@@ -1,0 +1,18 @@
+services:
+    forgot_password.controller.forgot_password:
+        class: ForgotPasswordBundle\Controller\ForgotPasswordController
+        arguments: ['@forgot_password.manager.forgot_password', '@security.authorization_checker', '@security.token_storage', '%forgot_password.user_field%']
+
+    forgot_password.manager.forgot_password:
+        class: ForgotPasswordBundle\Manager\ForgotPasswordManager
+        arguments: ['@security.token_storage', '@request_stack', '@forgot_password.manager.password_token', '@event_dispatcher', '@doctrine', '%forgot_password.user_class%', '%forgot_password.user_field%']
+
+    forgot_password.manager.password_token:
+        class: ForgotPasswordBundle\Manager\PasswordTokenManager
+        arguments: ['@doctrine', '%forgot_password.password_token_class%']
+
+    forgot_password.param_converter.password_token:
+        class: ForgotPasswordBundle\Request\ParamConverter\PasswordTokenParamConverter
+        arguments: ['@forgot_password.manager.password_token']
+        tags:
+            - { name: request.param_converter, converter: password_token, priority: 1 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.6/phpunit.xsd"
+         backupGlobals="false"
+         colors="true">
+
+    <testsuites>
+        <testsuite name="ForgotPasswordBundle tests suite">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>.</directory>
+            <exclude>
+                <directory>tests</directory>
+                <directory>features</directory>
+                <directory>vendor</directory>
+                <directory>src/Controller</directory>
+                <directory>src/DependencyInjection</directory>
+                <directory>src/Entity</directory>
+                <directory>src/Resources</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

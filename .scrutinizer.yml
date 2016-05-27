@@ -1,0 +1,47 @@
+checks:
+    php: true
+
+build_failure_conditions:
+    - 'issues.severity(>= MAJOR).new.exists'
+    - 'project.metric_change("scrutinizer.quality", < -0.10)'
+    - 'project.metric_change("scrutinizer.test_coverage", < -0.10)'
+
+build:
+    environment:
+        php:
+            version: 5.5.12
+            ini:
+                error_reporting: 16383
+    tests:
+        override:
+            -
+                command: 'vendor/bin/phpunit --coverage-clover=coverage-report'
+                coverage:
+                    file: 'coverage-report'
+                    format: 'php-clover'
+
+filter:
+    paths:
+        - src/*
+    excluded_paths:
+        - tests/*
+
+tools:
+    external_code_coverage: false
+    php_code_coverage: false
+    php_code_sniffer:
+        config:
+            standard: 'symfony'
+    php_changetracking: true
+    php_cpd: true
+    php_cs_fixer:
+        config:
+            level: 'all'
+
+coding_style:
+    php:
+        spaces:
+            before_parentheses:
+                closure_definition: true
+            around_operators:
+                concatenation: false
