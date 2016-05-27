@@ -43,13 +43,13 @@ class PasswordTokenManager
         $passwordToken->setToken(md5(time()));
         $passwordToken->setUser($user);
         $passwordToken->setExpiresAt($expiresAt instanceof \DateTime ? $expiresAt : new \DateTime($expiresAt));
-        
+
         $this->entityManager->persist($passwordToken);
-        
+
         if (true === $flush) {
             $this->entityManager->flush($passwordToken);
         }
-        
+
         return $passwordToken;
     }
 

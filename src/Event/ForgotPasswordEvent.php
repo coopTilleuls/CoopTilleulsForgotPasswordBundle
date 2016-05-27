@@ -14,7 +14,7 @@ class ForgotPasswordEvent extends Event
      * @var AbstractPasswordToken
      */
     private $passwordToken;
-    
+
     /**
      * @var string
      */
