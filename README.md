@@ -27,7 +27,9 @@ public function registerBundles()
 }
 ```
 
-Now load default routing:
+## Configuration
+
+Load routing:
 
 ```yml
 # app/config/routing.yml
@@ -37,7 +39,7 @@ forgot_password:
     prefix:   /forgot_password
 ```
 
-Finally, enable custom configuration:
+Enable configuration:
 
 ```yml
 # app/config.yml
@@ -45,6 +47,63 @@ forgot_password:
     password_token_class: 'AppBundle\Entity\PasswordToken'
     user_class: 'AppBundle\Entity\User'
     user_field: 'email'
+```
+
+Create your own `PasswordToken` entity:
+
+```php
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use ForgotPasswordBundle\Entity\AbstractPasswordToken;
+use Symfony\Component\Security\Core\User\UserInterface;
+
+/**
+ * @ORM\Entity
+ */
+class PasswordToken extends AbstractPasswordToken
+{
+    /**
+     * @var int
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setUser(UserInterface $user)
+    {
+        $this->user = $user;
+    }
+}
 ```
 
 ## Usage
