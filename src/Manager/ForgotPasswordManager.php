@@ -87,7 +87,7 @@ class ForgotPasswordManager
         }
 
         $currentRequest = $this->requestStack->getCurrentRequest();
-        if (false === ($value = $currentRequest->get($this->userFieldName))) {
+        if (null === ($value = $currentRequest->get($this->userFieldName))) {
             return false;
         }
 

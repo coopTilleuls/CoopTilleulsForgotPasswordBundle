@@ -6,12 +6,14 @@ Provides a 'forgot-password' feature for a REST API.
 
 Feel free to contribute on it !
 
+[![Build Status](https://travis-ci.org/coopTilleuls/forgot-password-bundle.svg?branch=master)](https://travis-ci.org/coopTilleuls/forgot-password-bundle)
+
 ## Installation
 
 Install this bundle through [Composer](https://getcomposer.org/):
 
 ```bash
-composer require --dev coopTilleuls/forgot-password-bundle
+composer require coopTilleuls/forgot-password-bundle
 ```
 
 Update your `AppKernel.php` file:

@@ -1,10 +1,9 @@
 <?php
 
-namespace ForgotPasswordBundle\Tests\Request\ParamConverter;
+namespace ForgotPasswordBundle\Request\ParamConverter;
 
-use Doctrine\ORM\EntityRepository;
 use ForgotPasswordBundle\Entity\AbstractPasswordToken;
-use ForgotPasswordBundle\Request\ParamConverter\PasswordTokenParamConverter;
+use ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,7 +15,7 @@ class PasswordTokenParamConverterTest extends \PHPUnit_Framework_TestCase
      */
     public function testApplyInvalidTokenException()
     {
-        $repositoryMock = $this->prophesize(EntityRepository::class);
+        $passwordTokenManagerMock = $this->prophesize(PasswordTokenManager::class);
         $requestMock = $this->prophesize(Request::class);
         $paramConverterMock = $this->prophesize(ParamConverter::class);
 
@@ -24,9 +23,9 @@ class PasswordTokenParamConverterTest extends \PHPUnit_Framework_TestCase
         $requestMock->get('token')->willReturn('12345')->shouldBeCalledTimes(1);
         $paramConverterMock->isOptional()->willReturn(false)->shouldNotBeCalled();
 
-        $repositoryMock->findOneBy(['token' => '12345'])->shouldBeCalledTimes(1);
+        $passwordTokenManagerMock->findOneByToken('12345')->shouldBeCalledTimes(1);
 
-        $converter = new PasswordTokenParamConverter($repositoryMock->reveal());
+        $converter = new PasswordTokenParamConverter($passwordTokenManagerMock->reveal());
         $converter->apply($requestMock->reveal(), $paramConverterMock->reveal());
     }
 
@@ -36,7 +35,7 @@ class PasswordTokenParamConverterTest extends \PHPUnit_Framework_TestCase
      */
     public function testApplyExpiredTokenException()
     {
-        $repositoryMock = $this->prophesize(EntityRepository::class);
+        $passwordTokenManagerMock = $this->prophesize(PasswordTokenManager::class);
         $requestMock = $this->prophesize(Request::class);
         $paramConverterMock = $this->prophesize(ParamConverter::class);
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
@@ -45,10 +44,34 @@ class PasswordTokenParamConverterTest extends \PHPUnit_Framework_TestCase
         $requestMock->get('token')->willReturn('12345')->shouldBeCalledTimes(1);
         $paramConverterMock->isOptional()->willReturn(false)->shouldNotBeCalled();
 
-        $repositoryMock->findOneBy(['token' => '12345'])->willReturn($tokenMock->reveal())->shouldBeCalledTimes(1);
+        $passwordTokenManagerMock->findOneByToken('12345')->willReturn($tokenMock->reveal())->shouldBeCalledTimes(1);
         $tokenMock->getExpiresAt()->willReturn(new \DateTime('-1 minute'))->shouldBeCalledTimes(1);
 
-        $converter = new PasswordTokenParamConverter($repositoryMock->reveal());
+        $converter = new PasswordTokenParamConverter($passwordTokenManagerMock->reveal());
         $converter->apply($requestMock->reveal(), $paramConverterMock->reveal());
+    }
+
+    public function testApplyNoRequestParameter()
+    {
+        $passwordTokenManagerMock = $this->prophesize(PasswordTokenManager::class);
+        $requestMock = $this->prophesize(Request::class);
+        $paramConverterMock = $this->prophesize(ParamConverter::class);
+
+        $paramConverterMock->getName()->willReturn('token')->shouldBeCalledTimes(1);
+        $requestMock->get('token')->shouldBeCalledTimes(1);
+
+        $converter = new PasswordTokenParamConverter($passwordTokenManagerMock->reveal());
+        $this->assertFalse($converter->apply($requestMock->reveal(), $paramConverterMock->reveal()));
+    }
+
+    public function testSupports()
+    {
+        $passwordTokenManagerMock = $this->prophesize(PasswordTokenManager::class);
+        $paramConverterMock = $this->prophesize(ParamConverter::class);
+
+        $paramConverterMock->getClass()->willReturn(AbstractPasswordToken::class)->shouldBeCalledTimes(1);
+
+        $converter = new PasswordTokenParamConverter($passwordTokenManagerMock->reveal());
+        $this->assertTrue($converter->supports($paramConverterMock->reveal()));
     }
 }

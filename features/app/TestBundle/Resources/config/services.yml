@@ -1,0 +1,12 @@
+services:
+    kernel.event_listener.json_request_transformer:
+        class: Qandidate\Common\Symfony\HttpKernel\EventListener\JsonRequestTransformerListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 100 }
+
+    test.event_listener.forgot_password:
+        class: ForgotPasswordBundle\Tests\TestBundle\EventListener\ForgotPasswordEventListener
+        arguments: ['@mailer', '@templating', '@doctrine']
+        tags:
+            - { name: kernel.event_listener, event: forgot_password.create_token, method: onCreateToken }
+            - { name: kernel.event_listener, event: forgot_password.update_password, method: onUpdatePassword }

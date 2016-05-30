@@ -1,26 +1,15 @@
 default:
-    calls:
-        error_reporting: 16383 # E_ALL & ~E_USER_DREPRECATED
     suites:
         default:
             contexts:
-                - DatabaseContext:
-                    - "@doctrine"
-                - APIContext:
-                    - "@behat.client"
-                - AuthContext:
-                    - "@behat.client"
-                    - "@adherent.manager.person"
-                    - "@lexik_jwt_authentication.jwt_manager"
-                    - "@doctrine.orm.default_entity_manager"
-                - ForgotPasswordContext:
-                    - "@behat.client"
-                    - "@adherent.manager.person"
-                    - "@forgot_password.manager.password_token"
+                - FeatureContext:
+                    - '@test.client'
+                    - '@doctrine'
+                    - '@forgot_password.manager.password_token'
     extensions:
         Behat\Symfony2Extension:
             kernel:
                 env: 'test'
                 debug: 'true'
-                path: 'tests/Fixtures/app/AppKernel.php'
-                bootstrap: 'tests/Fixtures/app/bootstrap.php'
+                path: 'features/app/AppKernel.php'
+                bootstrap: 'features/app/bootstrap.php'

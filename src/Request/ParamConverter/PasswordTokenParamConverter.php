@@ -35,10 +35,6 @@ class PasswordTokenParamConverter implements ParamConverterInterface
             return false;
         }
 
-        if (!$value && $configuration->isOptional()) {
-            return false;
-        }
-
         /** @var AbstractPasswordToken $token */
         if (null === ($token = $this->passwordTokenManager->findOneByToken($value))) {
             throw new NotFoundHttpException('Invalid token.');
