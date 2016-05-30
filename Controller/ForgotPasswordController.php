@@ -9,49 +9,22 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route(service="forgot_password.controller.forgot_password")
  */
 class ForgotPasswordController
 {
-    /**
-     * @var ForgotPasswordManager
-     */
     private $forgotPasswordManager;
-
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    /**
-     * @var string
-     */
     private $userFieldName;
 
     /**
      * @param ForgotPasswordManager         $forgotPasswordManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenStorageInterface         $tokenStorage
      * @param string                        $userFieldName
      */
-    public function __construct(
-        ForgotPasswordManager $forgotPasswordManager,
-        AuthorizationCheckerInterface $authorizationChecker,
-        TokenStorageInterface $tokenStorage,
-        $userFieldName
-    ) {
+    public function __construct(ForgotPasswordManager $forgotPasswordManager, $userFieldName)
+    {
         $this->forgotPasswordManager = $forgotPasswordManager;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->tokenStorage = $tokenStorage;
         $this->userFieldName = $userFieldName;
     }
 
