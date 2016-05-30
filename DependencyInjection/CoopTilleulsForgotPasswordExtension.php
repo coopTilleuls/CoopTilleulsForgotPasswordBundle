@@ -4,7 +4,7 @@ namespace CoopTilleuls\ForgotPasswordBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class CoopTilleulsForgotPasswordExtension extends Extension
@@ -21,7 +21,7 @@ class CoopTilleulsForgotPasswordExtension extends Extension
         $container->setParameter('coop_tilleuls_forgot_password.user_class', $config['user_class']);
         $container->setParameter('coop_tilleuls_forgot_password.user_field', $config['user_field']);
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.xml');
     }
 }
