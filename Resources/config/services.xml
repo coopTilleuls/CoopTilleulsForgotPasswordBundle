@@ -13,8 +13,6 @@
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager">
-            <argument type="service" id="security.token_storage" />
-            <argument type="service" id="request_stack" />
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="doctrine" />

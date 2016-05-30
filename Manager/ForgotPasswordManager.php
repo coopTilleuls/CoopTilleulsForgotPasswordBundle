@@ -17,26 +17,20 @@ class ForgotPasswordManager
      * @var ObjectManager
      */
     private $entityManager;
-    private $tokenStorage;
-    private $requestStack;
     private $passwordTokenManager;
     private $dispatcher;
     private $userClass;
     private $userFieldName;
 
     /**
-     * @param TokenStorageInterface    $tokenStorage
-     * @param RequestStack             $requestStack
      * @param PasswordTokenManager     $passwordTokenManager
      * @param EventDispatcherInterface $dispatcher
      * @param ManagerRegistry          $managerRegistry
      * @param string                   $userClass
      * @param string                   $userFieldName
      */
-    public function __construct(TokenStorageInterface $tokenStorage, RequestStack $requestStack, PasswordTokenManager $passwordTokenManager, EventDispatcherInterface $dispatcher, ManagerRegistry $managerRegistry, $userClass, $userFieldName)
+    public function __construct(PasswordTokenManager $passwordTokenManager, EventDispatcherInterface $dispatcher, ManagerRegistry $managerRegistry, $userClass, $userFieldName)
     {
-        $this->tokenStorage = $tokenStorage;
-        $this->requestStack = $requestStack;
         $this->passwordTokenManager = $passwordTokenManager;
         $this->dispatcher = $dispatcher;
         $this->entityManager = $managerRegistry->getManagerForClass($userClass);
