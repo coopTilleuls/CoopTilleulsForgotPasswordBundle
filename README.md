@@ -38,9 +38,7 @@ Load routing:
 ```yml
 # app/config/routing.yml
 forgot_password:
-    resource: '@CoopTilleulsForgotPasswordBundle/Controller/'
-    type:     annotation
-    prefix:   /forgot_password
+    resource: '@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml'
 ```
 
 Enable configuration:
@@ -113,7 +111,7 @@ class PasswordToken extends AbstractPasswordToken
 ## Usage
 
 This bundle provides 2 main routes:
-- `POST /forgot_password/`: receives user email (or another field customized through `user_field` configuration key)
+- `POST /forgot_password`: receives user email (or another field customized through `user_field` configuration key)
 - `POST /forgot_password/{token}`: update user password
 
 ### Send email on user request

@@ -1,5 +1,7 @@
 <?php
 
+use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\PasswordToken;
+use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -19,7 +21,6 @@ class AppKernel extends Kernel
     public function registerBundles()
     {
         return [
-            new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
@@ -34,14 +35,14 @@ class AppKernel extends Kernel
 
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
-        $routes->import('@CoopTilleulsForgotPasswordBundle/Controller/', '/forgot_password');
+        $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml');
     }
 
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
     {
         $c->loadFromExtension('coop_tilleuls_forgot_password', [
-            'password_token_class' => 'CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\PasswordToken',
-            'user_class' => 'CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User',
+            'password_token_class' => PasswordToken::class,
+            'user_class' => User::class,
             'user_field' => 'email',
         ]);
 

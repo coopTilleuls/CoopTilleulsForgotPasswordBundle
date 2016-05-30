@@ -2,18 +2,12 @@
 
 namespace CoopTilleuls\ForgotPasswordBundle\Controller;
 
-use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @Route(service="forgot_password.controller.forgot_password")
- */
 class ForgotPasswordController
 {
     private $forgotPasswordManager;
@@ -29,13 +23,9 @@ class ForgotPasswordController
     {
         $this->forgotPasswordManager = $forgotPasswordManager;
         $this->passwordTokenManager = $passwordTokenManager;
-        $this->userFieldName = $userFieldName;
     }
 
     /**
-     * @Route(name="forgot_password.reset")
-     * @Method({"POST"})
-     *
      * @return Response|JsonResponse
      */
     public function resetPasswordAction()
@@ -48,17 +38,22 @@ class ForgotPasswordController
     }
 
     /**
-     * @ParamConverter(name="token", class="CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken")
-     *
-     * @Route("/{token}", name="forgot_password.update")
-     * @Method({"POST"})
-     *
-     * @param AbstractPasswordToken $token
+     * @param string $tokenValue
      *
      * @return Response|JsonResponse
      */
-    public function updatePasswordAction(AbstractPasswordToken $token)
+    public function updatePasswordAction($tokenValue)
     {
+        $token = $this->passwordTokenManager->findOneByToken($tokenValue);
+
+        if (null === $token) {
+            throw new NotFoundHttpException('Invalid token.');
+        }
+
+        if ((new \DateTime()) > $token->getExpiresAt()) {
+            throw new NotFoundHttpException('The token has expired.');
+        }
+
         if (true === $this->forgotPasswordManager->updatePassword($token)) {
             return new Response('', 204);
         }

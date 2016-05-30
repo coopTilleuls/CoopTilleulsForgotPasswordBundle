@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing
+        http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="coop_tilleuls_forgot_password.reset" path="/forgot_password" methods="POST">
+        <default key="_controller">coop_tilleuls_forgot_password.controller.forgot_password:resetPasswordAction</default>
+    </route>
+
+    <route id="coop_tilleuls_forgot_password.update" path="/forgot_password/{tokenValue}" methods="POST">
+        <default key="_controller">coop_tilleuls_forgot_password.controller.forgot_password:updatePasswordAction</default>
+    </route>
+
+</routes>

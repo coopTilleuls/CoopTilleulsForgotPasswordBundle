@@ -71,7 +71,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->client->enableProfiler();
         $this->client->request(
             'POST',
-            '/forgot_password/',
+            '/forgot_password',
             [],
             [],
             $this->getServerOptions(),
@@ -104,7 +104,7 @@ JSON
         \PHPUnit_Framework_Assert::assertEquals('Réinitialisation de votre mot de passe', $messages[0]->getSubject());
         \PHPUnit_Framework_Assert::assertEquals('no-reply@example.com', key($messages[0]->getFrom()));
         \PHPUnit_Framework_Assert::assertEquals('john.doe@example.com', key($messages[0]->getTo()));
-        \PHPUnit_Framework_Assert::assertContains('http://www.example.com/forgot_password/', $messages[0]->getBody());
+        \PHPUnit_Framework_Assert::assertContains('http://www.example.com/forgot_password', $messages[0]->getBody());
     }
 
     /**
@@ -156,7 +156,7 @@ JSON
     {
         $this->client->request(
             'POST',
-            '/forgot_password/',
+            '/forgot_password',
             [],
             [],
             $this->getServerOptions(),
