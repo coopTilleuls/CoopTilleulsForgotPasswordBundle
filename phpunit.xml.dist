@@ -11,8 +11,8 @@
          beStrictAboutTestSize="true">
 
     <testsuites>
-        <testsuite name="ForgotPasswordBundle tests suite">
-            <directory>tests</directory>
+        <testsuite name="CoopTilleulsForgotPasswordBundle tests suite">
+            <directory>Tests</directory>
         </testsuite>
     </testsuites>
 
@@ -20,12 +20,9 @@
         <whitelist>
             <directory>.</directory>
             <exclude>
-                <directory>tests</directory>
+                <directory>Tests</directory>
                 <directory>features</directory>
                 <directory>vendor</directory>
-                <directory>src/Entity</directory>
-                <directory>src/Event</directory>
-                <directory>src/Resources</directory>
             </exclude>
         </whitelist>
     </filter>
