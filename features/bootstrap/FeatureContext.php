@@ -35,7 +35,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct(Client $client, Registry $doctrine, PasswordTokenManager $passwordTokenManager)
     {
-//        $client->setServerParameter('PHP_AUTH_USER', 'admin');
+        //        $client->setServerParameter('PHP_AUTH_USER', 'admin');
 //        $client->setServerParameter('PHP_AUTH_PW', 'admin');
 
         $this->client = $client;
@@ -64,7 +64,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function iResetMyPassword()
     {
         $this->createUser();
-        
+
         $this->client->enableProfiler();
         $this->client->request('POST', '/forgot_password/', [], [], [
             'CONTENT_TYPE' => 'application/json',
@@ -237,7 +237,7 @@ JSON
         $user->setUsername('foo');
         $this->doctrine->getManager()->persist($user);
         $this->doctrine->getManager()->flush();
-        
+
         return $user;
     }
 }
