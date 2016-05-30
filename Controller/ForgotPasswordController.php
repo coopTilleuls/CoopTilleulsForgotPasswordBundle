@@ -1,9 +1,9 @@
 <?php
 
-namespace ForgotPasswordBundle\Controller;
+namespace CoopTilleuls\ForgotPasswordBundle\Controller;
 
-use ForgotPasswordBundle\Entity\AbstractPasswordToken;
-use ForgotPasswordBundle\Manager\ForgotPasswordManager;
+use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
+use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -71,7 +71,7 @@ class ForgotPasswordController
     }
 
     /**
-     * @ParamConverter(name="token", class="ForgotPasswordBundle\Entity\AbstractPasswordToken")
+     * @ParamConverter(name="token", class="CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken")
      *
      * @Route("/{token}", name="forgot_password.update")
      * @Method({"POST"})

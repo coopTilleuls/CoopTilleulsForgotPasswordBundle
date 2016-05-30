@@ -1,9 +1,9 @@
-# Contributing to ForgotPasswordBundle
+# Contributing to CoopTilleulsForgotPasswordBundle
 
 First of all, thank you for contributing, you're awesome!
 
-To have your code integrated in the ForgotPasswordBundle project, there is some rules to follow, but don't panic,
-it's easy!
+To have your code integrated in the CoopTilleulsForgotPasswordBundle project, there is some rules to follow, but don't
+panic, it's easy!
 
 ## Reporting bugs
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace ForgotPasswordBundle\Request\ParamConverter;
+namespace CoopTilleuls\ForgotPasswordBundle\Request\ParamConverter;
 
-use ForgotPasswordBundle\Entity\AbstractPasswordToken;
-use ForgotPasswordBundle\Manager\PasswordTokenManager;
+use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
+use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
