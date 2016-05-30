@@ -43,7 +43,7 @@
         "psr-4": {
             "CoopTilleuls\\ForgotPasswordBundle\\": ""
         },
-        "exclude-from-classmap": ["/features/", "/tests/"]
+        "exclude-from-classmap": ["features/", "Tests/"]
     },
     "autoload-dev": {
         "psr-4": {
