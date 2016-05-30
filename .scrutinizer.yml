@@ -25,6 +25,7 @@ filter:
         - src/*
     excluded_paths:
         - tests/*
+        - features/*
 
 tools:
     external_code_coverage: false
