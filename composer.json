@@ -1,5 +1,5 @@
 {
-    "name": "coopTilleuls/forgot-password-bundle",
+    "name": "tilleuls/forgot-password-bundle",
     "type": "symfony-bundle",
     "description": "Provides a 'forgot password' feature for a REST API",
     "keywords": [
@@ -8,10 +8,11 @@
         "API"
     ],
     "license": "MIT",
+    "homepage": "https://les-tilleuls.coop",
     "authors": [
         {
             "name": "Vincent Chalamon",
-            "email": "vincentchalamon@gmail.com"
+            "email": "vincent@les-tilleuls.coop"
         }
     ],
     "require": {
@@ -41,12 +42,13 @@
     },
     "autoload": {
         "psr-4": {
-            "ForgotPasswordBundle\\": "src"
-        }
+            "CoopTilleuls\\ForgotPasswordBundle\\": ""
+        },
+        "exclude-from-classmap": ["/features/", "/tests/"]
     },
     "autoload-dev": {
         "psr-4": {
-            "ForgotPasswordBundle\\Tests\\": "features/app"
+            "CoopTilleuls\\ForgotPasswordBundle\\Tests\\": "features/app"
         }
     },
     "extra": {

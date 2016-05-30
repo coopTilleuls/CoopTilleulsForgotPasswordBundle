@@ -1,11 +1,11 @@
 <?php
 
-namespace ForgotPasswordBundle\Tests\TestBundle\EventListener;
+namespace CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\EventListener;
 
+use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
+use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
-use ForgotPasswordBundle\Event\ForgotPasswordEvent;
-use ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
 class ForgotPasswordEventListener
@@ -49,7 +49,7 @@ class ForgotPasswordEventListener
         $swiftMessage = new \Swift_Message(
             'Réinitialisation de votre mot de passe',
             $this->templating->render(
-                'TestBundle:ResetPassword:mail.html.twig',
+                'CoopTilleulsTestBundle:ResetPassword:mail.html.twig',
                 ['token' => $passwordToken->getToken()]
             )
         );

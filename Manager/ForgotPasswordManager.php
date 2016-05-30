@@ -1,11 +1,11 @@
 <?php
 
-namespace ForgotPasswordBundle\Manager;
+namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
+use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
+use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
-use ForgotPasswordBundle\Entity\AbstractPasswordToken;
-use ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;

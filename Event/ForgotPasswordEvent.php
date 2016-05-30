@@ -1,8 +1,8 @@
 <?php
 
-namespace ForgotPasswordBundle\Event;
+namespace CoopTilleuls\ForgotPasswordBundle\Event;
 
-use ForgotPasswordBundle\Entity\AbstractPasswordToken;
+use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Symfony\Component\EventDispatcher\Event;
 
 class ForgotPasswordEvent extends Event

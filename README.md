@@ -1,19 +1,20 @@
-# ForgotPasswordBundle
+# CoopTilleulsForgotPasswordBundle
 
-Provides a 'forgot-password' feature for a REST API.
+Provides a 'forgot password' feature for a REST API.
 
 **This bundle is still in progress. You will be notified soon of its first release ;).**
 
 Feel free to contribute on it !
 
-[![Build Status](https://travis-ci.org/coopTilleuls/forgot-password-bundle.svg?branch=master)](https://travis-ci.org/coopTilleuls/forgot-password-bundle)
+[![Build Status](https://travis-ci.org/coopTilleuls/ForgotPasswordBundle.svg?branch=master)](https://travis-ci.org/coopTilleuls/ForgotPasswordBundle)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/79b794ea-1f79-49fc-b27a-b0bf86afd30c/mini.png)](https://insight.sensiolabs.com/projects/79b794ea-1f79-49fc-b27a-b0bf86afd30c)
 
 ## Installation
 
 Install this bundle through [Composer](https://getcomposer.org/):
 
 ```bash
-composer require coopTilleuls/forgot-password-bundle
+composer require tilleuls/forgot-password-bundle
 ```
 
 Update your `AppKernel.php` file:
@@ -23,7 +24,7 @@ public function registerBundles()
 {
     $bundles = [
         ...
-        new ForgotPasswordBundle\ForgotPasswordBundle(),
+        new CoopTilleuls\ForgotPasswordBundle\CoopTilleulsForgotPasswordBundle(),
     ];
     ...
 }
@@ -36,7 +37,7 @@ Load routing:
 ```yml
 # app/config/routing.yml
 forgot_password:
-    resource: "@ForgotPasswordBundle/Controller/"
+    resource: "@CoopTilleulsForgotPasswordBundle/Controller/"
     type:     annotation
     prefix:   /forgot_password
 ```
@@ -56,8 +57,8 @@ Create your own `PasswordToken` entity:
 ```php
 namespace AppBundle\Entity;
 
+use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Doctrine\ORM\Mapping as ORM;
-use ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -134,7 +135,7 @@ services:
 namespace AppBundle/Event;
 
 // ...
-use ForgotPasswordBundle\Event\ForgotPasswordEvent;
+use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 
 class ForgotPasswordEventListener
 {
@@ -195,7 +196,7 @@ services:
 namespace AppBundle/Event;
 
 // ...
-use ForgotPasswordBundle\Event\ForgotPasswordEvent;
+use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 
 class ForgotPasswordEventListener
 {

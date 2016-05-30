@@ -1,10 +1,10 @@
 <?php
 
-namespace ForgotPasswordBundle\Manager;
+namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
+use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
-use ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class PasswordTokenManager

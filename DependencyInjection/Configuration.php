@@ -1,6 +1,6 @@
 <?php
 
-namespace ForgotPasswordBundle\DependencyInjection;
+namespace CoopTilleuls\ForgotPasswordBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -13,7 +13,7 @@ final class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('forgot_password');
+        $rootNode = $treeBuilder->root('coop_tilleuls_forgot_password');
 
         $rootNode
             ->children()

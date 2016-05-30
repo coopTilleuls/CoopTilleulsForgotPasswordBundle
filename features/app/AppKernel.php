@@ -27,21 +27,21 @@ class AppKernel extends Kernel
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
-            new ForgotPasswordBundle\ForgotPasswordBundle(),
-            new ForgotPasswordBundle\Tests\TestBundle\TestBundle(),
+            new CoopTilleuls\ForgotPasswordBundle\CoopTilleulsForgotPasswordBundle(),
+            new CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\CoopTilleulsTestBundle(),
         ];
     }
 
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
-        $routes->import('@ForgotPasswordBundle/Controller/', '/forgot_password');
+        $routes->import('@CoopTilleulsForgotPasswordBundle/Controller/', '/forgot_password');
     }
 
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
     {
-        $c->loadFromExtension('forgot_password', [
-            'password_token_class' => 'ForgotPasswordBundle\Tests\TestBundle\Entity\PasswordToken',
-            'user_class' => 'ForgotPasswordBundle\Tests\TestBundle\Entity\User',
+        $c->loadFromExtension('coop_tilleuls_forgot_password', [
+            'password_token_class' => 'CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\PasswordToken',
+            'user_class' => 'CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User',
             'user_field' => 'email',
         ]);
 
@@ -71,7 +71,7 @@ class AppKernel extends Kernel
         ]);
 
         $c->loadFromExtension('framework', [
-            'secret' => 'ForgotPasswordBundle',
+            'secret' => 'CoopTilleulsForgotPasswordBundle',
             'test' => null,
             'serializer' => ['enabled' => true],
             'profiler' => ['collect' => false],

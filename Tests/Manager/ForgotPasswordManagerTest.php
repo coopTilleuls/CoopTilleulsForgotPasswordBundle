@@ -1,12 +1,12 @@
 <?php
 
-namespace ForgotPasswordBundle\Manager;
+namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
+use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
+use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use ForgotPasswordBundle\Entity\AbstractPasswordToken;
-use ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -22,22 +22,22 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
      * @var ObjectProphecy
      */
     private $tokenStorageMock;
-    
+
     /**
      * @var ObjectProphecy
      */
     private $requestStackMock;
-    
+
     /**
      * @var ObjectProphecy
      */
     private $passwordTokenManagerMock;
-    
+
     /**
      * @var ObjectProphecy
      */
     private $dispatcherMock;
-    
+
     /**
      * @var ObjectProphecy
      */
@@ -104,7 +104,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertFalse($manager->resetPassword());
     }
-    
+
     public function testResetPasswordNoUser()
     {
         $tokenMock = $this->prophesize(TokenInterface::class);
@@ -159,7 +159,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
             ->shouldBeCalledTimes(1);
         $this->dispatcherMock->dispatch(
             ForgotPasswordEvent::CREATE_TOKEN,
-            Argument::type('ForgotPasswordBundle\Event\ForgotPasswordEvent')
+            Argument::type('CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent')
         )->shouldBeCalledTimes(1);
 
         $manager = new ForgotPasswordManager(
@@ -173,7 +173,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertTrue($manager->resetPassword());
     }
-    
+
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
      */
@@ -197,7 +197,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         );
         $manager->updatePassword($passwordTokenMock->reveal());
     }
-    
+
     public function testUpdatePasswordNoRequestParameter()
     {
         $tokenMock = $this->prophesize(TokenInterface::class);
@@ -221,7 +221,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertFalse($manager->updatePassword($passwordTokenMock->reveal()));
     }
-    
+
     public function testUpdatePassword()
     {
         $tokenMock = $this->prophesize(TokenInterface::class);

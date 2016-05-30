@@ -1,9 +1,9 @@
 <?php
 
-namespace ForgotPasswordBundle\Tests\TestBundle\Entity;
+namespace CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity;
 
+use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Doctrine\ORM\Mapping as ORM;
-use ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
