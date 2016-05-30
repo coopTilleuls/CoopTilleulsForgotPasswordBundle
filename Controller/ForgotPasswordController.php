@@ -9,49 +9,26 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @Route(service="forgot_password.controller.forgot_password")
  */
 class ForgotPasswordController
 {
-    /**
-     * @var ForgotPasswordManager
-     */
     private $forgotPasswordManager;
-
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    /**
-     * @var string
-     */
+    private $passwordTokenManager;
     private $userFieldName;
 
     /**
-     * @param ForgotPasswordManager         $forgotPasswordManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenStorageInterface         $tokenStorage
-     * @param string                        $userFieldName
+     * @param ForgotPasswordManager $forgotPasswordManager
+     * @param PasswordTokenManager  $passwordTokenManager
+     * @param string                $userFieldName
      */
-    public function __construct(
-        ForgotPasswordManager $forgotPasswordManager,
-        AuthorizationCheckerInterface $authorizationChecker,
-        TokenStorageInterface $tokenStorage,
-        $userFieldName
-    ) {
+    public function __construct(ForgotPasswordManager $forgotPasswordManager, PasswordTokenManager $passwordTokenManager, $userFieldName)
+    {
         $this->forgotPasswordManager = $forgotPasswordManager;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->tokenStorage = $tokenStorage;
+        $this->passwordTokenManager = $passwordTokenManager;
         $this->userFieldName = $userFieldName;
     }
 
