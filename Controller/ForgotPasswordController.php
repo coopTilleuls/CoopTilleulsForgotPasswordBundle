@@ -5,32 +5,51 @@ namespace CoopTilleuls\ForgotPasswordBundle\Controller;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ForgotPasswordController
 {
+    private $tokenStorage;
     private $forgotPasswordManager;
     private $passwordTokenManager;
     private $userFieldName;
 
     /**
+     * @param TokenStorageInterface $tokenStorage
      * @param ForgotPasswordManager $forgotPasswordManager
      * @param PasswordTokenManager  $passwordTokenManager
      * @param string                $userFieldName
      */
-    public function __construct(ForgotPasswordManager $forgotPasswordManager, PasswordTokenManager $passwordTokenManager, $userFieldName)
+    public function __construct(TokenStorageInterface $tokenStorage, ForgotPasswordManager $forgotPasswordManager, PasswordTokenManager $passwordTokenManager, $userFieldName)
     {
+        $this->tokenStorage = $tokenStorage;
         $this->forgotPasswordManager = $forgotPasswordManager;
         $this->passwordTokenManager = $passwordTokenManager;
+        $this->userFieldName = $userFieldName;
     }
 
     /**
-     * @return Response|JsonResponse
+     * @param Request $request
+     *
+     * @return JsonResponse|Response
+     *
+     * @throws AccessDeniedHttpException
      */
-    public function resetPasswordAction()
+    public function resetPasswordAction(Request $request)
     {
-        if (true === $this->forgotPasswordManager->resetPassword()) {
+        // Authenticated user cannot ask to reset password
+        $token = $this->tokenStorage->getToken();
+        if ($token->getUser() instanceof UserInterface) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $data = json_decode($request->getContent(), true);
+        if (isset($data[$this->userFieldName]) && true === $this->forgotPasswordManager->resetPassword($data[$this->userFieldName])) {
             return new Response('', 204);
         }
 
@@ -38,14 +57,20 @@ class ForgotPasswordController
     }
 
     /**
-     * @param string $tokenValue
+     * @param string  $tokenValue
+     * @param Request $request
      *
      * @return Response|JsonResponse
      */
-    public function updatePasswordAction($tokenValue)
+    public function updatePasswordAction($tokenValue, Request $request)
     {
-        $token = $this->passwordTokenManager->findOneByToken($tokenValue);
+        // Authenticated user cannot ask to reset password
+        $userToken = $this->tokenStorage->getToken();
+        if (null !== $userToken && $userToken->getUser() instanceof UserInterface) {
+            throw new AccessDeniedHttpException();
+        }
 
+        $token = $this->passwordTokenManager->findOneByToken($tokenValue);
         if (null === $token) {
             throw new NotFoundHttpException('Invalid token.');
         }
@@ -54,7 +79,8 @@ class ForgotPasswordController
             throw new NotFoundHttpException('The token has expired.');
         }
 
-        if (true === $this->forgotPasswordManager->updatePassword($token)) {
+        $data = json_decode($request->getContent(), true);
+        if (isset($data['password']) && true === $this->forgotPasswordManager->updatePassword($token, $data['password'])) { // FIXME: password field should be configurable
             return new Response('', 204);
         }
 

@@ -3,8 +3,8 @@
 namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use RandomLib\Factory;
 use SecurityLib\Strength;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -12,22 +12,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class PasswordTokenManager
 {
     /**
-     * @var EntityManager
+     * @var ObjectManager
      */
     private $entityManager;
-
-    /**
-     * @var string
-     */
     private $passwordTokenClass;
 
     /**
-     * @param Registry $registry
+     * @param ManagerRegistry $registry
      * @param string   $passwordTokenClass
      */
-    public function __construct(Registry $registry, $passwordTokenClass)
+    public function __construct(ManagerRegistry $registry, $passwordTokenClass)
     {
-        $this->entityManager = $registry->getManager();
+        $this->entityManager = $registry->getManagerForClass($passwordTokenClass);
         $this->passwordTokenClass = $passwordTokenClass;
     }
 
@@ -43,16 +39,16 @@ class PasswordTokenManager
         /** @var AbstractPasswordToken $passwordToken */
         $passwordToken = new $this->passwordTokenClass();
 
-        $factory = new Factory();;
+        $factory = new Factory();
         $generator = $factory->getGenerator(new Strength(Strength::MEDIUM));
 
         $passwordToken->setToken($generator->generateString(50, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'));
         $passwordToken->setUser($user);
-        $passwordToken->setExpiresAt($expiresAt instanceof \DateTime ? $expiresAt : new \DateTime($expiresAt));
+        $passwordToken->setExpiresAt($expiresAt ?: new \DateTime('+1 day')); // TODO: make the default expire time configurable
 
         $this->entityManager->persist($passwordToken);
 
-        if (true === $flush) {
+        if ($flush) {
             $this->entityManager->flush($passwordToken);
         }
 

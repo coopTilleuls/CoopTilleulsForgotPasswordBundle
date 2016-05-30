@@ -4,49 +4,24 @@ namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ForgotPasswordManager
 {
     /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
-     * @var PasswordTokenManager
-     */
-    private $passwordTokenManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    /**
-     * @var EntityManagerInterface
+     * @var ObjectManager
      */
     private $entityManager;
-
-    /**
-     * @var string
-     */
+    private $tokenStorage;
+    private $requestStack;
+    private $passwordTokenManager;
+    private $dispatcher;
     private $userClass;
-
-    /**
-     * @var string
-     */
     private $userFieldName;
 
     /**
@@ -54,48 +29,31 @@ class ForgotPasswordManager
      * @param RequestStack             $requestStack
      * @param PasswordTokenManager     $passwordTokenManager
      * @param EventDispatcherInterface $dispatcher
-     * @param Registry                 $doctrine
+     * @param ManagerRegistry          $managerRegistry
      * @param string                   $userClass
      * @param string                   $userFieldName
      */
-    public function __construct(
-        TokenStorageInterface $tokenStorage,
-        RequestStack $requestStack,
-        PasswordTokenManager $passwordTokenManager,
-        EventDispatcherInterface $dispatcher,
-        Registry $doctrine,
-        $userClass,
-        $userFieldName
-    ) {
+    public function __construct(TokenStorageInterface $tokenStorage, RequestStack $requestStack, PasswordTokenManager $passwordTokenManager, EventDispatcherInterface $dispatcher, ManagerRegistry $managerRegistry, $userClass, $userFieldName)
+    {
         $this->tokenStorage = $tokenStorage;
         $this->requestStack = $requestStack;
         $this->passwordTokenManager = $passwordTokenManager;
         $this->dispatcher = $dispatcher;
-        $this->entityManager = $doctrine->getManager();
+        $this->entityManager = $managerRegistry->getManagerForClass($userClass);
         $this->userClass = $userClass;
         $this->userFieldName = $userFieldName;
     }
 
     /**
+     * @param string $username
+     *
      * @return bool
      */
-    public function resetPassword()
+    public function resetPassword($username)
     {
-        // Authenticated user cannot ask to reset password
-        if (null !== ($token = $this->tokenStorage->getToken()) && $token->getUser() instanceof UserInterface) {
-            throw new AccessDeniedHttpException();
-        }
-
-        $currentRequest = $this->requestStack->getCurrentRequest();
-        if (null === ($value = $currentRequest->get($this->userFieldName))) {
-            return false;
-        }
-
         /** @var UserInterface $user */
-        if (null === ($user = $this->entityManager->getRepository($this->userClass)->findOneBy(
-                [$this->userFieldName => $value]
-            ))
-        ) {
+        $user = $this->entityManager->getRepository($this->userClass)->findOneBy([$this->userFieldName => $username]);
+        if (null === $user) {
             return false;
         }
 
@@ -110,21 +68,12 @@ class ForgotPasswordManager
 
     /**
      * @param AbstractPasswordToken $passwordToken
+     * @param string                $password
      *
      * @return bool
      */
-    public function updatePassword(AbstractPasswordToken $passwordToken)
+    public function updatePassword(AbstractPasswordToken $passwordToken, $password)
     {
-        // Authenticated user cannot ask to reset password
-        if (null !== ($token = $this->tokenStorage->getToken()) && $token->getUser() instanceof UserInterface) {
-            throw new AccessDeniedHttpException();
-        }
-
-        $currentRequest = $this->requestStack->getCurrentRequest();
-        if (null === ($password = $currentRequest->get('password'))) {
-            return false;
-        }
-
         // Update user password
         $this->dispatcher->dispatch(
             ForgotPasswordEvent::UPDATE_PASSWORD,
@@ -134,7 +83,5 @@ class ForgotPasswordManager
         // Remove PasswordToken
         $this->entityManager->remove($passwordToken);
         $this->entityManager->flush();
-
-        return true;
     }
 }

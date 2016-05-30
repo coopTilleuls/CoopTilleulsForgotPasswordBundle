@@ -56,7 +56,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         $this->dispatcherMock = $this->prophesize(EventDispatcherInterface::class);
         $this->doctrineMock = $this->prophesize(Registry::class);
         $this->entityManagerMock = $this->prophesize(EntityManagerInterface::class);
-        $this->doctrineMock->getManager()->willReturn($this->entityManagerMock->reveal());
+        $this->doctrineMock->getManagerForClass('AppBundle\Entity\User')->willReturn($this->entityManagerMock->reveal());
     }
 
     /**
@@ -79,7 +79,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
             'AppBundle\Entity\User',
             'email'
         );
-        $manager->resetPassword();
+        $manager->resetPassword('foo');
     }
 
     public function testResetPasswordNoRequestParameter()
@@ -102,7 +102,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
             'AppBundle\Entity\User',
             'email'
         );
-        $this->assertFalse($manager->resetPassword());
+        $this->assertFalse($manager->resetPassword('foo'));
     }
 
     public function testResetPasswordNoUser()
@@ -131,7 +131,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
             'AppBundle\Entity\User',
             'email'
         );
-        $this->assertFalse($manager->resetPassword());
+        $this->assertFalse($manager->resetPassword('foo'));
     }
 
     public function testResetPassword()
@@ -171,7 +171,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
             'AppBundle\Entity\User',
             'email'
         );
-        $this->assertTrue($manager->resetPassword());
+        $this->assertTrue($manager->resetPassword('foo'));
     }
 
     /**
@@ -195,7 +195,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
             'AppBundle\Entity\User',
             'email'
         );
-        $manager->updatePassword($passwordTokenMock->reveal());
+        $manager->updatePassword($passwordTokenMock->reveal(), 'foo');
     }
 
     public function testUpdatePasswordNoRequestParameter()
@@ -219,7 +219,7 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
             'AppBundle\Entity\User',
             'email'
         );
-        $this->assertFalse($manager->updatePassword($passwordTokenMock->reveal()));
+        $this->assertFalse($manager->updatePassword($passwordTokenMock->reveal(), 'foo'));
     }
 
     public function testUpdatePassword()
@@ -250,6 +250,6 @@ class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
             'AppBundle\Entity\User',
             'email'
         );
-        $this->assertTrue($manager->updatePassword($passwordTokenMock->reveal()));
+        $this->assertTrue($manager->updatePassword($passwordTokenMock->reveal(), 'foo'));
     }
 }
