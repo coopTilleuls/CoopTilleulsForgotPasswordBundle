@@ -4,7 +4,7 @@ Provides a 'forgot password' feature for a REST API.
 
 **This bundle is still in progress. You will be notified soon of its first release ;).**
 
-Feel free to contribute on it !
+Feel free to contribute on it!
 
 [![Build Status](https://travis-ci.org/coopTilleuls/ForgotPasswordBundle.svg?branch=master)](https://travis-ci.org/coopTilleuls/ForgotPasswordBundle)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/79b794ea-1f79-49fc-b27a-b0bf86afd30c/mini.png)](https://insight.sensiolabs.com/projects/79b794ea-1f79-49fc-b27a-b0bf86afd30c)
@@ -23,10 +23,11 @@ Update your `AppKernel.php` file:
 public function registerBundles()
 {
     $bundles = [
-        ...
         new CoopTilleuls\ForgotPasswordBundle\CoopTilleulsForgotPasswordBundle(),
+        // ...
     ];
-    ...
+
+    // ...
 }
 ```
 
@@ -37,7 +38,7 @@ Load routing:
 ```yml
 # app/config/routing.yml
 forgot_password:
-    resource: "@CoopTilleulsForgotPasswordBundle/Controller/"
+    resource: '@CoopTilleulsForgotPasswordBundle/Controller/'
     type:     annotation
     prefix:   /forgot_password
 ```
@@ -48,8 +49,8 @@ Enable configuration:
 # app/config.yml
 forgot_password:
     password_token_class: 'AppBundle\Entity\PasswordToken'
-    user_class: 'AppBundle\Entity\User'
-    user_field: 'email'
+    user_class:           'AppBundle\Entity\User'
+    user_field:           'email'
 ```
 
 Create your own `PasswordToken` entity:
@@ -140,6 +141,7 @@ use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 class ForgotPasswordEventListener
 {
     // ...
+
     /**
      * @param ForgotPasswordEvent $event
      */
@@ -149,7 +151,7 @@ class ForgotPasswordEventListener
         $user = $passwordToken->getUser();
 
         $swiftMessage = new \Swift_Message(
-            'Réinitialisation de votre mot de passe',
+            'Reset of your password',
             $this->templating->render(
                 'AppBundle:ResetPassword:mail.html.twig',
                 [
@@ -157,6 +159,7 @@ class ForgotPasswordEventListener
                 ]
             )
         );
+
         $swiftMessage->setFrom('no-reply@example.com');
         $swiftMessage->setTo($user->getEmail());
         $swiftMessage->setContentType('text/html');
@@ -175,7 +178,7 @@ Your app is ready to receive a request like:
 }
 ```
 
-### Update user password
+### Update the password of the user
 
 On the second user story, user will send its new password, and you'll have to encode it and save it: this is your own
 business.
@@ -183,7 +186,7 @@ business.
 Update your event listener listening to `forgot_password.update_password` event:
 
 ```yml
-# AppBundle/Resources/config/services.yml
+# app/config/services.yml
 services:
     app.listener.forgot_password:
         # ...
@@ -221,3 +224,7 @@ Your app is ready to receive a request like:
     "password": "P4$$w0rd"
 }
 ```
+
+## Credits
+
+Created by [Vincent Chalamon](http://vincent-chalamon.fr/) for Les-Tilleuls.coop.
