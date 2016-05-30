@@ -5,11 +5,11 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\Tools\SchemaTool;
 use ForgotPasswordBundle\Manager\PasswordTokenManager;
 use ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
-use Doctrine\ORM\Tools\SchemaTool;
 
 class FeatureContext implements Context, SnippetAcceptingContext
 {
@@ -29,15 +29,17 @@ class FeatureContext implements Context, SnippetAcceptingContext
     private $passwordTokenManager;
 
     /**
+     * @var bool
+     */
+    private $authenticated;
+
+    /**
      * @param Client               $client
      * @param Registry             $doctrine
      * @param PasswordTokenManager $passwordTokenManager
      */
     public function __construct(Client $client, Registry $doctrine, PasswordTokenManager $passwordTokenManager)
     {
-        //        $client->setServerParameter('PHP_AUTH_USER', 'admin');
-//        $client->setServerParameter('PHP_AUTH_PW', 'admin');
-
         $this->client = $client;
         $this->doctrine = $doctrine;
         $this->passwordTokenManager = $passwordTokenManager;
@@ -48,6 +50,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function resetDatabase()
     {
+        $this->authenticated = false;
         $purger = new ORMPurger($this->doctrine->getManager());
         $purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
         try {
@@ -66,11 +69,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->createUser();
 
         $this->client->enableProfiler();
-        $this->client->request('POST', '/forgot_password/', [], [], [
-            'CONTENT_TYPE' => 'application/json',
-        ], <<<JSON
-{
-    "username": "john.doe"
+        $this->client->request(
+            'POST',
+            '/forgot_password/',
+            [],
+            [],
+            $this->getServerOptions(),
+            <<<JSON
+           {
+    "email": "john.doe@example.com"
 }
 JSON
         );
@@ -95,9 +102,51 @@ JSON
         $messages = $mailCollector->getMessages();
         \PHPUnit_Framework_Assert::assertInstanceOf('Swift_Message', $messages[0]);
         \PHPUnit_Framework_Assert::assertEquals('Réinitialisation de votre mot de passe', $messages[0]->getSubject());
-        \PHPUnit_Framework_Assert::assertEquals('no-reply@parti-de-gauche.fr', key($messages[0]->getFrom()));
+        \PHPUnit_Framework_Assert::assertEquals('no-reply@example.com', key($messages[0]->getFrom()));
         \PHPUnit_Framework_Assert::assertEquals('john.doe@example.com', key($messages[0]->getTo()));
-        \PHPUnit_Framework_Assert::assertContains('http://localhost/mot-de-passe-oublie/', $messages[0]->getBody());
+        \PHPUnit_Framework_Assert::assertContains('http://www.example.com/forgot_password/', $messages[0]->getBody());
+    }
+
+    /**
+     * @Given I am authenticated
+     */
+    public function iAmAuthenticated()
+    {
+        $this->authenticated = true;
+    }
+
+    /**
+     * @When I should be forbidden
+     */
+    public function iShouldBeForbidden()
+    {
+        \PHPUnit_Framework_Assert::assertTrue(
+            $this->client->getResponse()->isForbidden(),
+            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+        );
+    }
+
+    /**
+     * @When the page should not be found
+     */
+    public function thePageShouldNotBeFound()
+    {
+        \PHPUnit_Framework_Assert::assertTrue(
+            $this->client->getResponse()->isNotFound(),
+            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+        );
+    }
+
+    /**
+     * @When the request should be invalid
+     */
+    public function theRequestShouldBeInvalid()
+    {
+        \PHPUnit_Framework_Assert::assertEquals(
+            400,
+            $this->client->getResponse()->getStatusCode(),
+            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+        );
     }
 
     /**
@@ -105,10 +154,14 @@ JSON
      */
     public function iResetMyPasswordUsingInvalidEmailAddress()
     {
-        $this->client->request('POST', '/forgot_password/', [], [], [
-            'CONTENT_TYPE' => 'application/json',
-        ], <<<JSON
-{
+        $this->client->request(
+            'POST',
+            '/forgot_password/',
+            [],
+            [],
+            $this->getServerOptions(),
+            <<<JSON
+           {
     "email": "foo@example.com"
 }
 JSON
@@ -120,15 +173,15 @@ JSON
      */
     public function iUpdateMyPassword()
     {
-        if (null === ($person = $this->personManager->findUserBy(['email' => 'john.doe@example.com']))) {
-            $person = $this->authContext->createPerson();
-        }
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
 
-        $token = $this->passwordTokenManager->createPasswordToken($person);
-
-        $this->client->request('POST', sprintf('/forgot_password/%s', $token->getToken()), [], [], [
-            'CONTENT_TYPE' => 'application/json',
-        ], <<<JSON
+        $this->client->request(
+            'POST',
+            sprintf('/forgot_password/%s', $token->getToken()),
+            [],
+            [],
+            $this->getServerOptions(),
+            <<<JSON
 {
     "password": "foo"
 }
@@ -137,61 +190,17 @@ JSON
     }
 
     /**
-     * @Then I can log in
-     */
-    public function iCanLogIn()
-    {
-        $this->authContext->iAmAuthenticated();
-        $this->iGetMyProfile();
-        $this->iShouldSeeMyProfile();
-    }
-
-    /**
-     * @Then I should see my profile
-     */
-    public function iShouldSeeMyProfile()
-    {
-        \PHPUnit_Framework_Assert::assertTrue(
-            $this->client->getResponse()->isSuccessful(),
-            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
-        );
-        $expected = <<<JSON
-{
-    "@context": "/contexts/Person",
-    "@id": "/people/1",
-    "@type": "http://schema.org/Person",
-    "email": "john.doe@example.com",
-    "address": null,
-    "birthDate": null,
-    "description": null,
-    "familyName": null,
-    "givenName": null,
-    "maidenName": null,
-    "aliasName": null,
-    "genre": "/genres/1",
-    "type": "/person_types/1",
-    "status": "/person_statuts/1",
-    "emailPro": null,
-    "twitter": null,
-    "facebook": null,
-    "website": null,
-    "profession": "/profession2s/1",
-    "employer": "employeur",
-    "unionActivity": "act",
-    "observations": "obs"
-}
-JSON;
-        \PHPUnit_Framework_Assert::assertJsonStringEqualsJsonString($expected, $this->client->getResponse()->getContent());
-    }
-
-    /**
      * @Then I update my password using an invalid token
      */
     public function iUpdateMyPasswordUsingAnInvalidToken()
     {
-        $this->client->request('POST', '/forgot_password/12345', [], [], [
-            'CONTENT_TYPE' => 'application/json',
-        ], <<<JSON
+        $this->client->request(
+            'POST',
+            '/forgot_password/12345',
+            [],
+            [],
+            $this->getServerOptions(),
+            <<<JSON
 {
     "password": "foo"
 }
@@ -204,15 +213,15 @@ JSON
      */
     public function iUpdateMyPasswordUsingAnExpiredToken()
     {
-        if (null === ($person = $this->personManager->findUserBy(['email' => 'john.doe@example.com']))) {
-            $person = $this->authContext->createPerson();
-        }
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('-1 minute'));
 
-        $token = $this->passwordTokenManager->createPasswordToken($person, new \DateTime('-1 minute'));
-
-        $this->client->request('POST', sprintf('/forgot_password/%s', $token->getToken()), [], [], [
-            'CONTENT_TYPE' => 'application/json',
-        ], <<<JSON
+        $this->client->request(
+            'POST',
+            sprintf('/forgot_password/%s', $token->getToken()),
+            [],
+            [],
+            $this->getServerOptions(),
+            <<<JSON
 {
     "password": "foo"
 }
@@ -221,23 +230,30 @@ JSON
     }
 
     /**
-     * @When I get my profile
-     */
-    public function iGetMyProfile()
-    {
-        $this->client->request('GET', '/profile');
-    }
-
-    /**
      * @return User
      */
     private function createUser()
     {
         $user = new User();
-        $user->setUsername('foo');
+        $user->setEmail('john.doe@example.com');
+        $user->setPassword('password');
         $this->doctrine->getManager()->persist($user);
         $this->doctrine->getManager()->flush();
 
         return $user;
+    }
+
+    /**
+     * @return array
+     */
+    private function getServerOptions()
+    {
+        $serverOptions = ['CONTENT_TYPE' => 'application/json'];
+        if (true === $this->authenticated) {
+            $serverOptions['PHP_AUTH_USER'] = 'john.doe@example.com';
+            $serverOptions['PHP_AUTH_PW'] = 'P4$$w0rd';
+        }
+
+        return $serverOptions;
     }
 }

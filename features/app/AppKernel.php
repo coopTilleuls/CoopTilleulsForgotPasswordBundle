@@ -1,13 +1,6 @@
 <?php
 
-use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use ForgotPasswordBundle\ForgotPasswordBundle;
-use ForgotPasswordBundle\Tests\TestBundle\TestBundle;
-use Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle;
-use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
-use Symfony\Bundle\SecurityBundle\SecurityBundle;
-use Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
@@ -26,13 +19,16 @@ class AppKernel extends Kernel
     public function registerBundles()
     {
         return [
-            new FrameworkBundle(),
-            new SecurityBundle(),
-            new StofDoctrineExtensionsBundle(),
-            new DoctrineBundle(),
-            new SwiftmailerBundle(),
-            new TestBundle(),
-            new ForgotPasswordBundle(),
+            new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
+            new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new Symfony\Bundle\SecurityBundle\SecurityBundle(),
+            new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
+            new Symfony\Bundle\TwigBundle\TwigBundle(),
+            new Symfony\Bundle\AsseticBundle\AsseticBundle(),
+            new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
+            new ForgotPasswordBundle\ForgotPasswordBundle(),
+            new ForgotPasswordBundle\Tests\TestBundle\TestBundle(),
         ];
     }
 
@@ -46,7 +42,7 @@ class AppKernel extends Kernel
         $c->loadFromExtension('forgot_password', [
             'password_token_class' => 'ForgotPasswordBundle\Tests\TestBundle\Entity\PasswordToken',
             'user_class' => 'ForgotPasswordBundle\Tests\TestBundle\Entity\User',
-            'user_field' => 'username',
+            'user_field' => 'email',
         ]);
 
         $c->loadFromExtension('stof_doctrine_extensions', [
@@ -55,6 +51,10 @@ class AppKernel extends Kernel
                     'timestampable' => true,
                 ],
             ],
+        ]);
+
+        $c->loadFromExtension('swiftmailer', [
+            'disable_delivery' => true,
         ]);
 
         $c->loadFromExtension('doctrine', [
@@ -74,6 +74,10 @@ class AppKernel extends Kernel
             'secret' => 'ForgotPasswordBundle',
             'test' => null,
             'serializer' => ['enabled' => true],
+            'profiler' => ['collect' => false],
+            'templating' => [
+                'engines' => ['twig'],
+            ],
         ]);
 
         $c->loadFromExtension('security', [
@@ -82,7 +86,7 @@ class AppKernel extends Kernel
                 'in_memory' => [
                     'memory' => [
                         'users' => [
-                            'admin' => ['password' => 'admin'],
+                            'john.doe@example.com' => ['password' => 'P4$$w0rd'],
                         ],
                     ],
                 ],

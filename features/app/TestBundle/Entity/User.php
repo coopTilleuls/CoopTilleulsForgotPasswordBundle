@@ -24,7 +24,14 @@ class User implements UserInterface
      *
      * @ORM\Column(type="string")
      */
-    private $username;
+    private $email;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     */
+    private $password;
 
     /**
      * @return int
@@ -39,28 +46,45 @@ class User implements UserInterface
      */
     public function getUsername()
     {
-        return $this->username;
-    }
-
-    /**
-     * @param string $username
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
+        return $this->getEmail();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getRoles()
+    public function getEmail()
     {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
     }
 
     /**
      * {@inheritdoc}
      */
     public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param string $password
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRoles()
     {
     }
 

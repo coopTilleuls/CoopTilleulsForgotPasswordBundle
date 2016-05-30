@@ -1,6 +1,5 @@
 Feature: I need to be able to reset my password
 
-    @debug
     Scenario: I can reset my password
         When I reset my password
         Then I should receive an email
@@ -18,11 +17,6 @@ Feature: I need to be able to reset my password
         Given I am authenticated
         When I update my password
         Then I should be forbidden
-
-    Scenario: I can update my password using a valid token
-        When I update my password
-        Then I can log in
-        And I should see my profile
 
     Scenario: I can't update my password using an invalid token
         When I update my password using an invalid token
