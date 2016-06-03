@@ -17,34 +17,37 @@
     ],
     "require": {
         "php": ">=5.5",
-        "sensio/framework-extra-bundle": "^2.3|^3.0",
         "symfony/http-foundation": "^2.3|^3.0",
         "symfony/http-kernel": "^2.3|^3.0",
-        "symfony/security": "^2.3|^3.0",
         "symfony/event-dispatcher": "^2.3|^3.0",
         "symfony/dependency-injection": "^2.3|^3.0",
+        "symfony/validator": "^2.3|^3.0",
         "symfony/config": "^2.3|^3.0",
-        "doctrine/orm": "^2.5",
-        "doctrine/doctrine-bundle": "^1.6",
-        "stof/doctrine-extensions-bundle": "^1.2"
+        "ircmaxell/random-lib": "^1.1"
     },
     "require-dev": {
         "phpunit/phpunit": "<5.0",
-        "symfony/browser-kit": "^2.3|^3.0",
-        "symfony/security-bundle": "^2.3|^3.0",
-        "symfony/swiftmailer-bundle": "^2.3|^3.0",
-        "symfony/twig-bundle": "^2.3|^3.0",
-        "symfony/assetic-bundle": "^2.8",
-        "doctrine/data-fixtures": "^1.1",
         "behat/behat": "~3.0",
         "behat/symfony2-extension": "~2.0",
-        "qandidate/symfony-json-request-transformer": "^1.2"
+        "sensio/framework-extra-bundle": "^3.0",
+        "symfony/browser-kit": "^3.0",
+        "symfony/security-bundle": "^3.0",
+        "symfony/swiftmailer-bundle": "^2.3",
+        "symfony/twig-bundle": "^3.0",
+        "symfony/assetic-bundle": "^2.8",
+        "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/orm": "^2.5",
+        "doctrine/data-fixtures": "^1.1"
+    },
+    "suggest": {
+        "doctrine/doctrine-bundle": "To connect with Doctrine in Symfony project",
+        "doctrine/orm": "To connect with Doctrine"
     },
     "autoload": {
         "psr-4": {
             "CoopTilleuls\\ForgotPasswordBundle\\": ""
         },
-        "exclude-from-classmap": ["/features/", "/tests/"]
+        "exclude-from-classmap": ["features/", "Tests/"]
     },
     "autoload-dev": {
         "psr-4": {

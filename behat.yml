@@ -5,11 +5,11 @@ default:
                 - FeatureContext:
                     - '@test.client'
                     - '@doctrine'
-                    - '@forgot_password.manager.password_token'
+                    - '@coop_tilleuls_forgot_password.manager.password_token'
     extensions:
-        Behat\Symfony2Extension:
+        'Behat\Symfony2Extension':
             kernel:
-                env: 'test'
-                debug: 'true'
-                path: 'features/app/AppKernel.php'
+                env:       'test'
+                debug:     'true'
+                path:      'features/app/AppKernel.php'
                 bootstrap: 'features/app/bootstrap.php'

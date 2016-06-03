@@ -3,52 +3,47 @@
 namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManager;
-use Symfony\Component\Security\Core\User\UserInterface;
+use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
+use RandomLib\Factory;
+use SecurityLib\Strength;
 
 class PasswordTokenManager
 {
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
-     * @var string
-     */
+    private $manager;
     private $passwordTokenClass;
+    private $defaultExpiresIn;
 
     /**
-     * @param Registry $registry
-     * @param string   $passwordTokenClass
+     * @param ManagerInterface $manager
+     * @param string           $passwordTokenClass
+     * @param string           $defaultExpiresIn
      */
-    public function __construct(Registry $registry, $passwordTokenClass)
+    public function __construct(ManagerInterface $manager, $passwordTokenClass, $defaultExpiresIn)
     {
-        $this->entityManager = $registry->getManager();
+        $this->manager = $manager;
         $this->passwordTokenClass = $passwordTokenClass;
+        $this->defaultExpiresIn = $defaultExpiresIn;
     }
 
     /**
-     * @param UserInterface  $user
+     * @param mixed          $user
      * @param \DateTime|null $expiresAt
-     * @param bool           $flush
      *
      * @return AbstractPasswordToken
      */
-    public function createPasswordToken(UserInterface $user, \DateTime $expiresAt = null, $flush = true)
+    public function createPasswordToken($user, \DateTime $expiresAt = null)
     {
         /** @var AbstractPasswordToken $passwordToken */
         $passwordToken = new $this->passwordTokenClass();
-        $passwordToken->setToken(md5(time()));
+
+        $factory = new Factory();
+        $generator = $factory->getGenerator(new Strength(Strength::MEDIUM));
+
+        $passwordToken->setToken($generator->generateString(50, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'));
         $passwordToken->setUser($user);
-        $passwordToken->setExpiresAt($expiresAt instanceof \DateTime ? $expiresAt : new \DateTime($expiresAt));
+        $passwordToken->setExpiresAt($expiresAt ?: new \DateTime($this->defaultExpiresIn));
 
-        $this->entityManager->persist($passwordToken);
-
-        if (true === $flush) {
-            $this->entityManager->flush($passwordToken);
-        }
+        $this->manager->persist($passwordToken);
 
         return $passwordToken;
     }
@@ -60,6 +55,6 @@ class PasswordTokenManager
      */
     public function findOneByToken($token)
     {
-        return $this->entityManager->getRepository($this->passwordTokenClass)->findOneBy(['token' => $token]);
+        return $this->manager->findOneBy($this->passwordTokenClass, ['token' => $token]);
     }
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="coop_tilleuls_forgot_password.controller.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Controller\ForgotPasswordController">
+            <argument type="service" id="coop_tilleuls_forgot_password.manager.forgot_password" />
+            <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
+            <argument type="service" id="validator" />
+            <argument>%coop_tilleuls_forgot_password.email_field%</argument>
+            <argument>%coop_tilleuls_forgot_password.password_field%</argument>
+        </service>
+
+        <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager">
+            <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
+            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="coop_tilleuls_forgot_password.manager" />
+            <argument>%coop_tilleuls_forgot_password.user_class%</argument>
+            <argument>%coop_tilleuls_forgot_password.email_field%</argument>
+        </service>
+
+        <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager">
+            <argument type="service" id="coop_tilleuls_forgot_password.manager" />
+            <argument>%coop_tilleuls_forgot_password.password_token_class%</argument>
+            <argument>%coop_tilleuls_forgot_password.expires_in%</argument>
+        </service>
+
+        <service id="coop_tilleuls_forgot_password.manager.doctrine" class="CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\DoctrineManager" public="false">
+            <argument type="service" id="doctrine" on-invalid="null" />
+        </service>
+    </services>
+</container>

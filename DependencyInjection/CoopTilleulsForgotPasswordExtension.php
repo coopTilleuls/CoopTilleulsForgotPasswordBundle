@@ -4,7 +4,7 @@ namespace CoopTilleuls\ForgotPasswordBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class CoopTilleulsForgotPasswordExtension extends Extension
@@ -17,11 +17,20 @@ class CoopTilleulsForgotPasswordExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('forgot_password.password_token_class', $config['password_token_class']);
-        $container->setParameter('forgot_password.user_class', $config['user_class']);
-        $container->setParameter('forgot_password.user_field', $config['user_field']);
+        // Build parameters
+        $container->setParameter('coop_tilleuls_forgot_password.password_token_class', $config['password_token_class']);
+        $container->setParameter('coop_tilleuls_forgot_password.user_class', $config['user_class']);
+        $container->setParameter('coop_tilleuls_forgot_password.email_field', $config['email_field']);
+        $container->setParameter('coop_tilleuls_forgot_password.password_field', $config['password_field']);
+        $container->setParameter('coop_tilleuls_forgot_password.expires_in', $config['expires_in']);
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.xml');
+
+        // Build manager
+        if (!$container->hasDefinition($config['manager'])) {
+            throw new \LogicException(sprintf('Service "%s" does not exist.', $config['manager']));
+        }
+        $container->setAlias('coop_tilleuls_forgot_password.manager', $config['manager']);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\PasswordToken;
+use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -19,10 +21,8 @@ class AppKernel extends Kernel
     public function registerBundles()
     {
         return [
-            new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
-            new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
@@ -34,23 +34,16 @@ class AppKernel extends Kernel
 
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
-        $routes->import('@CoopTilleulsForgotPasswordBundle/Controller/', '/forgot_password');
+        $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml', '/forgot_password');
     }
 
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
     {
         $c->loadFromExtension('coop_tilleuls_forgot_password', [
-            'password_token_class' => 'CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\PasswordToken',
-            'user_class' => 'CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User',
-            'user_field' => 'email',
-        ]);
-
-        $c->loadFromExtension('stof_doctrine_extensions', [
-            'orm' => [
-                'default' => [
-                    'timestampable' => true,
-                ],
-            ],
+            'password_token_class' => PasswordToken::class,
+            'user_class' => User::class,
+            'email_field' => 'email',
+            'password_field' => 'password',
         ]);
 
         $c->loadFromExtension('swiftmailer', [
@@ -73,7 +66,7 @@ class AppKernel extends Kernel
         $c->loadFromExtension('framework', [
             'secret' => 'CoopTilleulsForgotPasswordBundle',
             'test' => null,
-            'serializer' => ['enabled' => true],
+            'validation' => null,
             'profiler' => ['collect' => false],
             'templating' => [
                 'engines' => ['twig'],

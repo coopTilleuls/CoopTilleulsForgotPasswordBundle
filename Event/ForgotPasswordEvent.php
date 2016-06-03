@@ -7,17 +7,10 @@ use Symfony\Component\EventDispatcher\Event;
 
 class ForgotPasswordEvent extends Event
 {
-    const CREATE_TOKEN = 'forgot_password.create_token';
-    const UPDATE_PASSWORD = 'forgot_password.update_password';
+    const CREATE_TOKEN = 'coop_tilleuls_forgot_password.create_token';
+    const UPDATE_PASSWORD = 'coop_tilleuls_forgot_password.update_password';
 
-    /**
-     * @var AbstractPasswordToken
-     */
     private $passwordToken;
-
-    /**
-     * @var string
-     */
     private $password;
 
     /**
@@ -39,7 +32,7 @@ class ForgotPasswordEvent extends Event
     }
 
     /**
-     * @return string
+     * @return null|string
      */
     public function getPassword()
     {

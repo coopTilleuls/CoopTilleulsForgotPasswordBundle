@@ -29,11 +29,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
     private $passwordTokenManager;
 
     /**
-     * @var bool
-     */
-    private $authenticated;
-
-    /**
      * @param Client               $client
      * @param Registry             $doctrine
      * @param PasswordTokenManager $passwordTokenManager
@@ -50,7 +45,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function resetDatabase()
     {
-        $this->authenticated = false;
         $purger = new ORMPurger($this->doctrine->getManager());
         $purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
         try {
@@ -74,9 +68,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
             '/forgot_password/',
             [],
             [],
-            $this->getServerOptions(),
+            ['CONTENT_TYPE' => 'application/json'],
             <<<JSON
-           {
+{
     "email": "john.doe@example.com"
 }
 JSON
@@ -104,26 +98,7 @@ JSON
         \PHPUnit_Framework_Assert::assertEquals('Réinitialisation de votre mot de passe', $messages[0]->getSubject());
         \PHPUnit_Framework_Assert::assertEquals('no-reply@example.com', key($messages[0]->getFrom()));
         \PHPUnit_Framework_Assert::assertEquals('john.doe@example.com', key($messages[0]->getTo()));
-        \PHPUnit_Framework_Assert::assertContains('http://www.example.com/forgot_password/', $messages[0]->getBody());
-    }
-
-    /**
-     * @Given I am authenticated
-     */
-    public function iAmAuthenticated()
-    {
-        $this->authenticated = true;
-    }
-
-    /**
-     * @When I should be forbidden
-     */
-    public function iShouldBeForbidden()
-    {
-        \PHPUnit_Framework_Assert::assertTrue(
-            $this->client->getResponse()->isForbidden(),
-            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
-        );
+        \PHPUnit_Framework_Assert::assertRegExp('/http:\/\/www\.example\.com\/forgot_password\/(.*)/', $messages[0]->getBody());
     }
 
     /**
@@ -159,9 +134,9 @@ JSON
             '/forgot_password/',
             [],
             [],
-            $this->getServerOptions(),
+            ['CONTENT_TYPE' => 'application/json'],
             <<<JSON
-           {
+{
     "email": "foo@example.com"
 }
 JSON
@@ -180,7 +155,7 @@ JSON
             sprintf('/forgot_password/%s', $token->getToken()),
             [],
             [],
-            $this->getServerOptions(),
+            ['CONTENT_TYPE' => 'application/json'],
             <<<JSON
 {
     "password": "foo"
@@ -199,7 +174,7 @@ JSON
             '/forgot_password/12345',
             [],
             [],
-            $this->getServerOptions(),
+            ['CONTENT_TYPE' => 'application/json'],
             <<<JSON
 {
     "password": "foo"
@@ -220,7 +195,7 @@ JSON
             sprintf('/forgot_password/%s', $token->getToken()),
             [],
             [],
-            $this->getServerOptions(),
+            ['CONTENT_TYPE' => 'application/json'],
             <<<JSON
 {
     "password": "foo"
@@ -241,19 +216,5 @@ JSON
         $this->doctrine->getManager()->flush();
 
         return $user;
-    }
-
-    /**
-     * @return array
-     */
-    private function getServerOptions()
-    {
-        $serverOptions = ['CONTENT_TYPE' => 'application/json'];
-        if (true === $this->authenticated) {
-            $serverOptions['PHP_AUTH_USER'] = 'john.doe@example.com';
-            $serverOptions['PHP_AUTH_PW'] = 'P4$$w0rd';
-        }
-
-        return $serverOptions;
     }
 }

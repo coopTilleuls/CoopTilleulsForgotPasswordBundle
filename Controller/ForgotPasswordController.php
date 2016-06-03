@@ -2,90 +2,85 @@
 
 namespace CoopTilleuls\ForgotPasswordBundle\Controller;
 
-use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * @Route(service="forgot_password.controller.forgot_password")
- */
 class ForgotPasswordController
 {
-    /**
-     * @var ForgotPasswordManager
-     */
     private $forgotPasswordManager;
+    private $passwordTokenManager;
+    private $validator;
+    private $emailFieldName;
+    private $passwordFieldName;
 
     /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    /**
-     * @var string
-     */
-    private $userFieldName;
-
-    /**
-     * @param ForgotPasswordManager         $forgotPasswordManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenStorageInterface         $tokenStorage
-     * @param string                        $userFieldName
+     * @param ForgotPasswordManager $forgotPasswordManager
+     * @param PasswordTokenManager  $passwordTokenManager
+     * @param ValidatorInterface    $validator
+     * @param string                $emailFieldName
+     * @param string                $passwordFieldName
      */
     public function __construct(
         ForgotPasswordManager $forgotPasswordManager,
-        AuthorizationCheckerInterface $authorizationChecker,
-        TokenStorageInterface $tokenStorage,
-        $userFieldName
+        PasswordTokenManager $passwordTokenManager,
+        ValidatorInterface $validator,
+        $emailFieldName,
+        $passwordFieldName
     ) {
         $this->forgotPasswordManager = $forgotPasswordManager;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->tokenStorage = $tokenStorage;
-        $this->userFieldName = $userFieldName;
+        $this->passwordTokenManager = $passwordTokenManager;
+        $this->validator = $validator;
+        $this->emailFieldName = $emailFieldName;
+        $this->passwordFieldName = $passwordFieldName;
     }
 
     /**
-     * @Route(name="forgot_password.reset")
-     * @Method({"POST"})
+     * @param Request $request
      *
-     * @return Response|JsonResponse
+     * @return JsonResponse|Response
      */
-    public function resetPasswordAction()
+    public function resetPasswordAction(Request $request)
     {
-        if (true === $this->forgotPasswordManager->resetPassword()) {
+        $data = json_decode($request->getContent(), true);
+        if (isset($data[$this->emailFieldName]) && true === $this->forgotPasswordManager->resetPassword(
+                $data[$this->emailFieldName]
+            )
+        ) {
             return new Response('', 204);
         }
 
-        return new JsonResponse([$this->userFieldName => 'Invalid'], 400);
+        return new JsonResponse([$this->emailFieldName => 'Invalid'], 400);
     }
 
     /**
-     * @ParamConverter(name="token", class="CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken")
-     *
-     * @Route("/{token}", name="forgot_password.update")
-     * @Method({"POST"})
-     *
-     * @param AbstractPasswordToken $token
+     * @param string  $tokenValue
+     * @param Request $request
      *
      * @return Response|JsonResponse
+     *
+     * @throws NotFoundHttpException
      */
-    public function updatePasswordAction(AbstractPasswordToken $token)
+    public function updatePasswordAction($tokenValue, Request $request)
     {
-        if (true === $this->forgotPasswordManager->updatePassword($token)) {
+        $token = $this->passwordTokenManager->findOneByToken($tokenValue);
+        if (null === $token || 0 < count($this->validator->validate($token))) {
+            throw new NotFoundHttpException('Invalid token.');
+        }
+
+        $data = json_decode($request->getContent(), true);
+        if (isset($data[$this->passwordFieldName]) && true === $this->forgotPasswordManager->updatePassword(
+                $token,
+                $data[$this->passwordFieldName]
+            )
+        ) {
             return new Response('', 204);
         }
 
-        return new JsonResponse(['password' => 'Invalid password'], 400);
+        return new JsonResponse([$this->passwordFieldName => 'Invalid'], 400);
     }
 }
