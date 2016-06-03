@@ -76,7 +76,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
             [],
             $this->getServerOptions(),
             <<<JSON
-           {
+{
     "email": "john.doe@example.com"
 }
 JSON
@@ -104,7 +104,7 @@ JSON
         \PHPUnit_Framework_Assert::assertEquals('Réinitialisation de votre mot de passe', $messages[0]->getSubject());
         \PHPUnit_Framework_Assert::assertEquals('no-reply@example.com', key($messages[0]->getFrom()));
         \PHPUnit_Framework_Assert::assertEquals('john.doe@example.com', key($messages[0]->getTo()));
-        \PHPUnit_Framework_Assert::assertContains('http://www.example.com/forgot_password', $messages[0]->getBody());
+        \PHPUnit_Framework_Assert::assertRegExp('/http:\/\/www\.example\.com\/forgot_password\/(.*)/', $messages[0]->getBody());
     }
 
     /**
@@ -161,7 +161,7 @@ JSON
             [],
             $this->getServerOptions(),
             <<<JSON
-           {
+{
     "email": "foo@example.com"
 }
 JSON

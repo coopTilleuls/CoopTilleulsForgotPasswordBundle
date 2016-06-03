@@ -5,37 +5,36 @@ namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ForgotPasswordManager
 {
-    /**
-     * @var ObjectManager
-     */
     private $entityManager;
     private $passwordTokenManager;
     private $dispatcher;
     private $userClass;
-    private $userFieldName;
+    private $emailFieldName;
 
     /**
      * @param PasswordTokenManager     $passwordTokenManager
      * @param EventDispatcherInterface $dispatcher
      * @param ManagerRegistry          $managerRegistry
      * @param string                   $userClass
-     * @param string                   $userFieldName
+     * @param string                   $emailFieldName
      */
-    public function __construct(PasswordTokenManager $passwordTokenManager, EventDispatcherInterface $dispatcher, ManagerRegistry $managerRegistry, $userClass, $userFieldName)
-    {
+    public function __construct(
+        PasswordTokenManager $passwordTokenManager,
+        EventDispatcherInterface $dispatcher,
+        ManagerRegistry $managerRegistry,
+        $userClass,
+        $emailFieldName
+    ) {
         $this->passwordTokenManager = $passwordTokenManager;
         $this->dispatcher = $dispatcher;
         $this->entityManager = $managerRegistry->getManagerForClass($userClass);
         $this->userClass = $userClass;
-        $this->userFieldName = $userFieldName;
+        $this->emailFieldName = $emailFieldName;
     }
 
     /**
@@ -46,7 +45,7 @@ class ForgotPasswordManager
     public function resetPassword($username)
     {
         /** @var UserInterface $user */
-        $user = $this->entityManager->getRepository($this->userClass)->findOneBy([$this->userFieldName => $username]);
+        $user = $this->entityManager->getRepository($this->userClass)->findOneBy([$this->emailFieldName => $username]);
         if (null === $user) {
             return false;
         }

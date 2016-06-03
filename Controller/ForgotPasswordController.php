@@ -7,53 +7,49 @@ use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class ForgotPasswordController
 {
-    private $tokenStorage;
     private $forgotPasswordManager;
     private $passwordTokenManager;
-    private $userFieldName;
+    private $emailFieldName;
+    private $passwordFieldName;
 
     /**
-     * @param TokenStorageInterface $tokenStorage
      * @param ForgotPasswordManager $forgotPasswordManager
      * @param PasswordTokenManager  $passwordTokenManager
-     * @param string                $userFieldName
+     * @param string                $emailFieldName
+     * @param string                $passwordFieldName
      */
-    public function __construct(TokenStorageInterface $tokenStorage, ForgotPasswordManager $forgotPasswordManager, PasswordTokenManager $passwordTokenManager, $userFieldName)
-    {
-        $this->tokenStorage = $tokenStorage;
+    public function __construct(
+        ForgotPasswordManager $forgotPasswordManager,
+        PasswordTokenManager $passwordTokenManager,
+        $emailFieldName,
+        $passwordFieldName
+    ) {
         $this->forgotPasswordManager = $forgotPasswordManager;
         $this->passwordTokenManager = $passwordTokenManager;
-        $this->userFieldName = $userFieldName;
+        $this->emailFieldName = $emailFieldName;
+        $this->passwordFieldName = $passwordFieldName;
     }
 
     /**
      * @param Request $request
      *
      * @return JsonResponse|Response
-     *
-     * @throws AccessDeniedHttpException
      */
     public function resetPasswordAction(Request $request)
     {
-        // Authenticated user cannot ask to reset password
-        $token = $this->tokenStorage->getToken();
-        if ($token->getUser() instanceof UserInterface) {
-            throw new AccessDeniedHttpException();
-        }
-
         $data = json_decode($request->getContent(), true);
-        if (isset($data[$this->userFieldName]) && true === $this->forgotPasswordManager->resetPassword($data[$this->userFieldName])) {
+        if (isset($data[$this->emailFieldName]) && true === $this->forgotPasswordManager->resetPassword(
+                $data[$this->emailFieldName]
+            )
+        ) {
             return new Response('', 204);
         }
 
-        return new JsonResponse([$this->userFieldName => 'Invalid'], 400);
+        return new JsonResponse([$this->emailFieldName => 'Invalid'], 400);
     }
 
     /**
@@ -61,15 +57,11 @@ class ForgotPasswordController
      * @param Request $request
      *
      * @return Response|JsonResponse
+     *
+     * @throws NotFoundHttpException
      */
     public function updatePasswordAction($tokenValue, Request $request)
     {
-        // Authenticated user cannot ask to reset password
-        $userToken = $this->tokenStorage->getToken();
-        if (null !== $userToken && $userToken->getUser() instanceof UserInterface) {
-            throw new AccessDeniedHttpException();
-        }
-
         $token = $this->passwordTokenManager->findOneByToken($tokenValue);
         if (null === $token) {
             throw new NotFoundHttpException('Invalid token.');
@@ -80,10 +72,14 @@ class ForgotPasswordController
         }
 
         $data = json_decode($request->getContent(), true);
-        if (isset($data['password']) && true === $this->forgotPasswordManager->updatePassword($token, $data['password'])) { // FIXME: password field should be configurable
+        if (isset($data[$this->passwordFieldName]) && true === $this->forgotPasswordManager->updatePassword(
+                $token,
+                $data[$this->passwordFieldName]
+            )
+        ) {
             return new Response('', 204);
         }
 
-        return new JsonResponse(['password' => 'Invalid password'], 400);
+        return new JsonResponse([$this->passwordFieldName => 'Invalid'], 400);
     }
 }

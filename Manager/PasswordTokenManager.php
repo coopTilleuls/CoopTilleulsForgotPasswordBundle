@@ -4,27 +4,26 @@ namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use RandomLib\Factory;
 use SecurityLib\Strength;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class PasswordTokenManager
 {
-    /**
-     * @var ObjectManager
-     */
     private $entityManager;
     private $passwordTokenClass;
+    private $defaultExpiresIn;
 
     /**
      * @param ManagerRegistry $registry
-     * @param string   $passwordTokenClass
+     * @param string          $passwordTokenClass
+     * @param string          $defaultExpiresIn
      */
-    public function __construct(ManagerRegistry $registry, $passwordTokenClass)
+    public function __construct(ManagerRegistry $registry, $passwordTokenClass, $defaultExpiresIn)
     {
         $this->entityManager = $registry->getManagerForClass($passwordTokenClass);
         $this->passwordTokenClass = $passwordTokenClass;
+        $this->defaultExpiresIn = $defaultExpiresIn;
     }
 
     /**
@@ -44,7 +43,7 @@ class PasswordTokenManager
 
         $passwordToken->setToken($generator->generateString(50, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'));
         $passwordToken->setUser($user);
-        $passwordToken->setExpiresAt($expiresAt ?: new \DateTime('+1 day')); // TODO: make the default expire time configurable
+        $passwordToken->setExpiresAt($expiresAt ?: new \DateTime($this->defaultExpiresIn));
 
         $this->entityManager->persist($passwordToken);
 

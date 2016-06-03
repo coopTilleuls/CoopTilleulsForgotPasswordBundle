@@ -37,18 +37,20 @@ Load routing:
 
 ```yml
 # app/config/routing.yml
-forgot_password:
+coop_tilleuls_forgot_password:
     resource: '@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml'
+    prefix:   '/forgot_password'
 ```
 
 Enable configuration:
 
 ```yml
 # app/config.yml
-forgot_password:
+coop_tilleuls_forgot_password:
     password_token_class: 'AppBundle\Entity\PasswordToken'
     user_class:           'AppBundle\Entity\User'
-    user_field:           'email'
+    email_field:          'email'
+    password_field:       'password'
 ```
 
 Create your own `PasswordToken` entity:
@@ -111,15 +113,15 @@ class PasswordToken extends AbstractPasswordToken
 ## Usage
 
 This bundle provides 2 main routes:
-- `POST /forgot_password`: receives user email (or another field customized through `user_field` configuration key)
-- `POST /forgot_password/{token}`: update user password
+- `POST /forgot_password/`: receives user email (or another field customized through `email_field` configuration key)
+- `POST /forgot_password/{token}`: update user password (or custom field configured through `password_field`)
 
 ### Send email on user request
 
 On the first user story, user will send its identifier (email, username...), and you'll have to send a custom email
 allowing him to reset its password.
 
-Create an event listener listening to `forgot_password.create_token` event:
+Create an event listener listening to `coop_tilleuls_forgot_password.create_token` event:
 
 ```yml
 # AppBundle/Resources/config/services.yml
@@ -127,7 +129,7 @@ services:
     app.listener.forgot_password:
         # ...
         tags:
-            - { name: kernel.event_listener, event: forgot_password.create_token, method: onCreateToken }
+            - { name: kernel.event_listener, event: coop_tilleuls_forgot_password.create_token, method: onCreateToken }
 ```
 
 ```php
@@ -181,7 +183,7 @@ Your app is ready to receive a request like:
 On the second user story, user will send its new password, and you'll have to encode it and save it: this is your own
 business.
 
-Update your event listener listening to `forgot_password.update_password` event:
+Update your event listener listening to `coop_tilleuls_forgot_password.update_password` event:
 
 ```yml
 # app/config/services.yml
@@ -190,7 +192,7 @@ services:
         # ...
         tags:
             # ...
-            - { name: kernel.event_listener, event: forgot_password.update_password, method: onUpdatePassword }
+            - { name: kernel.event_listener, event: coop_tilleuls_forgot_password.update_password, method: onUpdatePassword }
 ```
 
 ```php
@@ -225,4 +227,4 @@ Your app is ready to receive a request like:
 
 ## Credits
 
-Created by [Vincent Chalamon](http://vincent-chalamon.fr/) for Les-Tilleuls.coop.
+Created by [Vincent Chalamon](http://vincent-chalamon.fr/) for [Les-Tilleuls.coop](https://les-tilleuls.coop/).

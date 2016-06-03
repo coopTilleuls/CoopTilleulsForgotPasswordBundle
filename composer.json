@@ -24,8 +24,6 @@
         "symfony/dependency-injection": "^2.3|^3.0",
         "symfony/config": "^2.3|^3.0",
         "doctrine/orm": "^2.5",
-        "doctrine/doctrine-bundle": "^1.6",
-        "stof/doctrine-extensions-bundle": "^1.2",
         "ircmaxell/random-lib": "^1.1"
     },
     "require-dev": {
@@ -35,10 +33,10 @@
         "symfony/swiftmailer-bundle": "^2.3|^3.0",
         "symfony/twig-bundle": "^2.3|^3.0",
         "symfony/assetic-bundle": "^2.8",
+        "doctrine/doctrine-bundle": "^1.6",
         "doctrine/data-fixtures": "^1.1",
         "behat/behat": "~3.0",
-        "behat/symfony2-extension": "~2.0",
-        "qandidate/symfony-json-request-transformer": "^1.2"
+        "behat/symfony2-extension": "~2.0"
     },
     "autoload": {
         "psr-4": {

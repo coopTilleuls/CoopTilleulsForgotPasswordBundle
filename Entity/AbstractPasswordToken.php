@@ -16,11 +16,6 @@ abstract class AbstractPasswordToken
      */
     protected $expiresAt;
 
-    public function __construct()
-    {
-        $this->expiresAt = new \DateTime('1 day');
-    }
-
     /**
      * @return int
      */

@@ -43,7 +43,8 @@ class AppKernel extends Kernel
         $c->loadFromExtension('coop_tilleuls_forgot_password', [
             'password_token_class' => PasswordToken::class,
             'user_class' => User::class,
-            'user_field' => 'email',
+            'email_field' => 'email',
+            'password_field' => 'password',
         ]);
 
         $c->loadFromExtension('stof_doctrine_extensions', [
