@@ -3,24 +3,24 @@
 namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use RandomLib\Factory;
 use SecurityLib\Strength;
 
 class PasswordTokenManager
 {
-    private $entityManager;
+    private $manager;
     private $passwordTokenClass;
     private $defaultExpiresIn;
 
     /**
-     * @param ManagerRegistry $registry
-     * @param string          $passwordTokenClass
-     * @param string          $defaultExpiresIn
+     * @param ManagerInterface $manager
+     * @param string           $passwordTokenClass
+     * @param string           $defaultExpiresIn
      */
-    public function __construct(ManagerRegistry $registry, $passwordTokenClass, $defaultExpiresIn)
+    public function __construct(ManagerInterface $manager, $passwordTokenClass, $defaultExpiresIn)
     {
-        $this->entityManager = $registry->getManagerForClass($passwordTokenClass);
+        $this->manager = $manager;
         $this->passwordTokenClass = $passwordTokenClass;
         $this->defaultExpiresIn = $defaultExpiresIn;
     }
@@ -28,11 +28,10 @@ class PasswordTokenManager
     /**
      * @param mixed          $user
      * @param \DateTime|null $expiresAt
-     * @param bool           $flush
      *
      * @return AbstractPasswordToken
      */
-    public function createPasswordToken($user, \DateTime $expiresAt = null, $flush = true)
+    public function createPasswordToken($user, \DateTime $expiresAt = null)
     {
         /** @var AbstractPasswordToken $passwordToken */
         $passwordToken = new $this->passwordTokenClass();
@@ -44,11 +43,7 @@ class PasswordTokenManager
         $passwordToken->setUser($user);
         $passwordToken->setExpiresAt($expiresAt ?: new \DateTime($this->defaultExpiresIn));
 
-        $this->entityManager->persist($passwordToken);
-
-        if ($flush) {
-            $this->entityManager->flush($passwordToken);
-        }
+        $this->manager->persist($passwordToken);
 
         return $passwordToken;
     }
@@ -60,6 +55,6 @@ class PasswordTokenManager
      */
     public function findOneByToken($token)
     {
-        return $this->entityManager->getRepository($this->passwordTokenClass)->findOneBy(['token' => $token]);
+        return $this->manager->findOneBy($this->passwordTokenClass, ['token' => $token]);
     }
 }

@@ -17,6 +17,7 @@ class CoopTilleulsForgotPasswordExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        // Build parameters
         $container->setParameter('coop_tilleuls_forgot_password.password_token_class', $config['password_token_class']);
         $container->setParameter('coop_tilleuls_forgot_password.user_class', $config['user_class']);
         $container->setParameter('coop_tilleuls_forgot_password.email_field', $config['email_field']);
@@ -25,5 +26,11 @@ class CoopTilleulsForgotPasswordExtension extends Extension
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
+
+        // Build manager
+        if (!$container->hasDefinition($config['manager'])) {
+            throw new \LogicException(sprintf('Service "%s" does not exist.', $config['manager']));
+        }
+        $container->setAlias('coop_tilleuls_forgot_password.manager', $config['manager']);
     }
 }

@@ -15,15 +15,19 @@
         <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <argument type="service" id="event_dispatcher" />
-            <argument type="service" id="doctrine" />
+            <argument type="service" id="coop_tilleuls_forgot_password.manager" />
             <argument>%coop_tilleuls_forgot_password.user_class%</argument>
             <argument>%coop_tilleuls_forgot_password.email_field%</argument>
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager">
-            <argument type="service" id="doctrine" />
+            <argument type="service" id="coop_tilleuls_forgot_password.manager" />
             <argument>%coop_tilleuls_forgot_password.password_token_class%</argument>
             <argument>%coop_tilleuls_forgot_password.expires_in%</argument>
+        </service>
+
+        <service id="coop_tilleuls_forgot_password.manager.doctrine" class="CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\DoctrineManager" public="false">
+            <argument type="service" id="doctrine" on-invalid="null" />
         </service>
     </services>
 </container>

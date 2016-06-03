@@ -4,12 +4,12 @@ namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ForgotPasswordManager
 {
-    private $entityManager;
+    private $manager;
     private $passwordTokenManager;
     private $dispatcher;
     private $userClass;
@@ -18,20 +18,20 @@ class ForgotPasswordManager
     /**
      * @param PasswordTokenManager     $passwordTokenManager
      * @param EventDispatcherInterface $dispatcher
-     * @param ManagerRegistry          $managerRegistry
+     * @param ManagerInterface         $manager
      * @param string                   $userClass
      * @param string                   $emailFieldName
      */
     public function __construct(
         PasswordTokenManager $passwordTokenManager,
         EventDispatcherInterface $dispatcher,
-        ManagerRegistry $managerRegistry,
+        ManagerInterface $manager,
         $userClass,
         $emailFieldName
     ) {
         $this->passwordTokenManager = $passwordTokenManager;
         $this->dispatcher = $dispatcher;
-        $this->entityManager = $managerRegistry->getManagerForClass($userClass);
+        $this->manager = $manager;
         $this->userClass = $userClass;
         $this->emailFieldName = $emailFieldName;
     }
@@ -43,7 +43,7 @@ class ForgotPasswordManager
      */
     public function resetPassword($username)
     {
-        $user = $this->entityManager->getRepository($this->userClass)->findOneBy([$this->emailFieldName => $username]);
+        $user = $this->manager->findOneBy($this->userClass, [$this->emailFieldName => $username]);
         if (null === $user) {
             return false;
         }
@@ -72,7 +72,6 @@ class ForgotPasswordManager
         );
 
         // Remove PasswordToken
-        $this->entityManager->remove($passwordToken);
-        $this->entityManager->flush();
+        $this->manager->remove($passwordToken);
     }
 }
