@@ -111,6 +111,23 @@ coop_tilleuls_forgot_password:
     user_class:           'AppBundle\Entity\User'
 ```
 
+Update your security to allow anonymous users to reset their password:
+
+```yml
+# app/config/security.yml
+security:
+    # ...
+    firewalls:
+        # ...
+        main:
+            # ...
+            anonymous: true
+
+    access_control:
+        - { path: ^/forgot_password, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        # ...
+```
+
 By default, this bundle will look for `email` field on user class to retrieve it, will generate a PasswordToken valid
 for 1 day, and will set a `password` field when sent. You can customize those fields through complete configuration:
 
@@ -123,6 +140,13 @@ coop_tilleuls_forgot_password:
     password_field:       'password'
     expires_in:           '1 day'
 ```
+
+## Ensure user is not authenticated
+
+When a user requests a new password, or reset it, user shouldn't be authenticated. But this part is part of your own
+application.
+
+Read full documentation about [how to ensure user is not authenticated](user_not_authenticated.md).
 
 ## Usage
 
