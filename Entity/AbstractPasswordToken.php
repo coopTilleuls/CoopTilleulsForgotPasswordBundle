@@ -2,8 +2,6 @@
 
 namespace CoopTilleuls\ForgotPasswordBundle\Entity;
 
-use Symfony\Component\Security\Core\User\UserInterface;
-
 abstract class AbstractPasswordToken
 {
     /**
@@ -22,14 +20,14 @@ abstract class AbstractPasswordToken
     abstract public function getId();
 
     /**
-     * @return UserInterface
+     * @return mixed
      */
     abstract public function getUser();
 
     /**
-     * @param UserInterface $user
+     * @param mixed $user
      */
-    abstract public function setUser(UserInterface $user);
+    abstract public function setUser($user);
 
     /**
      * @return string

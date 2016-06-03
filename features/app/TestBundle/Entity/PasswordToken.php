@@ -4,7 +4,6 @@ namespace CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity
@@ -45,9 +44,9 @@ class PasswordToken extends AbstractPasswordToken
     }
 
     /**
-     * {@inheritdoc}
+     * @param User $user
      */
-    public function setUser(UserInterface $user)
+    public function setUser($user)
     {
         $this->user = $user;
     }

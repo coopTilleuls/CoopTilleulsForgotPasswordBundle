@@ -23,7 +23,6 @@ class AppKernel extends Kernel
         return [
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
-            new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
@@ -35,7 +34,7 @@ class AppKernel extends Kernel
 
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
-        $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml');
+        $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml', '/forgot_password');
     }
 
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
@@ -45,14 +44,6 @@ class AppKernel extends Kernel
             'user_class' => User::class,
             'email_field' => 'email',
             'password_field' => 'password',
-        ]);
-
-        $c->loadFromExtension('stof_doctrine_extensions', [
-            'orm' => [
-                'default' => [
-                    'timestampable' => true,
-                ],
-            ],
         ]);
 
         $c->loadFromExtension('swiftmailer', [
@@ -75,7 +66,6 @@ class AppKernel extends Kernel
         $c->loadFromExtension('framework', [
             'secret' => 'CoopTilleulsForgotPasswordBundle',
             'test' => null,
-            'serializer' => ['enabled' => true],
             'profiler' => ['collect' => false],
             'templating' => [
                 'engines' => ['twig'],

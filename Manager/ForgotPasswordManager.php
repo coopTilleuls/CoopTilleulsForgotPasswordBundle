@@ -6,7 +6,6 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class ForgotPasswordManager
 {
@@ -44,7 +43,6 @@ class ForgotPasswordManager
      */
     public function resetPassword($username)
     {
-        /** @var UserInterface $user */
         $user = $this->entityManager->getRepository($this->userClass)->findOneBy([$this->emailFieldName => $username]);
         if (null === $user) {
             return false;

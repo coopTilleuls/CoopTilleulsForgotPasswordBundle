@@ -6,7 +6,6 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use RandomLib\Factory;
 use SecurityLib\Strength;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class PasswordTokenManager
 {
@@ -27,13 +26,13 @@ class PasswordTokenManager
     }
 
     /**
-     * @param UserInterface  $user
+     * @param mixed          $user
      * @param \DateTime|null $expiresAt
      * @param bool           $flush
      *
      * @return AbstractPasswordToken
      */
-    public function createPasswordToken(UserInterface $user, \DateTime $expiresAt = null, $flush = true)
+    public function createPasswordToken($user, \DateTime $expiresAt = null, $flush = true)
     {
         /** @var AbstractPasswordToken $passwordToken */
         $passwordToken = new $this->passwordTokenClass();
