@@ -8,28 +8,33 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ForgotPasswordController
 {
     private $forgotPasswordManager;
     private $passwordTokenManager;
+    private $validator;
     private $emailFieldName;
     private $passwordFieldName;
 
     /**
      * @param ForgotPasswordManager $forgotPasswordManager
      * @param PasswordTokenManager  $passwordTokenManager
+     * @param ValidatorInterface    $validator
      * @param string                $emailFieldName
      * @param string                $passwordFieldName
      */
     public function __construct(
         ForgotPasswordManager $forgotPasswordManager,
         PasswordTokenManager $passwordTokenManager,
+        ValidatorInterface $validator,
         $emailFieldName,
         $passwordFieldName
     ) {
         $this->forgotPasswordManager = $forgotPasswordManager;
         $this->passwordTokenManager = $passwordTokenManager;
+        $this->validator = $validator;
         $this->emailFieldName = $emailFieldName;
         $this->passwordFieldName = $passwordFieldName;
     }
@@ -63,12 +68,8 @@ class ForgotPasswordController
     public function updatePasswordAction($tokenValue, Request $request)
     {
         $token = $this->passwordTokenManager->findOneByToken($tokenValue);
-        if (null === $token) {
+        if (null === $token || 0 < count($this->validator->validate($token))) {
             throw new NotFoundHttpException('Invalid token.');
-        }
-
-        if ((new \DateTime()) > $token->getExpiresAt()) {
-            throw new NotFoundHttpException('The token has expired.');
         }
 
         $data = json_decode($request->getContent(), true);
