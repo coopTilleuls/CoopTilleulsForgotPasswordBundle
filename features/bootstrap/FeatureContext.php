@@ -205,6 +205,41 @@ JSON
     }
 
     /**
+     * @Then I get a password token
+     */
+    public function iGetAPasswordToken()
+    {
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
+        $token->setToken('d7xtQlJVyN61TzWtrY6xy37zOxB66BqMSDXEbXBbo2Mw4Jjt9C');
+        $this->doctrine->getManager()->persist($token);
+        $this->doctrine->getManager()->flush();
+
+        $this->client->request('GET', sprintf('/forgot_password/%s', $token->getToken()));
+    }
+
+    /**
+     * @Then I should get a password token
+     */
+    public function iShouldGetAPasswordToken()
+    {
+        \PHPUnit_Framework_Assert::assertTrue(
+            $this->client->getResponse()->isSuccessful(),
+            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+        );
+        \PHPUnit_Framework_Assert::assertJson($this->client->getResponse()->getContent());
+    }
+
+    /**
+     * @Then I get a password token using an expired token
+     */
+    public function iGetAPasswordTokenUsingAnExpiredToken()
+    {
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('-1 minute'));
+
+        $this->client->request('GET', sprintf('/forgot_password/%s', $token->getToken()));
+    }
+
+    /**
      * @return User
      */
     private function createUser()

@@ -23,6 +23,12 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('password_field')->defaultValue('password')->cannotBeEmpty()->info('User password field name.')->end()
                 ->scalarNode('expires_in')->defaultValue('1 day')->cannotBeEmpty()->info('Expiration time.')->end()
                 ->scalarNode('manager')->defaultValue('coop_tilleuls_forgot_password.manager.doctrine')->cannotBeEmpty()->info('Manager service.')->end()
+                ->arrayNode('groups')
+                    ->info('PasswordToken serialization groups.')
+                    ->defaultValue([])
+                    ->useAttributeAsKey('name')
+                    ->prototype('scalar')->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

@@ -9,6 +9,8 @@
             <argument type="service" id="coop_tilleuls_forgot_password.manager.forgot_password" />
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <argument type="service" id="validator" />
+            <argument type="service" id="serializer" />
+            <argument>%coop_tilleuls_forgot_password.groups%</argument>
             <argument>%coop_tilleuls_forgot_password.email_field%</argument>
             <argument>%coop_tilleuls_forgot_password.password_field%</argument>
         </service>

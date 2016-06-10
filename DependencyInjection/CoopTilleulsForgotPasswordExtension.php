@@ -23,6 +23,7 @@ class CoopTilleulsForgotPasswordExtension extends Extension
         $container->setParameter('coop_tilleuls_forgot_password.email_field', $config['email_field']);
         $container->setParameter('coop_tilleuls_forgot_password.password_field', $config['password_field']);
         $container->setParameter('coop_tilleuls_forgot_password.expires_in', $config['expires_in']);
+        $container->setParameter('coop_tilleuls_forgot_password.groups', $config['groups']);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');

@@ -15,3 +15,11 @@ Feature: I need to be able to reset my password
     Scenario: I can't update my password using an expired token
         When I update my password using an expired token
         Then the page should not be found
+
+    Scenario: I can get a password token
+        When I get a password token
+        Then I should get a password token
+
+    Scenario: I can't get an expired password token
+        When I get a password token using an expired token
+        Then the page should not be found

@@ -42,8 +42,6 @@ class AppKernel extends Kernel
         $c->loadFromExtension('coop_tilleuls_forgot_password', [
             'password_token_class' => PasswordToken::class,
             'user_class' => User::class,
-            'email_field' => 'email',
-            'password_field' => 'password',
         ]);
 
         $c->loadFromExtension('swiftmailer', [
@@ -66,6 +64,7 @@ class AppKernel extends Kernel
         $c->loadFromExtension('framework', [
             'secret' => 'CoopTilleulsForgotPasswordBundle',
             'test' => null,
+            'serializer' => null,
             'validation' => null,
             'profiler' => ['collect' => false],
             'templating' => [
