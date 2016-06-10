@@ -20,7 +20,7 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('password_token_class')->cannotBeEmpty()->isRequired()->info('PasswordToken class.')->end()
                 ->scalarNode('user_class')->cannotBeEmpty()->isRequired()->info('User class.')->end()
                 ->scalarNode('email_field')->defaultValue('email')->cannotBeEmpty()->info('User email field name to retrieve user (email, username...).')->end()
-                ->scalarNode('password_field')->defaultValue('email')->cannotBeEmpty()->info('User password field name.')->end()
+                ->scalarNode('password_field')->defaultValue('password')->cannotBeEmpty()->info('User password field name.')->end()
                 ->scalarNode('expires_in')->defaultValue('1 day')->cannotBeEmpty()->info('Expiration time.')->end()
                 ->scalarNode('manager')->defaultValue('coop_tilleuls_forgot_password.manager.doctrine')->cannotBeEmpty()->info('Manager service.')->end()
             ->end();

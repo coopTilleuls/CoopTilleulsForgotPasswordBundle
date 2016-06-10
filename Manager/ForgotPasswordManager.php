@@ -73,5 +73,7 @@ class ForgotPasswordManager
 
         // Remove PasswordToken
         $this->manager->remove($passwordToken);
+
+        return true;
     }
 }
