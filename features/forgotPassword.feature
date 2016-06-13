@@ -4,6 +4,16 @@ Feature: I need to be able to reset my password
         When I reset my password
         Then I should receive an email
 
+    Scenario: I can't reset my password if I already request a token
+        Given I have a valid token
+        When I reset my password
+        Then the request should be invalid
+
+    Scenario: I can reset my password if I already request a token but it has expired
+        Given I have an expired token
+        When I reset my password
+        Then I should receive an email
+
     Scenario: I can't reset my password with an invalid email address
         When I reset my password using invalid email address
         Then the request should be invalid

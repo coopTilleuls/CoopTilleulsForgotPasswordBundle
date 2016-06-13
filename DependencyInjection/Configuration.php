@@ -16,18 +16,49 @@ final class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('coop_tilleuls_forgot_password');
 
         $rootNode
+            ->beforeNormalization()
+                ->ifTrue(function ($config) {
+                    return array_key_exists('password_token_class', $config) || array_key_exists('user_class', $config);
+                })
+                ->then(function ($config) {
+                    if (array_key_exists('password_token_class', $config)) {
+                        if (!isset($config['password_token'])) {
+                            $config['password_token'] = [];
+                        }
+                        $config['password_token']['class'] = $config['password_token_class'];
+                    }
+                    if (array_key_exists('user_class', $config)) {
+                        if (!isset($config['user'])) {
+                            $config['user'] = [];
+                        }
+                        $config['user']['class'] = $config['user_class'];
+                    }
+                    unset($config['password_token_class'], $config['user_class']);
+    
+                    return $config;
+                })
+            ->end()
             ->children()
-                ->scalarNode('password_token_class')->cannotBeEmpty()->isRequired()->info('PasswordToken class.')->end()
-                ->scalarNode('user_class')->cannotBeEmpty()->isRequired()->info('User class.')->end()
-                ->scalarNode('email_field')->defaultValue('email')->cannotBeEmpty()->info('User email field name to retrieve user (email, username...).')->end()
-                ->scalarNode('password_field')->defaultValue('password')->cannotBeEmpty()->info('User password field name.')->end()
-                ->scalarNode('expires_in')->defaultValue('1 day')->cannotBeEmpty()->info('Expiration time.')->end()
                 ->scalarNode('manager')->defaultValue('coop_tilleuls_forgot_password.manager.doctrine')->cannotBeEmpty()->info('Manager service.')->end()
-                ->arrayNode('groups')
-                    ->info('PasswordToken serialization groups.')
-                    ->defaultValue([])
-                    ->useAttributeAsKey('name')
-                    ->prototype('scalar')->end()
+                ->arrayNode('password_token')
+                    ->children()
+                        ->scalarNode('class')->cannotBeEmpty()->isRequired()->info('PasswordToken class.')->end()
+                        ->scalarNode('expires_in')->defaultValue('1 day')->cannotBeEmpty()->info('Expiration time.')->end()
+                        ->scalarNode('user_field')->defaultValue('user')->cannotBeEmpty()->info('User field name on PasswordToken entity.')->end()
+                        ->arrayNode('serialization_groups')
+                            ->info('PasswordToken serialization groups.')
+                            ->defaultValue([])
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->end()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('user')
+                    ->children()
+                        ->scalarNode('class')->cannotBeEmpty()->isRequired()->info('User class.')->end()
+                        ->scalarNode('email_field')->defaultValue('email')->cannotBeEmpty()->info('User email field name to retrieve it (email, username...).')->end()
+                        ->scalarNode('password_field')->defaultValue('password')->cannotBeEmpty()->info('User password field name.')->end()
+                    ->end()
                 ->end()
             ->end();
 

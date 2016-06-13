@@ -18,8 +18,8 @@ class ForgotPasswordController
     private $validator;
     private $normalizer;
     private $groups;
-    private $emailFieldName;
-    private $passwordFieldName;
+    private $userEmailField;
+    private $userPasswordField;
 
     /**
      * @param ForgotPasswordManager $forgotPasswordManager
@@ -27,8 +27,8 @@ class ForgotPasswordController
      * @param ValidatorInterface    $validator
      * @param NormalizerInterface   $normalizer
      * @param array                 $groups
-     * @param string                $emailFieldName
-     * @param string                $passwordFieldName
+     * @param string                $userEmailField
+     * @param string                $userPasswordField
      */
     public function __construct(
         ForgotPasswordManager $forgotPasswordManager,
@@ -36,16 +36,16 @@ class ForgotPasswordController
         ValidatorInterface $validator,
         NormalizerInterface $normalizer,
         array $groups,
-        $emailFieldName,
-        $passwordFieldName
+        $userEmailField,
+        $userPasswordField
     ) {
         $this->forgotPasswordManager = $forgotPasswordManager;
         $this->passwordTokenManager = $passwordTokenManager;
         $this->validator = $validator;
         $this->normalizer = $normalizer;
         $this->groups = $groups;
-        $this->emailFieldName = $emailFieldName;
-        $this->passwordFieldName = $passwordFieldName;
+        $this->userEmailField = $userEmailField;
+        $this->userPasswordField = $userPasswordField;
     }
 
     /**
@@ -56,14 +56,14 @@ class ForgotPasswordController
     public function resetPasswordAction(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        if (isset($data[$this->emailFieldName]) && true === $this->forgotPasswordManager->resetPassword(
-                $data[$this->emailFieldName]
+        if (isset($data[$this->userEmailField]) && true === $this->forgotPasswordManager->resetPassword(
+                $data[$this->userEmailField]
             )
         ) {
             return new Response('', 204);
         }
 
-        return new JsonResponse([$this->emailFieldName => 'Invalid'], 400);
+        return new JsonResponse([$this->userEmailField => 'Invalid'], 400);
     }
 
     /**
@@ -76,7 +76,7 @@ class ForgotPasswordController
     public function getTokenAction($tokenValue)
     {
         $token = $this->passwordTokenManager->findOneByToken($tokenValue);
-        if (null === $token || 0 < count($this->validator->validate($token))) {
+        if (null === $token || 0 < $this->validator->validate($token)->count()) {
             throw new NotFoundHttpException('Invalid token.');
         }
 
@@ -96,19 +96,19 @@ class ForgotPasswordController
     public function updatePasswordAction($tokenValue, Request $request)
     {
         $token = $this->passwordTokenManager->findOneByToken($tokenValue);
-        if (null === $token || 0 < count($this->validator->validate($token))) {
+        if (null === $token || 0 < $this->validator->validate($token)->count()) {
             throw new NotFoundHttpException('Invalid token.');
         }
 
         $data = json_decode($request->getContent(), true);
-        if (isset($data[$this->passwordFieldName]) && true === $this->forgotPasswordManager->updatePassword(
+        if (isset($data[$this->userPasswordField]) && true === $this->forgotPasswordManager->updatePassword(
                 $token,
-                $data[$this->passwordFieldName]
+                $data[$this->userPasswordField]
             )
         ) {
             return new Response('', 204);
         }
 
-        return new JsonResponse([$this->passwordFieldName => 'Invalid'], 400);
+        return new JsonResponse([$this->userPasswordField => 'Invalid'], 400);
     }
 }

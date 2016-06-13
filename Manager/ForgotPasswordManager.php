@@ -6,6 +6,7 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ForgotPasswordManager
 {
@@ -13,27 +14,31 @@ class ForgotPasswordManager
     private $passwordTokenManager;
     private $dispatcher;
     private $userClass;
-    private $emailFieldName;
+    private $userEmailField;
+    private $validator;
 
     /**
      * @param PasswordTokenManager     $passwordTokenManager
      * @param EventDispatcherInterface $dispatcher
      * @param ManagerInterface         $manager
+     * @param ValidatorInterface       $validator
      * @param string                   $userClass
-     * @param string                   $emailFieldName
+     * @param string                   $userEmailField
      */
     public function __construct(
         PasswordTokenManager $passwordTokenManager,
         EventDispatcherInterface $dispatcher,
         ManagerInterface $manager,
+        ValidatorInterface $validator,
         $userClass,
-        $emailFieldName
+        $userEmailField
     ) {
         $this->passwordTokenManager = $passwordTokenManager;
         $this->dispatcher = $dispatcher;
         $this->manager = $manager;
+        $this->validator = $validator;
         $this->userClass = $userClass;
-        $this->emailFieldName = $emailFieldName;
+        $this->userEmailField = $userEmailField;
     }
 
     /**
@@ -43,8 +48,13 @@ class ForgotPasswordManager
      */
     public function resetPassword($username)
     {
-        $user = $this->manager->findOneBy($this->userClass, [$this->emailFieldName => $username]);
+        $user = $this->manager->findOneBy($this->userClass, [$this->userEmailField => $username]);
         if (null === $user) {
+            return false;
+        }
+
+        $token = $this->passwordTokenManager->findOneByUser($user);
+        if (null !== $token && 0 === $this->validator->validate($token)->count()) {
             return false;
         }
 
