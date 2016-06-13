@@ -18,12 +18,14 @@ class CoopTilleulsForgotPasswordExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         // Build parameters
-        $container->setParameter('coop_tilleuls_forgot_password.password_token_class', $config['password_token_class']);
-        $container->setParameter('coop_tilleuls_forgot_password.user_class', $config['user_class']);
-        $container->setParameter('coop_tilleuls_forgot_password.email_field', $config['email_field']);
-        $container->setParameter('coop_tilleuls_forgot_password.password_field', $config['password_field']);
-        $container->setParameter('coop_tilleuls_forgot_password.expires_in', $config['expires_in']);
-        $container->setParameter('coop_tilleuls_forgot_password.groups', $config['groups']);
+        $container->setParameter('coop_tilleuls_forgot_password.password_token_class', $config['password_token']['class']);
+        $container->setParameter('coop_tilleuls_forgot_password.password_token_expires_in', $config['password_token']['expires_in']);
+        $container->setParameter('coop_tilleuls_forgot_password.password_token_user_field', $config['password_token']['user_field']);
+        $container->setParameter('coop_tilleuls_forgot_password.password_token_serialization_groups', $config['password_token']['serialization_groups']);
+
+        $container->setParameter('coop_tilleuls_forgot_password.user_class', $config['user']['class']);
+        $container->setParameter('coop_tilleuls_forgot_password.user_email_field', $config['user']['email_field']);
+        $container->setParameter('coop_tilleuls_forgot_password.user_password_field', $config['user']['password_field']);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');

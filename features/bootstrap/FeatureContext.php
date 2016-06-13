@@ -56,6 +56,22 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given I have a valid token
+     */
+    public function iHaveAValidToken()
+    {
+        $this->passwordTokenManager->createPasswordToken($this->createUser());
+    }
+
+    /**
+     * @Given I have an expired token
+     */
+    public function iHaveAnExpiredToken()
+    {
+        $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('-1 minute'));
+    }
+
+    /**
      * @Then I reset my password
      */
     public function iResetMyPassword()

@@ -10,23 +10,27 @@
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <argument type="service" id="validator" />
             <argument type="service" id="serializer" />
-            <argument>%coop_tilleuls_forgot_password.groups%</argument>
-            <argument>%coop_tilleuls_forgot_password.email_field%</argument>
-            <argument>%coop_tilleuls_forgot_password.password_field%</argument>
+            <argument>%coop_tilleuls_forgot_password.password_token_serialization_groups%</argument>
+            <argument>%coop_tilleuls_forgot_password.user_email_field%</argument>
+            <argument>%coop_tilleuls_forgot_password.user_password_field%</argument>
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="coop_tilleuls_forgot_password.manager" />
+            <argument type="service" id="validator" />
             <argument>%coop_tilleuls_forgot_password.user_class%</argument>
-            <argument>%coop_tilleuls_forgot_password.email_field%</argument>
+            <argument>%coop_tilleuls_forgot_password.user_email_field%</argument>
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager">
             <argument type="service" id="coop_tilleuls_forgot_password.manager" />
             <argument>%coop_tilleuls_forgot_password.password_token_class%</argument>
-            <argument>%coop_tilleuls_forgot_password.expires_in%</argument>
+            <argument>%coop_tilleuls_forgot_password.user_class%</argument>
+            <argument>%coop_tilleuls_forgot_password.user_email_field%</argument>
+            <argument>%coop_tilleuls_forgot_password.password_token_expires_in%</argument>
+            <argument>%coop_tilleuls_forgot_password.password_token_user_field%</argument>
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.doctrine" class="CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\DoctrineManager" public="false">
