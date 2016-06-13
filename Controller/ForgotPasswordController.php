@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ForgotPasswordController
@@ -15,6 +16,8 @@ class ForgotPasswordController
     private $forgotPasswordManager;
     private $passwordTokenManager;
     private $validator;
+    private $normalizer;
+    private $groups;
     private $emailFieldName;
     private $passwordFieldName;
 
@@ -22,6 +25,8 @@ class ForgotPasswordController
      * @param ForgotPasswordManager $forgotPasswordManager
      * @param PasswordTokenManager  $passwordTokenManager
      * @param ValidatorInterface    $validator
+     * @param NormalizerInterface   $normalizer
+     * @param array                 $groups
      * @param string                $emailFieldName
      * @param string                $passwordFieldName
      */
@@ -29,12 +34,16 @@ class ForgotPasswordController
         ForgotPasswordManager $forgotPasswordManager,
         PasswordTokenManager $passwordTokenManager,
         ValidatorInterface $validator,
+        NormalizerInterface $normalizer,
+        array $groups,
         $emailFieldName,
         $passwordFieldName
     ) {
         $this->forgotPasswordManager = $forgotPasswordManager;
         $this->passwordTokenManager = $passwordTokenManager;
         $this->validator = $validator;
+        $this->normalizer = $normalizer;
+        $this->groups = $groups;
         $this->emailFieldName = $emailFieldName;
         $this->passwordFieldName = $passwordFieldName;
     }
@@ -55,6 +64,25 @@ class ForgotPasswordController
         }
 
         return new JsonResponse([$this->emailFieldName => 'Invalid'], 400);
+    }
+
+    /**
+     * @param string $tokenValue
+     *
+     * @return Response|JsonResponse
+     *
+     * @throws NotFoundHttpException
+     */
+    public function getTokenAction($tokenValue)
+    {
+        $token = $this->passwordTokenManager->findOneByToken($tokenValue);
+        if (null === $token || 0 < count($this->validator->validate($token))) {
+            throw new NotFoundHttpException('Invalid token.');
+        }
+
+        return new JsonResponse(
+            $this->normalizer->normalize($token, 'json', $this->groups ? ['groups' => $this->groups] : [])
+        );
     }
 
     /**

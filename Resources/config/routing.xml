@@ -12,4 +12,8 @@
         <default key="_controller">coop_tilleuls_forgot_password.controller.forgot_password:updatePasswordAction</default>
     </route>
 
+    <route id="coop_tilleuls_forgot_password.get_token" path="/{tokenValue}" methods="GET">
+        <default key="_controller">coop_tilleuls_forgot_password.controller.forgot_password:getTokenAction</default>
+    </route>
+
 </routes>
