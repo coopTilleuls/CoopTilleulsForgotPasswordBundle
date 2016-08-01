@@ -11,31 +11,23 @@ class PasswordTokenManager
 {
     private $manager;
     private $passwordTokenClass;
-    private $userClass;
-    private $userEmailField;
     private $defaultExpiresIn;
     private $passwordTokenUserField;
 
     /**
      * @param ManagerInterface $manager
      * @param string           $passwordTokenClass
-     * @param string           $userClass
-     * @param string           $userEmailField
      * @param string           $defaultExpiresIn
      * @param string           $passwordTokenUserField
      */
     public function __construct(
         ManagerInterface $manager,
         $passwordTokenClass,
-        $userClass,
-        $userEmailField,
         $defaultExpiresIn,
         $passwordTokenUserField
     ) {
         $this->manager = $manager;
         $this->passwordTokenClass = $passwordTokenClass;
-        $this->userClass = $userClass;
-        $this->userEmailField = $userEmailField;
         $this->defaultExpiresIn = $defaultExpiresIn;
         $this->passwordTokenUserField = $passwordTokenUserField;
     }

@@ -27,8 +27,6 @@
         <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager">
             <argument type="service" id="coop_tilleuls_forgot_password.manager" />
             <argument>%coop_tilleuls_forgot_password.password_token_class%</argument>
-            <argument>%coop_tilleuls_forgot_password.user_class%</argument>
-            <argument>%coop_tilleuls_forgot_password.user_email_field%</argument>
             <argument>%coop_tilleuls_forgot_password.password_token_expires_in%</argument>
             <argument>%coop_tilleuls_forgot_password.password_token_user_field%</argument>
         </service>
