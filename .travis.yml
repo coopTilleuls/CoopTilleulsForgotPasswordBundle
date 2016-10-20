@@ -21,36 +21,28 @@ matrix:
         - php: 5.4
     include:
         - php: 5.5
-          env: SYMFONY_VERSION=2.3.*
+          env: PREFER_LOWEST=""
         - php: 5.5
-          env: SYMFONY_VERSION=2.8.*
-        - php: 5.5
-          env: SYMFONY_VERSION=3.1.*
+          env: PREFER_LOWEST="--prefer-lowest"
         - php: 5.6
-          env: SYMFONY_VERSION=2.3.*
+          env: PREFER_LOWEST=""
         - php: 5.6
-          env: SYMFONY_VERSION=2.8.*
-        - php: 5.6
-          env: SYMFONY_VERSION=3.1.*
+          env: PREFER_LOWEST="--prefer-lowest"
         - php: 7.0
-          env: SYMFONY_VERSION=2.3.*
+          env: PREFER_LOWEST=""
         - php: 7.0
-          env: SYMFONY_VERSION=2.8.*
-        - php: 7.0
-          env: SYMFONY_VERSION=3.1.*
+          env: PREFER_LOWEST="--prefer-lowest"
         - php: hhvm
-          env: SYMFONY_VERSION=2.3.*
+          env: PREFER_LOWEST=""
         - php: hhvm
-          env: SYMFONY_VERSION=2.8.*
-        - php: hhvm
-          env: SYMFONY_VERSION=3.1.*
+          env: PREFER_LOWEST="--prefer-lowest"
 
 env:
     global:
         - deps=no
 
 install:
-    - composer install
+    - composer install $PREFER_LOWEST
 
 script:
     - vendor/bin/phpunit
