@@ -36,7 +36,7 @@ final class RequestEventListener
     public function decodeRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-        $routeName = $request->get('_route');
+        $routeName = $request->attributes->get('_route');
         if (!$event->isMasterRequest() || !in_array(
                 $routeName,
                 ['coop_tilleuls_forgot_password.reset', 'coop_tilleuls_forgot_password.update']
@@ -56,7 +56,7 @@ final class RequestEventListener
     public function getTokenFromRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-        $routeName = $request->get('_route');
+        $routeName = $request->attributes->get('_route');
         if (!$event->isMasterRequest() || !in_array(
                 $routeName,
                 ['coop_tilleuls_forgot_password.get_token', 'coop_tilleuls_forgot_password.update']
@@ -65,7 +65,7 @@ final class RequestEventListener
             return;
         }
 
-        $token = $this->passwordTokenManager->findOneByToken($request->get('tokenValue'));
+        $token = $this->passwordTokenManager->findOneByToken($request->attributes->get('tokenValue'));
         if (null === $token || 0 < $this->validator->validate($token)->count()) {
             throw new NotFoundHttpException('Invalid token.');
         }
