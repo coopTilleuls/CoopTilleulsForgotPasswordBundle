@@ -7,12 +7,8 @@
     <services>
         <service id="coop_tilleuls_forgot_password.controller.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Controller\ForgotPasswordController">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.forgot_password" />
-            <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
-            <argument type="service" id="validator" />
             <argument type="service" id="serializer" />
             <argument>%coop_tilleuls_forgot_password.password_token_serialization_groups%</argument>
-            <argument>%coop_tilleuls_forgot_password.user_email_field%</argument>
-            <argument>%coop_tilleuls_forgot_password.user_password_field%</argument>
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager">
@@ -33,6 +29,19 @@
 
         <service id="coop_tilleuls_forgot_password.manager.doctrine" class="CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\DoctrineManager" public="false">
             <argument type="service" id="doctrine" on-invalid="null" />
+        </service>
+
+        <service id="coop_tilleuls_forgot_password.event_listener.request" class="CoopTilleuls\ForgotPasswordBundle\EventListener\RequestEventListener">
+            <argument>%coop_tilleuls_forgot_password.user_email_field%</argument>
+            <argument>%coop_tilleuls_forgot_password.user_password_field%</argument>
+            <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
+            <argument type="service" id="validator" />
+            <tag name="kernel.event_listener" event="kernel.request" method="decodeRequest" />
+            <tag name="kernel.event_listener" event="kernel.request" method="getTokenFromRequest" />
+        </service>
+
+        <service id="coop_tilleuls_forgot_password.event_listener.exception" class="CoopTilleuls\ForgotPasswordBundle\EventListener\ExceptionEventListener">
+            <tag name="kernel.event_listener" event="kernel.exception" method="onKernelException" />
         </service>
     </services>
 </container>

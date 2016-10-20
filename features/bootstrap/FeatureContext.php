@@ -129,14 +129,25 @@ JSON
     }
 
     /**
-     * @When the request should be invalid
+     * @When the request should be invalid with message :message
+     *
+     * @param string $message
      */
-    public function theRequestShouldBeInvalid()
+    public function theRequestShouldBeInvalidWithMessage($message)
     {
         \PHPUnit_Framework_Assert::assertEquals(
             400,
             $this->client->getResponse()->getStatusCode(),
             sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+        );
+        \PHPUnit_Framework_Assert::assertJson($this->client->getResponse()->getContent());
+        \PHPUnit_Framework_Assert::assertJsonStringEqualsJsonString(sprintf(<<<JSON
+{
+    "message": "%s"
+}
+JSON
+                , str_ireplace('"', '\"', $message)
+            ), $this->client->getResponse()->getContent()
         );
     }
 
@@ -160,6 +171,14 @@ JSON
     }
 
     /**
+     * @Then I reset my password using no email address
+     */
+    public function iResetMyPasswordUsingNoEmailAddress()
+    {
+        $this->client->request('POST', '/forgot_password/');
+    }
+
+    /**
      * @Then I update my password
      */
     public function iUpdateMyPassword()
@@ -178,6 +197,16 @@ JSON
 }
 JSON
         );
+    }
+
+    /**
+     * @Then I update my password using no password
+     */
+    public function iUpdateMyPasswordUsingNoPassword()
+    {
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
+
+        $this->client->request('POST', sprintf('/forgot_password/%s', $token->getToken()));
     }
 
     /**
