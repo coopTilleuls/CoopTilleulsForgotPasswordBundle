@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the ForgotPasswordBundle package.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
@@ -11,7 +20,10 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
-class FeatureContext implements Context, SnippetAcceptingContext
+/**
+ * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ */
+final class FeatureContext implements Context, SnippetAcceptingContext
 {
     /**
      * @var Registry
@@ -85,7 +97,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            <<<JSON
+            <<<'JSON'
 {
     "email": "john.doe@example.com"
 }
@@ -141,7 +153,7 @@ JSON
             sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
         \PHPUnit_Framework_Assert::assertJson($this->client->getResponse()->getContent());
-        \PHPUnit_Framework_Assert::assertJsonStringEqualsJsonString(sprintf(<<<JSON
+        \PHPUnit_Framework_Assert::assertJsonStringEqualsJsonString(sprintf(<<<'JSON'
 {
     "message": "%s"
 }
@@ -162,7 +174,7 @@ JSON
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            <<<JSON
+            <<<'JSON'
 {
     "email": "foo@example.com"
 }
@@ -191,7 +203,7 @@ JSON
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            <<<JSON
+            <<<'JSON'
 {
     "password": "foo"
 }
@@ -220,7 +232,7 @@ JSON
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            <<<JSON
+            <<<'JSON'
 {
     "password": "foo"
 }
@@ -241,7 +253,7 @@ JSON
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            <<<JSON
+            <<<'JSON'
 {
     "password": "foo"
 }

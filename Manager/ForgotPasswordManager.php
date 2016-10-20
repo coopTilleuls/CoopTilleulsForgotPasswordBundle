@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the ForgotPasswordBundle package.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
@@ -10,7 +19,10 @@ use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ForgotPasswordManager
+/**
+ * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ */
+final class ForgotPasswordManager
 {
     private $manager;
     private $passwordTokenManager;

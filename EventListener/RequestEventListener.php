@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the ForgotPasswordBundle package.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace CoopTilleuls\ForgotPasswordBundle\EventListener;
 
 use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
@@ -8,6 +17,9 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ */
 final class RequestEventListener
 {
     private $userEmailField;
@@ -16,10 +28,10 @@ final class RequestEventListener
     private $validator;
 
     /**
-     * @param string $userEmailField
-     * @param string $userPasswordField
+     * @param string               $userEmailField
+     * @param string               $userPasswordField
      * @param PasswordTokenManager $passwordTokenManager
-     * @param ValidatorInterface $validator
+     * @param ValidatorInterface   $validator
      */
     public function __construct(
         $userEmailField,

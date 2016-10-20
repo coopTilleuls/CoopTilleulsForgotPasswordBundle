@@ -1,10 +1,22 @@
 <?php
 
+/*
+ * This file is part of the ForgotPasswordBundle package.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace CoopTilleuls\ForgotPasswordBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ */
 final class Configuration implements ConfigurationInterface
 {
     /**
@@ -34,7 +46,7 @@ final class Configuration implements ConfigurationInterface
                         $config['user']['class'] = $config['user_class'];
                     }
                     unset($config['password_token_class'], $config['user_class']);
-    
+
                     return $config;
                 })
             ->end()

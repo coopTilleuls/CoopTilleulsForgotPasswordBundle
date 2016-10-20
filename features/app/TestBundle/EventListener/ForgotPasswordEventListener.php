@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the ForgotPasswordBundle package.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\EventListener;
 
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
@@ -8,7 +17,10 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
-class ForgotPasswordEventListener
+/**
+ * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ */
+final class ForgotPasswordEventListener
 {
     /**
      * @var \Swift_Mailer

@@ -12,9 +12,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Test purpose micro-kernel.
  *
- * @author Vincent Chalamon <vincentchalamon@gmail.com>
+ * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-class AppKernel extends Kernel
+final class AppKernel extends Kernel
 {
     use MicroKernelTrait;
 

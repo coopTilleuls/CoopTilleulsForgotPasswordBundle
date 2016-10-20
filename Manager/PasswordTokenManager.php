@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the ForgotPasswordBundle package.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
@@ -7,7 +16,10 @@ use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use RandomLib\Factory;
 use SecurityLib\Strength;
 
-class PasswordTokenManager
+/**
+ * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ */
+final class PasswordTokenManager
 {
     private $manager;
     private $passwordTokenClass;

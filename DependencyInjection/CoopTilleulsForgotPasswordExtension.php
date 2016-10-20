@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the ForgotPasswordBundle package.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace CoopTilleuls\ForgotPasswordBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
@@ -7,7 +16,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class CoopTilleulsForgotPasswordExtension extends Extension
+/**
+ * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ */
+final class CoopTilleulsForgotPasswordExtension extends Extension
 {
     /**
      * {@inheritdoc}

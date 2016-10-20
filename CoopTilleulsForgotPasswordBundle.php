@@ -1,9 +1,21 @@
 <?php
 
+/*
+ * This file is part of the ForgotPasswordBundle package.
+ *
+ * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace CoopTilleuls\ForgotPasswordBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class CoopTilleulsForgotPasswordBundle extends Bundle
+/**
+ * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ */
+final class CoopTilleulsForgotPasswordBundle extends Bundle
 {
 }
