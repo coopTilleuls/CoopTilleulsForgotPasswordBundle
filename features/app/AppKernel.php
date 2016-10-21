@@ -65,7 +65,6 @@ final class AppKernel extends Kernel
             'secret' => 'CoopTilleulsForgotPasswordBundle',
             'test' => null,
             'serializer' => null,
-            'validation' => null,
             'profiler' => ['collect' => false],
             'templating' => [
                 'engines' => ['twig'],

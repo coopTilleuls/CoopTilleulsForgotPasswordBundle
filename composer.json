@@ -21,7 +21,6 @@
         "symfony/http-kernel": "^2.3|^3.0",
         "symfony/event-dispatcher": "^2.3|^3.0",
         "symfony/dependency-injection": "^2.3|^3.0",
-        "symfony/validator": "^2.3|^3.0",
         "symfony/serializer": "^2.3|^3.0",
         "symfony/config": "^2.3|^3.0",
         "ircmaxell/random-lib": "^1.1"
@@ -38,8 +37,7 @@
         "symfony/assetic-bundle": "^2.8",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
-        "doctrine/data-fixtures": "^1.1",
-        "kahlan/kahlan": "^3.0"
+        "doctrine/data-fixtures": "^1.1"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "To connect with Doctrine in Symfony project",
@@ -49,11 +47,12 @@
         "psr-4": {
             "CoopTilleuls\\ForgotPasswordBundle\\": ""
         },
-        "exclude-from-classmap": ["features/", "Tests/"]
+        "exclude-from-classmap": ["features/", "tests/"]
     },
     "autoload-dev": {
         "psr-4": {
-            "CoopTilleuls\\ForgotPasswordBundle\\Tests\\": "features/app"
+            "CoopTilleuls\\ForgotPasswordBundle\\Tests\\": "features/app",
+            "Tests\\ForgotPasswordBundle\\": "tests"
         }
     },
     "extra": {

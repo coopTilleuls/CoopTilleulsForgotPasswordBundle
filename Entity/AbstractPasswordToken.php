@@ -72,4 +72,12 @@ abstract class AbstractPasswordToken
     {
         $this->expiresAt = $expiresAt;
     }
+
+    /**
+     * @return bool
+     */
+    public function isExpired()
+    {
+        return (new \DateTime()) > $this->expiresAt;
+    }
 }

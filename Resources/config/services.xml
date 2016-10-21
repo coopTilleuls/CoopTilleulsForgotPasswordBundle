@@ -15,7 +15,6 @@
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="coop_tilleuls_forgot_password.manager" />
-            <argument type="service" id="validator" />
             <argument>%coop_tilleuls_forgot_password.user_class%</argument>
             <argument>%coop_tilleuls_forgot_password.user_email_field%</argument>
         </service>
@@ -35,7 +34,6 @@
             <argument>%coop_tilleuls_forgot_password.user_email_field%</argument>
             <argument>%coop_tilleuls_forgot_password.user_password_field%</argument>
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
-            <argument type="service" id="validator" />
             <tag name="kernel.event_listener" event="kernel.request" method="decodeRequest" />
             <tag name="kernel.event_listener" event="kernel.request" method="getTokenFromRequest" />
         </service>

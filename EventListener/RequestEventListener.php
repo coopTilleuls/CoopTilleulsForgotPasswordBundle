@@ -15,7 +15,6 @@ use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -25,24 +24,20 @@ final class RequestEventListener
     private $userEmailField;
     private $userPasswordField;
     private $passwordTokenManager;
-    private $validator;
 
     /**
      * @param string               $userEmailField
      * @param string               $userPasswordField
      * @param PasswordTokenManager $passwordTokenManager
-     * @param ValidatorInterface   $validator
      */
     public function __construct(
         $userEmailField,
         $userPasswordField,
-        PasswordTokenManager $passwordTokenManager,
-        ValidatorInterface $validator
+        PasswordTokenManager $passwordTokenManager
     ) {
         $this->userEmailField = $userEmailField;
         $this->userPasswordField = $userPasswordField;
         $this->passwordTokenManager = $passwordTokenManager;
-        $this->validator = $validator;
     }
 
     public function decodeRequest(GetResponseEvent $event)
@@ -78,7 +73,7 @@ final class RequestEventListener
         }
 
         $token = $this->passwordTokenManager->findOneByToken($request->attributes->get('tokenValue'));
-        if (null === $token || 0 < $this->validator->validate($token)->count()) {
+        if (null === $token || $token->isExpired()) {
             throw new NotFoundHttpException('Invalid token.');
         }
         $request->attributes->set('token', $token);

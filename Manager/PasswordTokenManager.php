@@ -19,7 +19,7 @@ use SecurityLib\Strength;
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class PasswordTokenManager
+class PasswordTokenManager
 {
     private $manager;
     private $passwordTokenClass;

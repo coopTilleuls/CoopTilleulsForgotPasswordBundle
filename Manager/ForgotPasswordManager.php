@@ -17,25 +17,22 @@ use CoopTilleuls\ForgotPasswordBundle\Exception\UnexpiredTokenHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\UserNotFoundHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class ForgotPasswordManager
+class ForgotPasswordManager
 {
     private $manager;
     private $passwordTokenManager;
     private $dispatcher;
     private $userClass;
     private $userEmailField;
-    private $validator;
 
     /**
      * @param PasswordTokenManager     $passwordTokenManager
      * @param EventDispatcherInterface $dispatcher
      * @param ManagerInterface         $manager
-     * @param ValidatorInterface       $validator
      * @param string                   $userClass
      * @param string                   $userEmailField
      */
@@ -43,14 +40,12 @@ final class ForgotPasswordManager
         PasswordTokenManager $passwordTokenManager,
         EventDispatcherInterface $dispatcher,
         ManagerInterface $manager,
-        ValidatorInterface $validator,
         $userClass,
         $userEmailField
     ) {
         $this->passwordTokenManager = $passwordTokenManager;
         $this->dispatcher = $dispatcher;
         $this->manager = $manager;
-        $this->validator = $validator;
         $this->userClass = $userClass;
         $this->userEmailField = $userEmailField;
     }
@@ -66,7 +61,8 @@ final class ForgotPasswordManager
         }
 
         $token = $this->passwordTokenManager->findOneByUser($user);
-        if (null !== $token && 0 === $this->validator->validate($token)->count()) {
+        // A token already exists and has not expired
+        if (null !== $token && !$token->isExpired()) {
             throw new UnexpiredTokenHttpException();
         }
 
