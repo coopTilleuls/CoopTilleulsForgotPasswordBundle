@@ -38,7 +38,8 @@
         "symfony/assetic-bundle": "^2.8",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
-        "doctrine/data-fixtures": "^1.1"
+        "doctrine/data-fixtures": "^1.1",
+        "kahlan/kahlan": "^3.0"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "To connect with Doctrine in Symfony project",

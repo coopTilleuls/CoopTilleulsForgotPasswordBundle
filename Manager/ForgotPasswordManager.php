@@ -4,6 +4,8 @@ namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
+use CoopTilleuls\ForgotPasswordBundle\Exception\UnexpiredTokenHttpException;
+use CoopTilleuls\ForgotPasswordBundle\Exception\UserNotFoundHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -43,19 +45,17 @@ class ForgotPasswordManager
 
     /**
      * @param string $username
-     *
-     * @return bool
      */
     public function resetPassword($username)
     {
         $user = $this->manager->findOneBy($this->userClass, [$this->userEmailField => $username]);
         if (null === $user) {
-            return false;
+            throw new UserNotFoundHttpException($this->userEmailField, $username);
         }
 
         $token = $this->passwordTokenManager->findOneByUser($user);
         if (null !== $token && 0 === $this->validator->validate($token)->count()) {
-            return false;
+            throw new UnexpiredTokenHttpException();
         }
 
         // Generate password token
@@ -63,8 +63,6 @@ class ForgotPasswordManager
             ForgotPasswordEvent::CREATE_TOKEN,
             new ForgotPasswordEvent($this->passwordTokenManager->createPasswordToken($user))
         );
-
-        return true;
     }
 
     /**

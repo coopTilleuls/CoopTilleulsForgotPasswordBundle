@@ -2,113 +2,67 @@
 
 namespace CoopTilleuls\ForgotPasswordBundle\Controller;
 
+use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
-use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ForgotPasswordController
 {
     private $forgotPasswordManager;
-    private $passwordTokenManager;
-    private $validator;
     private $normalizer;
     private $groups;
-    private $userEmailField;
-    private $userPasswordField;
 
     /**
      * @param ForgotPasswordManager $forgotPasswordManager
-     * @param PasswordTokenManager  $passwordTokenManager
-     * @param ValidatorInterface    $validator
      * @param NormalizerInterface   $normalizer
      * @param array                 $groups
-     * @param string                $userEmailField
-     * @param string                $userPasswordField
      */
     public function __construct(
         ForgotPasswordManager $forgotPasswordManager,
-        PasswordTokenManager $passwordTokenManager,
-        ValidatorInterface $validator,
         NormalizerInterface $normalizer,
-        array $groups,
-        $userEmailField,
-        $userPasswordField
+        array $groups
     ) {
         $this->forgotPasswordManager = $forgotPasswordManager;
-        $this->passwordTokenManager = $passwordTokenManager;
-        $this->validator = $validator;
         $this->normalizer = $normalizer;
         $this->groups = $groups;
-        $this->userEmailField = $userEmailField;
-        $this->userPasswordField = $userPasswordField;
     }
 
     /**
-     * @param Request $request
+     * @param string $email
      *
-     * @return JsonResponse|Response
+     * @return Response
      */
-    public function resetPasswordAction(Request $request)
+    public function resetPasswordAction($email)
     {
-        $data = json_decode($request->getContent(), true);
-        if (isset($data[$this->userEmailField]) && true === $this->forgotPasswordManager->resetPassword(
-                $data[$this->userEmailField]
-            )
-        ) {
-            return new Response('', 204);
-        }
+        $this->forgotPasswordManager->resetPassword($email);
 
-        return new JsonResponse([$this->userEmailField => 'Invalid'], 400);
+        return new Response('', 204);
     }
 
     /**
-     * @param string $tokenValue
+     * @param AbstractPasswordToken $token
      *
-     * @return Response|JsonResponse
-     *
-     * @throws NotFoundHttpException
+     * @return JsonResponse
      */
-    public function getTokenAction($tokenValue)
+    public function getTokenAction(AbstractPasswordToken $token)
     {
-        $token = $this->passwordTokenManager->findOneByToken($tokenValue);
-        if (null === $token || 0 < $this->validator->validate($token)->count()) {
-            throw new NotFoundHttpException('Invalid token.');
-        }
-
         return new JsonResponse(
             $this->normalizer->normalize($token, 'json', $this->groups ? ['groups' => $this->groups] : [])
         );
     }
 
     /**
-     * @param string  $tokenValue
-     * @param Request $request
+     * @param AbstractPasswordToken $token
+     * @param string                $password
      *
-     * @return Response|JsonResponse
-     *
-     * @throws NotFoundHttpException
+     * @return Response
      */
-    public function updatePasswordAction($tokenValue, Request $request)
+    public function updatePasswordAction(AbstractPasswordToken $token, $password)
     {
-        $token = $this->passwordTokenManager->findOneByToken($tokenValue);
-        if (null === $token || 0 < $this->validator->validate($token)->count()) {
-            throw new NotFoundHttpException('Invalid token.');
-        }
+        $this->forgotPasswordManager->updatePassword($token, $password);
 
-        $data = json_decode($request->getContent(), true);
-        if (isset($data[$this->userPasswordField]) && true === $this->forgotPasswordManager->updatePassword(
-                $token,
-                $data[$this->userPasswordField]
-            )
-        ) {
-            return new Response('', 204);
-        }
-
-        return new JsonResponse([$this->userPasswordField => 'Invalid'], 400);
+        return new Response('', 204);
     }
 }
