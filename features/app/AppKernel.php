@@ -64,6 +64,7 @@ final class AppKernel extends Kernel
         $c->loadFromExtension('framework', [
             'secret' => 'CoopTilleulsForgotPasswordBundle',
             'test' => null,
+            'assets' => null,
             'serializer' => null,
             'profiler' => ['collect' => false],
             'templating' => [

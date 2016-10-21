@@ -61,7 +61,7 @@ final class ExceptionEventListenerTest extends \PHPUnit_Framework_TestCase
                     return $response instanceof JsonResponse &&
                     json_encode(
                         ['message' => 'User with field "foo" equal to "bar" cannot be found.'],
-                        JsonResponse::DEFAULT_ENCODING_OPTIONS
+                        15
                     ) === $response->getContent() &&
                     400 === $response->getStatusCode();
                 }

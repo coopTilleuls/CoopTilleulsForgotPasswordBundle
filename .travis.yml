@@ -42,7 +42,7 @@ env:
         - deps=no
 
 install:
-    - composer install $PREFER_LOWEST
+    - composer update $PREFER_LOWEST
 
 script:
     - vendor/bin/phpunit

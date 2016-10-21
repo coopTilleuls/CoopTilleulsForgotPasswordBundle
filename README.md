@@ -2,8 +2,6 @@
 
 Provides a _forgot password_ feature for a REST API.
 
-**This bundle is still in progress. You will be notified soon of its first release ;).**
-
 Feel free to contribute on it!
 
 [![Build Status](https://travis-ci.org/coopTilleuls/CoopTilleulsForgotPasswordBundle.svg?branch=master)](https://travis-ci.org/coopTilleuls/CoopTilleulsForgotPasswordBundle)
