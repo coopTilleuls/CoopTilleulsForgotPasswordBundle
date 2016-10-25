@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\Event;
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class ForgotPasswordEvent extends Event
+class ForgotPasswordEvent extends Event
 {
     const CREATE_TOKEN = 'coop_tilleuls_forgot_password.create_token';
     const UPDATE_PASSWORD = 'coop_tilleuls_forgot_password.update_password';
