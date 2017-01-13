@@ -36,7 +36,7 @@
         "symfony/swiftmailer-bundle": "^2.3.11",
         "symfony/swiftmailer-bridge": "^2.8",
         "swiftmailer/swiftmailer": "^5.2.0",
-        "symfony/twig-bundle": "^3.0",
+        "symfony/twig-bundle": "^3.0, <3.2",
         "symfony/assetic-bundle": "^2.8",
         "symfony/debug": "^2.8",
         "doctrine/doctrine-bundle": "^1.6",
