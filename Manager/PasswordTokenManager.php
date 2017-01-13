@@ -57,7 +57,6 @@ class PasswordTokenManager
 
         if (version_compare(phpversion(), '7.0', '>')) {
             $passwordToken->setToken(random_bytes(50));
-
         } else {
             $factory = new Factory();
             $generator = $factory->getGenerator(new Strength(Strength::MEDIUM));
