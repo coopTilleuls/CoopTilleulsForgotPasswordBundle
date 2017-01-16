@@ -55,10 +55,17 @@ class PasswordTokenManager
         /** @var AbstractPasswordToken $passwordToken */
         $passwordToken = new $this->passwordTokenClass();
 
-        $factory = new Factory();
-        $generator = $factory->getGenerator(new Strength(Strength::MEDIUM));
+        if (version_compare(phpversion(), '7.0', '>')) {
+            $passwordToken->setToken(random_bytes(50));
+        } else {
+            $factory = new Factory();
+            $generator = $factory->getGenerator(new Strength(Strength::MEDIUM));
 
-        $passwordToken->setToken($generator->generateString(50, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'));
+            $passwordToken->setToken(
+                $generator->generateString(50, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
+            );
+        }
+
         $passwordToken->setUser($user);
         $passwordToken->setExpiresAt($expiresAt ?: new \DateTime($this->defaultExpiresIn));
 
