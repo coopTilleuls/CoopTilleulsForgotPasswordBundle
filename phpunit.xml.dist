@@ -12,7 +12,7 @@
 
     <testsuites>
         <testsuite name="CoopTilleulsForgotPasswordBundle tests suite">
-            <directory>Tests</directory>
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
 
@@ -20,7 +20,7 @@
         <whitelist>
             <directory>.</directory>
             <exclude>
-                <directory>Tests</directory>
+                <directory>tests</directory>
                 <directory>features</directory>
                 <directory>vendor</directory>
             </exclude>
