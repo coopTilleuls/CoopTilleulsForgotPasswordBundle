@@ -3,48 +3,35 @@ language: php
 sudo: false
 
 cache:
-    directories:
-        - $HOME/.composer/cache
-
-php:
-    - 5.3
-    - 5.4
-    - 5.5
-    - 5.6
-    - 7.0
-    - 7.1
-    - hhvm
+  directories:
+    - $HOME/.composer/cache
 
 matrix:
-    fast_finish: true
-    allow_failures:
-        - php: 5.3
-        - php: 5.4
-    include:
-        - php: 5.5
-          env: PREFER_LOWEST=""
-        - php: 5.5
-          env: PREFER_LOWEST="--prefer-lowest"
-        - php: 5.6
-          env: PREFER_LOWEST=""
-        - php: 5.6
-          env: PREFER_LOWEST="--prefer-lowest"
-        - php: 7.0
-          env: PREFER_LOWEST=""
-        - php: 7.0
-          env: PREFER_LOWEST="--prefer-lowest"
-        - php: hhvm
-          env: PREFER_LOWEST=""
-        - php: hhvm
-          env: PREFER_LOWEST="--prefer-lowest"
+  fast_finish: true
+  include:
+    - php: 5.5
+    - php: 5.5
+      env: deps='low' lint=1
+    - php: 5.6
+    - php: 5.6
+      env: deps='low'
+    - php: 7.0
+    - php: 7.0
+      env: deps='low'
+    - php: 7.1
+    - php: 7.1
+      env: deps='low'
+    - php: hhvm
+    - php: hhvm
+      env: deps='low'
 
-env:
-    global:
-        - deps=no
+before_install:
+  - if [[ $lint = 1 ]]; then wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.1.1/php-cs-fixer.phar; fi
 
 install:
-    - composer update $PREFER_LOWEST
-
+  - if [[ ! $deps ]]; then composer update --prefer-dist --no-progress --no-suggest --ansi; fi
+  - if [[ $deps = 'low' ]]; then composer update --prefer-dist --no-progress --no-suggest --prefer-stable --prefer-lowest --ansi; fi
 script:
-    - vendor/bin/phpunit
-    - vendor/bin/behat
+  - if [[ $lint = 1 ]]; then php php-cs-fixer.phar fix --dry-run --diff; fi
+  - vendor/bin/phpunit
+  - vendor/bin/behat
