@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the forgot-password-bundle package.
+ * This file is part of the CoopTilleulsForgotPasswordBundle package.
  *
  * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
  *
@@ -44,7 +44,7 @@ final class DoctrineManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->registryMock->getManagerForClass('class')->willReturn($this->managerMock->reveal())->shouldBeCalledTimes(1);
         $this->managerMock->getRepository('class')->willReturn($this->repositoryMock->reveal())->shouldBeCalledTimes(1);
-        $this->repositoryMock->findOneBy(['criteria'])->willReturn('foo')->shouldBeCalledTimes(1);;
+        $this->repositoryMock->findOneBy(['criteria'])->willReturn('foo')->shouldBeCalledTimes(1);
 
         $this->assertEquals('foo', $this->doctrineManager->findOneBy('class', ['criteria']));
     }

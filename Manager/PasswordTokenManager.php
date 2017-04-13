@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the ForgotPasswordBundle package.
+ * This file is part of the CoopTilleulsForgotPasswordBundle package.
  *
  * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
  *
