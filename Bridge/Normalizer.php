@@ -40,7 +40,7 @@ class Normalizer
      *
      * @return array
      */
-    public function normalize($object, $format = null, array $context = array())
+    public function normalize($object, $format = null, array $context = [])
     {
         return $this->normalizer instanceof JMSSerializerInterface ? $this->normalizer->toArray($object) : $this->normalizer->normalize($object, $format, $context);
     }
