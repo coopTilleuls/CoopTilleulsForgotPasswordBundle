@@ -11,10 +11,10 @@
 
 namespace Tests\ForgotPasswordBundle\Controller;
 
-use CoopTilleuls\ForgotPasswordBundle\Bridge\Normalizer;
 use CoopTilleuls\ForgotPasswordBundle\Controller\ForgotPasswordController;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
+use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -34,7 +34,7 @@ final class ForgotPasswordControllerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->managerMock = $this->prophesize(ForgotPasswordManager::class);
-        $this->normalizerMock = $this->prophesize(Normalizer::class);
+        $this->normalizerMock = $this->prophesize(NormalizerInterface::class);
         $this->tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
         $this->controller = new ForgotPasswordController(

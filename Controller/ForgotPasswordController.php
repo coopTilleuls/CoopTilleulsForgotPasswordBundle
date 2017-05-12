@@ -11,9 +11,9 @@
 
 namespace CoopTilleuls\ForgotPasswordBundle\Controller;
 
-use CoopTilleuls\ForgotPasswordBundle\Bridge\Normalizer;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
+use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,12 +28,12 @@ final class ForgotPasswordController
 
     /**
      * @param ForgotPasswordManager $forgotPasswordManager
-     * @param Normalizer            $normalizer
+     * @param NormalizerInterface   $normalizer
      * @param array                 $groups
      */
     public function __construct(
         ForgotPasswordManager $forgotPasswordManager,
-        Normalizer $normalizer,
+        NormalizerInterface $normalizer,
         array $groups
     ) {
         $this->forgotPasswordManager = $forgotPasswordManager;

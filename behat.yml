@@ -1,4 +1,4 @@
-# Test without Symfony Serializer
+# Test with Symfony Serializer
 default:
     suites:
         default:

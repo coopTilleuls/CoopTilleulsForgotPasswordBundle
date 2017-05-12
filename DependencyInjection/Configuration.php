@@ -72,6 +72,7 @@ final class Configuration implements ConfigurationInterface
                         ->scalarNode('password_field')->defaultValue('password')->cannotBeEmpty()->info('User password field name.')->end()
                     ->end()
                 ->end()
+                ->booleanNode('use_jms_serializer')->defaultFalse()->end()
             ->end();
 
         return $treeBuilder;
