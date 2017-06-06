@@ -21,9 +21,6 @@ matrix:
         - php: 7.1
         - php: 7.1
           env: deps='low'
-        - php: hhvm
-        - php: hhvm
-          env: deps='low'
 
 before_install:
     - if [[ $lint = 1 ]]; then wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v2.1.1/php-cs-fixer.phar; fi
