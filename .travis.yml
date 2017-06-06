@@ -35,3 +35,4 @@ script:
     - if [[ $lint = 1 ]]; then php php-cs-fixer.phar fix --dry-run --diff; fi
     - vendor/bin/phpunit
     - vendor/bin/behat
+    - vendor/bin/behat -p jmsserializer

@@ -1,3 +1,4 @@
+# Test with Symfony Serializer
 default:
     suites:
         default:
@@ -10,6 +11,23 @@ default:
         'Behat\Symfony2Extension':
             kernel:
                 env:       'test'
+                debug:     'true'
+                path:      'features/app/AppKernel.php'
+                bootstrap: 'features/app/bootstrap.php'
+
+# Test with JmsSerializerBundle
+jmsserializer:
+    suites:
+        default:
+            contexts:
+                - FeatureContext:
+                    - '@test.client'
+                    - '@doctrine'
+                    - '@coop_tilleuls_forgot_password.manager.password_token'
+    extensions:
+        'Behat\Symfony2Extension':
+            kernel:
+                env:       'jmsserializer'
                 debug:     'true'
                 path:      'features/app/AppKernel.php'
                 bootstrap: 'features/app/bootstrap.php'

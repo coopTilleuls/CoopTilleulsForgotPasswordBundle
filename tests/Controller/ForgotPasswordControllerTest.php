@@ -14,9 +14,9 @@ namespace Tests\ForgotPasswordBundle\Controller;
 use CoopTilleuls\ForgotPasswordBundle\Controller\ForgotPasswordController;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
+use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * @author Vincent Chalamon <vincentchalamon@gmail.com>

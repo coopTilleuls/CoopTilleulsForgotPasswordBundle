@@ -11,9 +11,13 @@
 
 namespace CoopTilleuls\ForgotPasswordBundle\DependencyInjection;
 
+use CoopTilleuls\ForgotPasswordBundle\Normalizer\JMSNormalizer;
+use CoopTilleuls\ForgotPasswordBundle\Normalizer\SymfonyNormalizer;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -47,5 +51,9 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
             throw new \LogicException(sprintf('Service "%s" does not exist.', $config['manager']));
         }
         $container->setAlias('coop_tilleuls_forgot_password.manager', $config['manager']);
+
+        // Build normalizer
+        $class = true === $config['use_jms_serializer'] ? JMSNormalizer::class : SymfonyNormalizer::class;
+        $container->setDefinition('coop_tilleuls_forgot_password.normalizer', new Definition($class, [new Reference('serializer')]))->setPublic(false);
     }
 }

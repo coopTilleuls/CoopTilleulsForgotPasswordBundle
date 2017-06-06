@@ -7,7 +7,7 @@
     <services>
         <service id="coop_tilleuls_forgot_password.controller.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Controller\ForgotPasswordController">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.forgot_password" />
-            <argument type="service" id="serializer" />
+            <argument type="service" id="coop_tilleuls_forgot_password.normalizer" />
             <argument>%coop_tilleuls_forgot_password.password_token_serialization_groups%</argument>
         </service>
 

@@ -29,7 +29,7 @@ final class AppKernel extends Kernel
 
     public function registerBundles()
     {
-        return [
+        $bundles = [
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
@@ -39,6 +39,11 @@ final class AppKernel extends Kernel
             new CoopTilleuls\ForgotPasswordBundle\CoopTilleulsForgotPasswordBundle(),
             new CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\CoopTilleulsTestBundle(),
         ];
+        if ('jmsserializer' === $this->getEnvironment()) {
+            $bundles[] = new JMS\SerializerBundle\JMSSerializerBundle();
+        }
+
+        return $bundles;
     }
 
     protected function configureRoutes(RouteCollectionBuilder $routes)
@@ -51,6 +56,7 @@ final class AppKernel extends Kernel
         $c->loadFromExtension('coop_tilleuls_forgot_password', [
             'password_token_class' => PasswordToken::class,
             'user_class' => User::class,
+            'use_jms_serializer' => 'jmsserializer' === $this->getEnvironment(),
         ]);
 
         $c->loadFromExtension('swiftmailer', [
