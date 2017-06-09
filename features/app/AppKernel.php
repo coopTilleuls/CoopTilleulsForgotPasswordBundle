@@ -76,16 +76,15 @@ final class AppKernel extends Kernel
             ],
         ]);
 
-        $c->loadFromExtension('framework', [
+        $c->loadFromExtension('framework', array_merge([
             'secret' => 'CoopTilleulsForgotPasswordBundle',
             'test' => null,
             'assets' => null,
-            'serializer' => null,
             'profiler' => ['collect' => false],
             'templating' => [
                 'engines' => ['twig'],
             ],
-        ]);
+        ], 'jmsserializer' !== $this->getEnvironment() ? ['serializer' => null] : []));
 
         $c->loadFromExtension('security', [
             'encoders' => [UserInterface::class => 'plaintext'],
