@@ -40,7 +40,7 @@ Feature: I need to be able to reset my password
 
     Scenario: I can't update my password with no password specified
         When I update my password using no password
-        Then the request should be invalid with message 'Parameter "password" is missing.'
+        Then the request should be invalid with message 'No parameters send.'
 
     Scenario: I can get a password token
         When I get a password token

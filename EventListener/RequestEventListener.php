@@ -14,7 +14,6 @@ namespace CoopTilleuls\ForgotPasswordBundle\EventListener;
 use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\NoParametersException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException;
-use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldsException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -29,12 +28,12 @@ final class RequestEventListener
     private $passwordTokenManager;
 
     /**
-     * @param $authorizedFields
+     * @param array $authorizedFields
      * @param string $userPasswordField
      * @param PasswordTokenManager $passwordTokenManager
      */
     public function __construct(
-        $authorizedFields,
+        array $authorizedFields,
         $userPasswordField,
         PasswordTokenManager $passwordTokenManager
     ) {
@@ -56,24 +55,22 @@ final class RequestEventListener
         }
 
         $data = json_decode($request->getContent(), true);
+        if (!is_array($data)) {
+            throw new NoParametersException();
+        }
+
+        $fieldName = key($data);
+        if (empty($data[$fieldName])) {
+            throw new MissingFieldHttpException($fieldName);
+        }
 
         if ('coop_tilleuls_forgot_password.reset' === $routeName) {
-            if (!is_array($data)) {
-                throw new NoParametersException();
-            }
-
-            $fieldName = key($data);
             if (!in_array($fieldName, $this->authorizedFields)) {
                 throw new UnauthorizedFieldException($fieldName);
             }
             $request->attributes->set('propertyName', $fieldName);
             $request->attributes->set('value', $data[$fieldName]);
         } else {
-            $fieldName = $this->userPasswordField;
-
-            if (!isset($data[$fieldName]) || empty($data[$fieldName])) {
-                throw new MissingFieldHttpException($fieldName);
-            }
             $request->attributes->set($fieldName, $data[$fieldName]);
         }
     }
