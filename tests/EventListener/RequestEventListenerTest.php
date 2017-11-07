@@ -43,7 +43,7 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->requestMock->attributes = $this->parameterBagMock->reveal();
 
         $this->listener = new RequestEventListener(
-            'email',
+            ['email','username'],
             'password',
             $this->managerMock->reveal()
         );
@@ -66,7 +66,33 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
         $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
-        $this->requestMock->getContent()->willReturn(json_encode(['foo' => 'bar']))->shouldBeCalledTimes(1);
+        $this->requestMock->getContent()->willReturn(json_encode(['password' => '']))->shouldBeCalledTimes(1);
+
+        $this->listener->decodeRequest($this->eventMock->reveal());
+    }
+
+    /**
+     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\NoParametersException
+     * @expectedExceptionMessage No parameters send.
+     */
+    public function testDecodeRequestNoParametersException()
+    {
+        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
+        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        $this->requestMock->getContent()->willReturn()->shouldBeCalledTimes(1);
+
+        $this->listener->decodeRequest($this->eventMock->reveal());
+    }
+
+    /**
+     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException
+     * @expectedExceptionMessage The parameter "name" is not authorized in your configuration.
+     */
+    public function testDecodeRequestUnauthorizedException()
+    {
+        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.reset')->shouldBeCalledTimes(1);
+        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        $this->requestMock->getContent()->willReturn(json_encode(['name' => 'foo']))->shouldBeCalledTimes(1);
 
         $this->listener->decodeRequest($this->eventMock->reveal());
     }

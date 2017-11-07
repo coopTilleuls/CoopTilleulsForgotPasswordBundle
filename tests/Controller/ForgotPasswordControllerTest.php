@@ -46,8 +46,8 @@ final class ForgotPasswordControllerTest extends \PHPUnit_Framework_TestCase
 
     public function testResetPasswordAction()
     {
-        $this->managerMock->resetPassword('foo@example.com')->shouldBeCalledTimes(1);
-        $response = $this->controller->resetPasswordAction('foo@example.com');
+        $this->managerMock->resetPassword('email','foo@example.com')->shouldBeCalledTimes(1);
+        $response = $this->controller->resetPasswordAction('email','foo@example.com');
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals('', $response->getContent());
         $this->assertEquals(204, $response->getStatusCode());

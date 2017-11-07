@@ -49,8 +49,7 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
             $this->passwordManagerMock->reveal(),
             $this->eventDispatcherMock->reveal(),
             $this->managerMock->reveal(),
-            'App\Entity\User',
-            'email'
+            'App\Entity\User'
         );
     }
 
@@ -62,7 +61,7 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->managerMock->findOneBy('App\Entity\User', ['email' => 'foo@example.com'])->shouldBeCalledTimes(1);
 
-        $this->manager->resetPassword('foo@example.com');
+        $this->manager->resetPassword('email','foo@example.com');
     }
 
     /**
@@ -75,7 +74,7 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         $this->passwordManagerMock->findOneByUser($this->userMock->reveal())->willReturn($this->tokenMock->reveal())->shouldBeCalledTimes(1);
         $this->tokenMock->isExpired()->willReturn(false)->shouldBeCalledTimes(1);
 
-        $this->manager->resetPassword('foo@example.com');
+        $this->manager->resetPassword('email','foo@example.com');
     }
 
     public function testResetPassword()
@@ -90,7 +89,7 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
             return $event instanceof ForgotPasswordEvent && is_null($event->getPassword()) && $tokenMock->reveal() === $event->getPasswordToken();
         }))->shouldBeCalledTimes(1);
 
-        $this->manager->resetPassword('foo@example.com');
+        $this->manager->resetPassword('email','foo@example.com');
     }
 
     public function testUpdatePassword()
