@@ -12,6 +12,9 @@
 namespace CoopTilleuls\ForgotPasswordBundle\EventListener;
 
 use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
+use CoopTilleuls\ForgotPasswordBundle\Exception\NoParametersException;
+use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException;
+use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldsException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -21,21 +24,21 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class RequestEventListener
 {
-    private $userEmailField;
+    private $authorizedFields;
     private $userPasswordField;
     private $passwordTokenManager;
 
     /**
-     * @param string               $userEmailField
-     * @param string               $userPasswordField
+     * @param $authorizedFields
+     * @param string $userPasswordField
      * @param PasswordTokenManager $passwordTokenManager
      */
     public function __construct(
-        $userEmailField,
+        $authorizedFields,
         $userPasswordField,
         PasswordTokenManager $passwordTokenManager
     ) {
-        $this->userEmailField = $userEmailField;
+        $this->authorizedFields = $authorizedFields;
         $this->userPasswordField = $userPasswordField;
         $this->passwordTokenManager = $passwordTokenManager;
     }
@@ -53,11 +56,26 @@ final class RequestEventListener
         }
 
         $data = json_decode($request->getContent(), true);
-        $fieldName = 'coop_tilleuls_forgot_password.reset' === $routeName ? $this->userEmailField : $this->userPasswordField;
-        if (!isset($data[$fieldName]) || empty($data[$fieldName])) {
-            throw new MissingFieldHttpException($fieldName);
+
+        if ('coop_tilleuls_forgot_password.reset' === $routeName) {
+            if (!is_array($data)) {
+                throw new NoParametersException();
+            }
+
+            $fieldName = key($data);
+            if (!in_array($fieldName, $this->authorizedFields)) {
+                throw new UnauthorizedFieldException($fieldName);
+            }
+            $request->attributes->set('propertyName', $fieldName);
+            $request->attributes->set('value', $data[$fieldName]);
+        } else {
+            $fieldName = $this->userPasswordField;
+
+            if (!isset($data[$fieldName]) || empty($data[$fieldName])) {
+                throw new MissingFieldHttpException($fieldName);
+            }
+            $request->attributes->set($fieldName, $data[$fieldName]);
         }
-        $request->attributes->set($fieldName, $data[$fieldName]);
     }
 
     public function getTokenFromRequest(GetResponseEvent $event)

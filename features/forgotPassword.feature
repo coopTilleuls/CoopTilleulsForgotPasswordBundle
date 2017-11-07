@@ -4,6 +4,14 @@ Feature: I need to be able to reset my password
         When I reset my password
         Then I should receive an email
 
+    Scenario: I can reset my password with my username
+        When I reset my password with my username JohnDoe
+        Then I should receive an email
+
+    Scenario: I can't reset my password with an authorized field
+        When I reset my password with my id 1
+        Then the request should be invalid with message 'The parameter "id" is not authorized in your configuration.'
+
     Scenario: I can't reset my password if I already request a token
         Given I have a valid token
         When I reset my password
@@ -18,9 +26,9 @@ Feature: I need to be able to reset my password
         When I reset my password using invalid email address
         Then the request should be invalid with message 'User with field "email" equal to "foo@example.com" cannot be found.'
 
-    Scenario: I can't reset my password with no email address specified
-        When I reset my password using no email address
-        Then the request should be invalid with message 'Parameter "email" is missing.'
+    Scenario: I can't reset my password with no parameter specified
+        When I reset my password using no parameter
+        Then the request should be invalid with message 'No parameters send.'
 
     Scenario: I can't update my password using an invalid token
         When I update my password using an invalid token

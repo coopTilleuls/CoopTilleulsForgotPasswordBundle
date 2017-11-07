@@ -16,7 +16,6 @@
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="coop_tilleuls_forgot_password.manager" />
             <argument>%coop_tilleuls_forgot_password.user_class%</argument>
-            <argument>%coop_tilleuls_forgot_password.user_email_field%</argument>
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager">
@@ -31,7 +30,7 @@
         </service>
 
         <service id="coop_tilleuls_forgot_password.event_listener.request" class="CoopTilleuls\ForgotPasswordBundle\EventListener\RequestEventListener">
-            <argument>%coop_tilleuls_forgot_password.user_email_field%</argument>
+            <argument>%coop_tilleuls_forgot_password.user_authorized_fields%</argument>
             <argument>%coop_tilleuls_forgot_password.user_password_field%</argument>
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <tag name="kernel.event_listener" event="kernel.request" method="decodeRequest" />

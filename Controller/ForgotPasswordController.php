@@ -42,13 +42,13 @@ final class ForgotPasswordController
     }
 
     /**
-     * @param string $email
-     *
+     * @param $propertyName
+     * @param $value
      * @return Response
      */
-    public function resetPasswordAction($email)
+    public function resetPasswordAction($propertyName, $value)
     {
-        $this->forgotPasswordManager->resetPassword($email);
+        $this->forgotPasswordManager->resetPassword($propertyName, $value);
 
         return new Response('', 204);
     }

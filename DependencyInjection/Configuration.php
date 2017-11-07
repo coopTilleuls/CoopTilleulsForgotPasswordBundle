@@ -68,7 +68,7 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('user')
                     ->children()
                         ->scalarNode('class')->cannotBeEmpty()->isRequired()->info('User class.')->end()
-                        ->scalarNode('email_field')->defaultValue('email')->cannotBeEmpty()->info('User email field name to retrieve it (email, username...).')->end()
+                        ->scalarNode('authorized_fields')->defaultValue(['email', 'username'])->cannotBeEmpty()->info('User fields names to retrieve it (email, username...).')->end()
                         ->scalarNode('password_field')->defaultValue('password')->cannotBeEmpty()->info('User password field name.')->end()
                     ->end()
                 ->end()

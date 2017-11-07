@@ -38,6 +38,13 @@ final class User implements UserInterface
     private $email;
 
     /**
+     * @var
+     *
+     * @ORM\Column(type="string")
+     */
+    private $username;
+
+    /**
      * @var string
      *
      * @ORM\Column(type="string")
@@ -55,14 +62,6 @@ final class User implements UserInterface
     /**
      * {@inheritdoc}
      */
-    public function getUsername()
-    {
-        return $this->getEmail();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getEmail()
     {
         return $this->email;
@@ -74,6 +73,22 @@ final class User implements UserInterface
     public function setEmail($email)
     {
         $this->email = $email;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param string $username
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
     }
 
     /**

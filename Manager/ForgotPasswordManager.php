@@ -27,37 +27,34 @@ class ForgotPasswordManager
     private $passwordTokenManager;
     private $dispatcher;
     private $userClass;
-    private $userEmailField;
 
     /**
      * @param PasswordTokenManager     $passwordTokenManager
      * @param EventDispatcherInterface $dispatcher
      * @param ManagerInterface         $manager
      * @param string                   $userClass
-     * @param string                   $userEmailField
      */
     public function __construct(
         PasswordTokenManager $passwordTokenManager,
         EventDispatcherInterface $dispatcher,
         ManagerInterface $manager,
-        $userClass,
-        $userEmailField
+        $userClass
     ) {
         $this->passwordTokenManager = $passwordTokenManager;
         $this->dispatcher = $dispatcher;
         $this->manager = $manager;
         $this->userClass = $userClass;
-        $this->userEmailField = $userEmailField;
     }
 
     /**
-     * @param string $username
+     * @param $propertyName
+     * @param $value
      */
-    public function resetPassword($username)
+    public function resetPassword($propertyName, $value)
     {
-        $user = $this->manager->findOneBy($this->userClass, [$this->userEmailField => $username]);
+        $user = $this->manager->findOneBy($this->userClass, [$propertyName => $value]);
         if (null === $user) {
-            throw new UserNotFoundHttpException($this->userEmailField, $username);
+            throw new UserNotFoundHttpException($propertyName, $value);
         }
 
         $token = $this->passwordTokenManager->findOneByUser($user);
