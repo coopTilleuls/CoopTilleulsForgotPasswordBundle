@@ -55,7 +55,7 @@ final class RequestEventListener
         }
 
         $data = json_decode($request->getContent(), true);
-        if (!is_array($data)) {
+        if (!is_array($data) || empty($data)) {
             throw new NoParametersException();
         }
 
