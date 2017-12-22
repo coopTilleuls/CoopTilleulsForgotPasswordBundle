@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": ">=5.6",
+        "php": ">=5.5",
         "ircmaxell/random-lib": "^1.2",
         "symfony/config": "^2.3|^3.0|^4.0",
         "symfony/dependency-injection": "^2.3|^3.0|^4.0",
@@ -48,8 +48,7 @@
     },
     "suggest": {
         "doctrine/doctrine-bundle": "To connect with Doctrine in Symfony project",
-        "doctrine/orm": "To connect with Doctrine",
-        "symfony/serializer": "(recommanded) Use the official Symfony Serializer"
+        "doctrine/orm": "To connect with Doctrine"
     },
     "autoload": {
         "psr-4": {
