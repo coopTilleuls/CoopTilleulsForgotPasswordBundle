@@ -9,6 +9,10 @@ Installing CoopTilleulsForgotPasswordBundle can be done easily through [Composer
 composer require tilleuls/forgot-password-bundle
 ```
 
+**If you're using [Flex](https://github.com/symfony/flex), all configuration is already done. You can customize it in
+`config/packages/coop_tilleuls_forgot_password.yaml` file.** You can directly go to
+[Create your entity](#create-your-entity) chapter.
+
 Register this bundle in your kernel:
 
 ```php
@@ -129,16 +133,20 @@ security:
 ```
 
 By default, this bundle will look for `email` field on user class to retrieve it, will generate a PasswordToken valid
-for 1 day, and will set a `password` field when sent. You can customize those fields through complete configuration:
+for 1 day, and will set a `password` field when sent. Here is the default configuration:
 
 ```yml
 # app/config/config.yml
 coop_tilleuls_forgot_password:
-    password_token_class: 'AppBundle\Entity\PasswordToken'
-    user_class:           'AppBundle\Entity\User'
-    email_field:          'email'
-    password_field:       'password'
-    expires_in:           '1 day'
+    password_token:
+        class: App\Entity\PasswordToken # required
+        expires_in: 1 day
+        user_field: user
+        serialization_groups: []
+    user:
+        class: App\Entity\User # required
+        email_field: email
+        password_field: password
 ```
 
 ## Ensure user is not authenticated

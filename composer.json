@@ -22,7 +22,8 @@
         "symfony/dependency-injection": "^2.3|^3.0|^4.0",
         "symfony/event-dispatcher": "^2.3|^3.0|^4.0",
         "symfony/http-foundation": "^2.3|^3.0|^4.0",
-        "symfony/http-kernel": "^2.3|^3.0|^4.0"
+        "symfony/http-kernel": "^2.3|^3.0|^4.0",
+        "symfony/serializer": "^2.7|^3.0|^4.0"
     },
     "require-dev": {
         "behat/behat": "^3.1",
@@ -30,7 +31,7 @@
         "doctrine/data-fixtures": "^1.1",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
-        "phpunit/phpunit": "^5.6.8",
+        "phpunit/phpunit": "^4.5|^5.6.8",
         "swiftmailer/swiftmailer": "^5.2.0",
         "symfony/asset": "^2.3|^3.0|^4.0",
         "symfony/assetic-bundle": "^2.8",
@@ -41,14 +42,14 @@
         "symfony/swiftmailer-bundle": "^2.3.11|^3.0",
         "symfony/templating": "^2.3|^3.0|^4.0",
         "symfony/twig-bundle": "^2.8|^3.0|^4.0",
-        "symfony/serializer": "^2.7|^3.0|^4.0",
         "jms/serializer-bundle": "^1.4",
         "symfony/stopwatch": "^2.3|^3.0|^4.0",
         "sebastian/comparator": "^1.2.4|^2.0"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "To connect with Doctrine in Symfony project",
-        "doctrine/orm": "To connect with Doctrine"
+        "doctrine/orm": "To connect with Doctrine",
+        "symfony/serializer": "(recommanded) Use the official Symfony Serializer"
     },
     "autoload": {
         "psr-4": {
