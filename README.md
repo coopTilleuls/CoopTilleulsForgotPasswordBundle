@@ -16,7 +16,7 @@ This bundle also supports Symfony 3.* & PHP 7
 
 ## Documentation
 
-Full documentation is available at [Resources/doc](Resources/doc).
+Full documentation is available at [Resources/doc](Resources/doc/getting_started.md).
 
 ## Credits
 
