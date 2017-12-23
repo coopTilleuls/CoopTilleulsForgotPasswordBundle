@@ -6,7 +6,6 @@
          colors="true"
          bootstrap="features/app/bootstrap.php"
          beStrictAboutTestsThatDoNotTestAnything="true"
-         checkForUnintentionallyCoveredCode="true"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTestSize="true">
 
