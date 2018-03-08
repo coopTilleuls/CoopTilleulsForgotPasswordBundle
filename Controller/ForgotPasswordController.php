@@ -42,8 +42,8 @@ final class ForgotPasswordController
     }
 
     /**
-     * @param $propertyName
-     * @param $value
+     * @param string $propertyName
+     * @param string $value
      * @return Response
      */
     public function resetPasswordAction($propertyName, $value)

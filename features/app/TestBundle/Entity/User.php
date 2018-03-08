@@ -38,7 +38,7 @@ final class User implements UserInterface
     private $email;
 
     /**
-     * @var
+     * @var string
      *
      * @ORM\Column(type="string")
      */

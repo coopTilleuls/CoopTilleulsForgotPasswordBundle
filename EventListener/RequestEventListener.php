@@ -11,8 +11,9 @@
 
 namespace CoopTilleuls\ForgotPasswordBundle\EventListener;
 
+use CoopTilleuls\ForgotPasswordBundle\Exception\InvalidJsonHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
-use CoopTilleuls\ForgotPasswordBundle\Exception\NoParametersException;
+use CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -55,8 +56,11 @@ final class RequestEventListener
         }
 
         $data = json_decode($request->getContent(), true);
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new InvalidJsonHttpException();
+        }
         if (!is_array($data) || empty($data)) {
-            throw new NoParametersException();
+            throw new NoParameterException();
         }
 
         $fieldName = key($data);

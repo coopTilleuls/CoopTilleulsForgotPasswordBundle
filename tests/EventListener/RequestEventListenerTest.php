@@ -72,7 +72,7 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\NoParametersException
+     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException
      * @expectedExceptionMessage No parameters send.
      */
     public function testDecodeRequestNoParametersException()

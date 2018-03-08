@@ -1,12 +1,12 @@
 Feature: I need to be able to reset my password
 
-    Scenario: I can reset my password
-        When I reset my password
+    Scenario Outline: I can reset my password
+        When I reset my password with my <property> <value>
         Then I should receive an email
-
-    Scenario: I can reset my password with my username
-        When I reset my password with my username JohnDoe
-        Then I should receive an email
+        Examples:
+            | property  | value                 |
+            | username  | JohnDoe               |
+            | email     | john.doe@example.com  |
 
     Scenario: I can't reset my password with an authorized field
         When I reset my password with my id 1
