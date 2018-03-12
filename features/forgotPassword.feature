@@ -1,7 +1,7 @@
 Feature: I need to be able to reset my password
 
     Scenario Outline: I can reset my password
-        When I reset my password with my <property> <value>
+        When I reset my password with my <property> "<value>"
         Then I should receive an email
         Examples:
             | property  | value                 |
@@ -9,7 +9,7 @@ Feature: I need to be able to reset my password
             | email     | john.doe@example.com  |
 
     Scenario: I can't reset my password with an authorized field
-        When I reset my password with my id 1
+        When I reset my password with my id "1"
         Then the request should be invalid with message 'The parameter "id" is not authorized in your configuration.'
 
     Scenario: I can't reset my password if I already request a token
@@ -28,7 +28,7 @@ Feature: I need to be able to reset my password
 
     Scenario: I can't reset my password with no parameter specified
         When I reset my password using no parameter
-        Then the request should be invalid with message 'No parameters send.'
+        Then the request should be invalid with message 'Invalid JSON data.'
 
     Scenario: I can't update my password using an invalid token
         When I update my password using an invalid token
@@ -40,7 +40,7 @@ Feature: I need to be able to reset my password
 
     Scenario: I can't update my password with no password specified
         When I update my password using no password
-        Then the request should be invalid with message 'No parameters send.'
+        Then the request should be invalid with message 'Invalid JSON data.'
 
     Scenario: I can get a password token
         When I get a password token

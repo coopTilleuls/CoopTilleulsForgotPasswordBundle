@@ -72,8 +72,8 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException
-     * @expectedExceptionMessage No parameters send.
+     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\InvalidJsonHttpException
+     * @expectedExceptionMessage Invalid JSON data.
      */
     public function testDecodeRequestNoParametersException()
     {

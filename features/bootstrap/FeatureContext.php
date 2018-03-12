@@ -85,7 +85,7 @@ final class FeatureContext implements Context, SnippetAcceptingContext
 
     /**
      * @Then I reset my password
-     * @Then I reset my password with my :propertyName :value
+     * @Then I reset my password with my :propertyName ":value"
      *
      * @param string $propertyName
      * @param string $value

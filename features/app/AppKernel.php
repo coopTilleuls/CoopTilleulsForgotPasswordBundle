@@ -56,6 +56,9 @@ final class AppKernel extends Kernel
         $c->loadFromExtension('coop_tilleuls_forgot_password', [
             'password_token_class' => PasswordToken::class,
             'user_class' => User::class,
+            'user' => [
+                'authorized_fields' => ['email', 'username'],
+            ],
             'use_jms_serializer' => 'jmsserializer' === $this->getEnvironment(),
         ]);
 
