@@ -43,7 +43,7 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->requestMock->attributes = $this->parameterBagMock->reveal();
 
         $this->listener = new RequestEventListener(
-            ['email','username'],
+            ['email', 'username'],
             'password',
             $this->managerMock->reveal()
         );

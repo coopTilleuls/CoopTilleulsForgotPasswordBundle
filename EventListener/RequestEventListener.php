@@ -29,8 +29,8 @@ final class RequestEventListener
     private $passwordTokenManager;
 
     /**
-     * @param array $authorizedFields
-     * @param string $userPasswordField
+     * @param array                $authorizedFields
+     * @param string               $userPasswordField
      * @param PasswordTokenManager $passwordTokenManager
      */
     public function __construct(
