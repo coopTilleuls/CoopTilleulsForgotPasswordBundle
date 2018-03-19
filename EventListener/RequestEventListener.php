@@ -75,6 +75,10 @@ final class RequestEventListener
             $request->attributes->set('propertyName', $fieldName);
             $request->attributes->set('value', $data[$fieldName]);
         } else {
+            if ($this->userPasswordField !== $fieldName) {
+                throw new MissingFieldHttpException($this->userPasswordField);
+            }
+
             $request->attributes->set($fieldName, $data[$fieldName]);
         }
     }

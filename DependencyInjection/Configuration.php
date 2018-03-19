@@ -71,7 +71,7 @@ final class Configuration implements ConfigurationInterface
                         ->scalarNode('email_field')->defaultValue('email')->cannotBeEmpty()->info('User email field name to retrieve it (email, username...).')->end()
                         ->arrayNode('authorized_fields')
                             ->defaultValue(['email'])
-                            ->cannotBeEmpty()
+                            ->requiresAtLeastOneElement()
                             ->info('User fields names to retrieve it (email, username...).')
                             ->prototype('scalar')->end()
                         ->end()

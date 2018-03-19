@@ -49,7 +49,6 @@ class ForgotPasswordManager
     /**
      * @param $propertyName
      * @param $value
-     * @return mixed|null
      */
     public function resetPassword($propertyName, $value)
     {
@@ -69,8 +68,6 @@ class ForgotPasswordManager
             ForgotPasswordEvent::CREATE_TOKEN,
             new ForgotPasswordEvent($this->passwordTokenManager->createPasswordToken($user))
         );
-
-        return $user;
     }
 
     /**
