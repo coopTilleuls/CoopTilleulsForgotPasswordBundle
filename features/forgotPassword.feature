@@ -28,7 +28,7 @@ Feature: I need to be able to reset my password
 
     Scenario: I can't reset my password with no parameter specified
         When I reset my password using no parameter
-        Then the request should be invalid with message 'Invalid JSON data.'
+        Then the request should be invalid with message 'No parameter sent.'
 
     Scenario: I can't update my password using an invalid token
         When I update my password using an invalid token
@@ -40,7 +40,7 @@ Feature: I need to be able to reset my password
 
     Scenario: I can't update my password with no password specified
         When I update my password using no password
-        Then the request should be invalid with message 'Invalid JSON data.'
+        Then the request should be invalid with message 'No parameter sent.'
 
     Scenario: I can get a password token
         When I get a password token

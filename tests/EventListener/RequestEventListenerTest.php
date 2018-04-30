@@ -92,7 +92,7 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
         $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
-        $this->requestMock->getContent()->willReturn('')->shouldBeCalledTimes(1);
+        $this->requestMock->getContent()->willReturn('{')->shouldBeCalledTimes(1);
 
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
