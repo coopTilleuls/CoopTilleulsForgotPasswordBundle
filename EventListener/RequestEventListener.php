@@ -55,8 +55,9 @@ final class RequestEventListener
             return;
         }
 
-        $data = json_decode($request->getContent(), true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        $content = $request->getContent();
+        $data = json_decode($content, true);
+        if (!empty($content) && JSON_ERROR_NONE !== json_last_error()) {
             throw new InvalidJsonHttpException();
         }
         if (!is_array($data) || empty($data)) {
