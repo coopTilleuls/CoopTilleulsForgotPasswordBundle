@@ -72,14 +72,27 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\InvalidJsonHttpException
-     * @expectedExceptionMessage Invalid JSON data.
+     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException
+     * @expectedExceptionMessage No parameter sent.
      */
     public function testDecodeRequestNoParametersException()
     {
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
         $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
-        $this->requestMock->getContent()->willReturn()->shouldBeCalledTimes(1);
+        $this->requestMock->getContent()->willReturn('{}')->shouldBeCalledTimes(1);
+
+        $this->listener->decodeRequest($this->eventMock->reveal());
+    }
+
+    /**
+     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\InvalidJsonHttpException
+     * @expectedExceptionMessage Invalid JSON data.
+     */
+    public function testDecodeRequestInvalidJsonHttpException()
+    {
+        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
+        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        $this->requestMock->getContent()->willReturn('')->shouldBeCalledTimes(1);
 
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
