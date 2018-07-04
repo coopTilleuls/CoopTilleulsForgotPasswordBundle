@@ -32,9 +32,8 @@
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
         "phpunit/phpunit": "^4.5|^5.6.8",
-        "swiftmailer/swiftmailer": "^5.2.0",
+        "swiftmailer/swiftmailer": "^5.2.0|^6.0",
         "symfony/asset": "^2.3|^3.0|^4.0",
-        "symfony/assetic-bundle": "^2.8",
         "symfony/browser-kit": "^2.3|^3.0|^4.0",
         "symfony/framework-bundle": "^2.8|^3.0|^4.0",
         "symfony/property-access": "^2.3|^3.0|^4.0",
@@ -42,9 +41,10 @@
         "symfony/swiftmailer-bundle": "^2.3.11|^3.0",
         "symfony/templating": "^2.3|^3.0|^4.0",
         "symfony/twig-bundle": "^2.8|^3.0|^4.0",
-        "jms/serializer-bundle": "^1.4",
+        "jms/serializer-bundle": "^1.4|^2.0",
         "symfony/stopwatch": "^2.3|^3.0|^4.0",
-        "sebastian/comparator": "^1.2.4|^2.0"
+        "sebastian/comparator": "^1.2.4|^2.0",
+        "symfony/var-dumper": "^2.3|^3.0|^4.0"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "To connect with Doctrine in Symfony project",
