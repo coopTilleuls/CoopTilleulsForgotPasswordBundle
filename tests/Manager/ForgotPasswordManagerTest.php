@@ -65,20 +65,21 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         $this->manager->resetPassword('foo@example.com');
     }
 
-    /**
-     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\UnexpiredTokenHttpException
-     * @expectedExceptionMessage An unexpired token already exists for this user.
-     */
-    public function testResetPasswordUnexpiredTokenHttpException()
+    public function testResetPasswordWithNoPreviousToken()
     {
+        $tokenMock = $this->prophesize(AbstractPasswordToken::class);
+
         $this->managerMock->findOneBy('App\Entity\User', ['email' => 'foo@example.com'])->willReturn($this->userMock->reveal())->shouldBeCalledTimes(1);
-        $this->passwordManagerMock->findOneByUser($this->userMock->reveal())->willReturn($this->tokenMock->reveal())->shouldBeCalledTimes(1);
-        $this->tokenMock->isExpired()->willReturn(false)->shouldBeCalledTimes(1);
+        $this->passwordManagerMock->findOneByUser($this->userMock->reveal())->willReturn(null)->shouldBeCalledTimes(1);
+        $this->passwordManagerMock->createPasswordToken($this->userMock->reveal())->willReturn($tokenMock->reveal())->shouldBeCalledTimes(1);
+        $this->eventDispatcherMock->dispatch(ForgotPasswordEvent::CREATE_TOKEN, Argument::that(function ($event) use ($tokenMock) {
+            return $event instanceof ForgotPasswordEvent && is_null($event->getPassword()) && $tokenMock->reveal() === $event->getPasswordToken();
+        }))->shouldBeCalledTimes(1);
 
         $this->manager->resetPassword('foo@example.com');
     }
 
-    public function testResetPassword()
+    public function testResetPasswordWithExpiredPreviousToken()
     {
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
@@ -88,6 +89,31 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         $this->passwordManagerMock->createPasswordToken($this->userMock->reveal())->willReturn($tokenMock->reveal())->shouldBeCalledTimes(1);
         $this->eventDispatcherMock->dispatch(ForgotPasswordEvent::CREATE_TOKEN, Argument::that(function ($event) use ($tokenMock) {
             return $event instanceof ForgotPasswordEvent && is_null($event->getPassword()) && $tokenMock->reveal() === $event->getPasswordToken();
+        }))->shouldBeCalledTimes(1);
+
+        $this->manager->resetPassword('foo@example.com');
+    }
+
+    /**
+     * @see https://github.com/coopTilleuls/CoopTilleulsForgotPasswordBundle/issues/37
+     */
+    public function testResetPasswordWithUnexpiredTokenHttp()
+    {
+        $tokenMock = $this->prophesize(AbstractPasswordToken::class);
+
+        $tokenMock
+            ->isExpired()
+            ->willReturn(false)
+            ->shouldBeCalledTimes(1)
+        ;
+
+        $token = $tokenMock->reveal();
+
+        $this->managerMock->findOneBy('App\Entity\User', ['email' => 'foo@example.com'])->willReturn($this->userMock->reveal())->shouldBeCalledTimes(1);
+        $this->passwordManagerMock->findOneByUser($this->userMock->reveal())->willReturn($token)->shouldBeCalledTimes(1);
+
+        $this->eventDispatcherMock->dispatch(ForgotPasswordEvent::CREATE_TOKEN, Argument::that(function ($event) use ($token) {
+            return $event instanceof ForgotPasswordEvent && is_null($event->getPassword()) && $token === $event->getPasswordToken();
         }))->shouldBeCalledTimes(1);
 
         $this->manager->resetPassword('foo@example.com');
