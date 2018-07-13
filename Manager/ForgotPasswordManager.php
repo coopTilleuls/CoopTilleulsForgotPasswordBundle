@@ -13,7 +13,6 @@ namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
-use CoopTilleuls\ForgotPasswordBundle\Exception\UserNotFoundHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -56,7 +55,7 @@ class ForgotPasswordManager
     {
         $user = $this->manager->findOneBy($this->userClass, [$this->userEmailField => $username]);
         if (null === $user) {
-            throw new UserNotFoundHttpException($this->userEmailField, $username);
+            return;
         }
 
         $token = $this->passwordTokenManager->findOneByUser($user);

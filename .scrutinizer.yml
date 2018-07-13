@@ -9,7 +9,7 @@ build_failure_conditions:
 build:
     environment:
         php:
-            version: 5.5.12
+            version: 7.2
             ini:
                 error_reporting: 16383
     tests:

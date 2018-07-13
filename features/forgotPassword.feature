@@ -14,9 +14,9 @@ Feature: I need to be able to reset my password
         When I reset my password
         Then I should receive an email
 
-    Scenario: I can't reset my password with an invalid email address
+    Scenario: I can reset my password with an invalid email address, no error is thrown
         When I reset my password using invalid email address
-        Then the request should be invalid with message 'User with field "email" equal to "foo@example.com" cannot be found.'
+        Then the response should be empty
 
     Scenario: I can't reset my password with no email address specified
         When I reset my password using no email address
