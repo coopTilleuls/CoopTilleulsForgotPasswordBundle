@@ -20,8 +20,6 @@ php:
     - 7.2
 
 before_install:
-    # Disable xdebug
-    - phpenv config-rm xdebug.ini
     - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 
 install:
@@ -35,3 +33,6 @@ script:
     - vendor/bin/phpunit
     - vendor/bin/behat
     - vendor/bin/behat -p jmsserializer
+
+after_success:
+    - travis_retry php vendor/bin/php-coveralls -v -o coveralls-upload.json -x clover.xml
