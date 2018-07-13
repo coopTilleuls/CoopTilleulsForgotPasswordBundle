@@ -141,6 +141,17 @@ JSON
     }
 
     /**
+     * @Then the response should be empty
+     */
+    public function theResponseShouldBeEmpty()
+    {
+        \PHPUnit_Framework_Assert::assertTrue(
+            $this->client->getResponse()->isEmpty(),
+            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+        );
+    }
+
+    /**
      * @When the request should be invalid with message :message
      *
      * @param string $message

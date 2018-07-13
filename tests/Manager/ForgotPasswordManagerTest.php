@@ -54,13 +54,10 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\UserNotFoundHttpException
-     * @expectedExceptionMessage User with field "email" equal to "foo@example.com" cannot be found.
-     */
-    public function testResetPasswordUserNotFoundHttpException()
+    public function testResetPasswordNotUser()
     {
         $this->managerMock->findOneBy('App\Entity\User', ['email' => 'foo@example.com'])->shouldBeCalledTimes(1);
+        $this->passwordManagerMock->findOneByUser(Argument::any())->shouldNotBeCalled();
 
         $this->manager->resetPassword('foo@example.com');
     }

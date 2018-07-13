@@ -12,7 +12,7 @@
 namespace Tests\ForgotPasswordBundle\EventListener;
 
 use CoopTilleuls\ForgotPasswordBundle\EventListener\ExceptionEventListener;
-use CoopTilleuls\ForgotPasswordBundle\Exception\UserNotFoundHttpException;
+use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
 use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -51,7 +51,7 @@ final class ExceptionEventListenerTest extends \PHPUnit_Framework_TestCase
         $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
         // Cannot mock exception as it should implement JsonHttpExceptionInterface
         // and extends \Exception, but method \Exception::getMessage is final
-        $exception = new UserNotFoundHttpException('foo', 'bar');
+        $exception = new MissingFieldHttpException('foo');
 
         $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
         $eventMock->getException()->willReturn($exception)->shouldBeCalledTimes(1);
@@ -60,7 +60,7 @@ final class ExceptionEventListenerTest extends \PHPUnit_Framework_TestCase
                 function ($response) {
                     return $response instanceof JsonResponse &&
                     json_encode(
-                        ['message' => 'User with field "foo" equal to "bar" cannot be found.'],
+                        ['message' => 'Parameter "foo" is missing.'],
                         15
                     ) === $response->getContent() &&
                     400 === $response->getStatusCode();
