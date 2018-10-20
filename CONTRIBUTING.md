@@ -20,10 +20,10 @@ If you happen to find a bug, we kindly request you to report it using GitHub by 
 ### Matching coding standards
 
 The CoopTilleulsForgotPasswordBundle project follows [Symfony coding standards](https://symfony.com/doc/current/contributing/code/standards.html).
-But don't worry, you can fix CS issues automatically using the [PHP CS Fixer](http://cs.sensiolabs.org/) tool
+But don't worry, you can fix CS issues automatically using the [PHP CS Fixer](http://cs.sensiolabs.org/) tool. Run phpcs fixer:
 
 ```bash
-php-cs-fixer.phar fix
+vendor/bin/php-cs-fixer fix
 ```
 
 And then, add fixed file to your commit before push. Be sure to add only **your modified files**. If another files are
