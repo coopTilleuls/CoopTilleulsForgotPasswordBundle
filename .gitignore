@@ -1,6 +1,7 @@
 vendor
-composer.phar
-composer.lock
-phpunit.xml
 features/app/cache
 features/app/logs
+composer.phar
+composer.lock
+.php_cs.cache
+phpunit.xml

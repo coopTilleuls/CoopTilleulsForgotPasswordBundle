@@ -20,7 +20,7 @@ interface ManagerInterface
      * @param string $class
      * @param array  $criteria
      *
-     * @return null|mixed
+     * @return mixed|null
      */
     public function findOneBy($class, array $criteria);
 

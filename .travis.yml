@@ -22,13 +22,12 @@ before_install:
     - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 
 install:
-    - composer global require friendsofphp/php-cs-fixer
     - if [[ $DEPENDENCIES = 'beta' ]]; then composer config minimum-stability beta; fi
     - if [[ ! $DEPENDENCIES || $DEPENDENCIES = 'beta' ]]; then composer update --prefer-dist --no-progress --no-suggest --ansi; fi
-    - if [[ $DEPENDENCIES = 'low' ]]; then composer update --prefer-dist --no-progress --no-suggest --prefer-stable --prefer-lowest --ansi; fi
+    - if [[ $DEPENDENCIES = 'low' ]]; then travis_wait 45 composer update --prefer-dist --no-progress --no-suggest --prefer-stable --prefer-lowest --ansi; fi
 
 script:
-    - $HOME/.composer/vendor/bin/php-cs-fixer fix --dry-run --diff
+    - vendor/bin/php-cs-fixer fix --dry-run --diff
     - vendor/bin/phpunit
     - vendor/bin/behat
     - vendor/bin/behat -p jmsserializer
