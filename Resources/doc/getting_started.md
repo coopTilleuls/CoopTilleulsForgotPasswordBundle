@@ -147,7 +147,7 @@ coop_tilleuls_forgot_password:
         class: App\Entity\User # required
         email_field: email
         password_field: password
-    use_jms_serialize: false # Switch between symfony's serializer component or JMS Serializer
+    use_jms_serializer: false # Switch between symfony's serializer component or JMS Serializer
 ```
 
 ## Ensure user is not authenticated
