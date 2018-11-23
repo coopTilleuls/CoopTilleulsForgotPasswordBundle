@@ -40,6 +40,8 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
         $container->setParameter('coop_tilleuls_forgot_password.password_token_serialization_groups', $config['password_token']['serialization_groups']);
 
         $container->setParameter('coop_tilleuls_forgot_password.user_class', $config['user']['class']);
+        $config['user']['authorized_fields'] = array_unique(array_merge($config['user']['authorized_fields'], [$config['user']['email_field']]));
+        unset($config['user']['email_field']);
         $container->setParameter('coop_tilleuls_forgot_password.user_authorized_fields', $config['user']['authorized_fields']);
         $container->setParameter('coop_tilleuls_forgot_password.user_password_field', $config['user']['password_field']);
 
@@ -56,8 +58,5 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
         $class = true === $config['use_jms_serializer'] ? JMSNormalizer::class : SymfonyNormalizer::class;
         $serializerId = true === $config['use_jms_serializer'] ? 'jms_serializer.serializer' : 'serializer';
         $container->setDefinition('coop_tilleuls_forgot_password.normalizer', new Definition($class, [new Reference($serializerId)]))->setPublic(false);
-
-        $config['user']['authorized_fields'] = array_unique(array_merge($config['user']['authorized_fields'], [$config['user']['email_field']]));
-        unset($config['user']['email_field']);
     }
 }

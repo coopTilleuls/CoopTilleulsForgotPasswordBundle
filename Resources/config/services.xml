@@ -3,12 +3,6 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services
         http://symfony.com/schema/dic/services/services-1.0.xsd">
-
-    <parameters>
-        <parameter key="coop_tilleuls_forgot_password.manager.forgot_password.class">CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager</parameter>
-        <parameter key="coop_tilleuls_forgot_password.manager.password_token.class">CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager</parameter>
-    </parameters>
-
     <services>
         <service id="coop_tilleuls_forgot_password.controller.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Controller\ForgotPasswordController">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.forgot_password" />
@@ -16,14 +10,14 @@
             <argument>%coop_tilleuls_forgot_password.password_token_serialization_groups%</argument>
         </service>
 
-        <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="%coop_tilleuls_forgot_password.manager.forgot_password.class%">
+        <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="coop_tilleuls_forgot_password.manager" />
             <argument>%coop_tilleuls_forgot_password.user_class%</argument>
         </service>
 
-        <service id="coop_tilleuls_forgot_password.manager.password_token" class="%coop_tilleuls_forgot_password.manager.password_token.class%">
+        <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager">
             <argument type="service" id="coop_tilleuls_forgot_password.manager" />
             <argument>%coop_tilleuls_forgot_password.password_token_class%</argument>
             <argument>%coop_tilleuls_forgot_password.password_token_expires_in%</argument>
