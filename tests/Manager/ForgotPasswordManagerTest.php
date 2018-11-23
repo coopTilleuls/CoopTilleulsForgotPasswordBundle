@@ -112,7 +112,7 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
             return $event instanceof ForgotPasswordEvent && is_null($event->getPassword()) && $token === $event->getPasswordToken();
         }))->shouldBeCalledTimes(1);
 
-        $this->manager->resetPassword('foo@example.com');
+        $this->manager->resetPassword('email', 'foo@example.com');
     }
 
     public function testUpdatePassword()

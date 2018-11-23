@@ -52,7 +52,7 @@ class ForgotPasswordManager
     {
         $user = $this->manager->findOneBy($this->userClass, [$propertyName => $value]);
         if (null === $user) {
-            throw new UserNotFoundHttpException($propertyName, $value);
+            return;
         }
 
         $token = $this->passwordTokenManager->findOneByUser($user);
