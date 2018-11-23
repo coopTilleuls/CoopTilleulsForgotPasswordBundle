@@ -6,7 +6,6 @@
          colors="true"
          bootstrap="features/app/bootstrap.php"
          beStrictAboutTestsThatDoNotTestAnything="true"
-         checkForUnintentionallyCoveredCode="true"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTestSize="true">
 
@@ -26,4 +25,8 @@
             </exclude>
         </whitelist>
     </filter>
+
+    <logging>
+        <log type="coverage-clover" target="clover.xml"/>
+    </logging>
 </phpunit>

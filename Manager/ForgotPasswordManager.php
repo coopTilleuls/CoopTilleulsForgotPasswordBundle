@@ -13,8 +13,6 @@ namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
-use CoopTilleuls\ForgotPasswordBundle\Exception\UnexpiredTokenHttpException;
-use CoopTilleuls\ForgotPasswordBundle\Exception\UserNotFoundHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -58,15 +56,16 @@ class ForgotPasswordManager
         }
 
         $token = $this->passwordTokenManager->findOneByUser($user);
+
         // A token already exists and has not expired
-        if (null !== $token && !$token->isExpired()) {
-            throw new UnexpiredTokenHttpException();
+        if (null === $token || $token->isExpired()) {
+            $token = $this->passwordTokenManager->createPasswordToken($user);
         }
 
         // Generate password token
         $this->dispatcher->dispatch(
             ForgotPasswordEvent::CREATE_TOKEN,
-            new ForgotPasswordEvent($this->passwordTokenManager->createPasswordToken($user))
+            new ForgotPasswordEvent($token)
         );
     }
 

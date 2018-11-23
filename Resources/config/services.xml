@@ -4,20 +4,20 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services
         http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="coop_tilleuls_forgot_password.controller.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Controller\ForgotPasswordController">
+        <service id="coop_tilleuls_forgot_password.controller.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Controller\ForgotPasswordController" public="true">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.forgot_password" />
             <argument type="service" id="coop_tilleuls_forgot_password.normalizer" />
             <argument>%coop_tilleuls_forgot_password.password_token_serialization_groups%</argument>
         </service>
 
-        <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager">
+        <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager" public="true">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="coop_tilleuls_forgot_password.manager" />
             <argument>%coop_tilleuls_forgot_password.user_class%</argument>
         </service>
 
-        <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager">
+        <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager" public="true">
             <argument type="service" id="coop_tilleuls_forgot_password.manager" />
             <argument>%coop_tilleuls_forgot_password.password_token_class%</argument>
             <argument>%coop_tilleuls_forgot_password.password_token_expires_in%</argument>

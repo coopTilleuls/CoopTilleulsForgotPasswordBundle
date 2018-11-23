@@ -9,7 +9,7 @@ build_failure_conditions:
 build:
     environment:
         php:
-            version: 5.5.12
+            version: 7.2
             ini:
                 error_reporting: 16383
     tests:
@@ -22,14 +22,14 @@ build:
 
 filter:
     paths:
-        - src/*
+        - ./
     excluded_paths:
         - tests/*
         - features/*
 
 tools:
     external_code_coverage: false
-    php_code_coverage: false
+    php_code_coverage: true
     php_code_sniffer:
         config:
             standard: 'symfony'

@@ -12,19 +12,19 @@ Feature: I need to be able to reset my password
         When I reset my password with my id "1"
         Then the request should be invalid with message 'The parameter "id" is not authorized in your configuration.'
 
-    Scenario: I can't reset my password if I already request a token
+    Scenario: I can reset my password even if I have already requested a token and this token has not expired yet
         Given I have a valid token
         When I reset my password
-        Then the request should be invalid with message 'An unexpired token already exists for this user.'
+        Then I should receive an email
 
     Scenario: I can reset my password if I already request a token but it has expired
         Given I have an expired token
         When I reset my password
         Then I should receive an email
 
-    Scenario: I can't reset my password with an invalid email address
+    Scenario: I can reset my password with an invalid email address, no error is thrown
         When I reset my password using invalid email address
-        Then the request should be invalid with message 'User with field "email" equal to "foo@example.com" cannot be found.'
+        Then the response should be empty
 
     Scenario: I can't reset my password with no parameter specified
         When I reset my password using no parameter

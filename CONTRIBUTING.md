@@ -19,11 +19,11 @@ If you happen to find a bug, we kindly request you to report it using GitHub by 
 
 ### Matching coding standards
 
-The PostmanGeneratorBundle project follows [Symfony coding standards](https://symfony.com/doc/current/contributing/code/standards.html).
-But don't worry, you can fix CS issues automatically using the [PHP CS Fixer](http://cs.sensiolabs.org/) tool
+The CoopTilleulsForgotPasswordBundle project follows [Symfony coding standards](https://symfony.com/doc/current/contributing/code/standards.html).
+But don't worry, you can fix CS issues automatically using the [PHP CS Fixer](http://cs.sensiolabs.org/) tool. Run phpcs fixer:
 
 ```bash
-php-cs-fixer.phar fix
+vendor/bin/php-cs-fixer fix
 ```
 
 And then, add fixed file to your commit before push. Be sure to add only **your modified files**. If another files are
@@ -74,7 +74,7 @@ git push --force
 
 # License and copyright attribution
 
-When you open a Pull Request to the PostmanGeneratorBundle project, you agree to license your code under the
+When you open a Pull Request to the CoopTilleulsForgotPasswordBundle project, you agree to license your code under the
 [MIT license](LICENSE) and to transfer the copyright on the submitted code to Vincent Chalamon.
 
 Be sure to you have the right to do that (if you are a professional, ask your company)!
