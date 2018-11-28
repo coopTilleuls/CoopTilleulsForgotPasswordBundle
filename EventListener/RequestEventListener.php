@@ -11,7 +11,10 @@
 
 namespace CoopTilleuls\ForgotPasswordBundle\EventListener;
 
+use CoopTilleuls\ForgotPasswordBundle\Exception\InvalidJsonHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
+use CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException;
+use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -21,21 +24,21 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class RequestEventListener
 {
-    private $userEmailField;
+    private $authorizedFields;
     private $userPasswordField;
     private $passwordTokenManager;
 
     /**
-     * @param string               $userEmailField
+     * @param array                $authorizedFields
      * @param string               $userPasswordField
      * @param PasswordTokenManager $passwordTokenManager
      */
     public function __construct(
-        $userEmailField,
+        array $authorizedFields,
         $userPasswordField,
         PasswordTokenManager $passwordTokenManager
     ) {
-        $this->userEmailField = $userEmailField;
+        $this->authorizedFields = $authorizedFields;
         $this->userPasswordField = $userPasswordField;
         $this->passwordTokenManager = $passwordTokenManager;
     }
@@ -52,12 +55,33 @@ final class RequestEventListener
             return;
         }
 
-        $data = json_decode($request->getContent(), true);
-        $fieldName = 'coop_tilleuls_forgot_password.reset' === $routeName ? $this->userEmailField : $this->userPasswordField;
-        if (!isset($data[$fieldName]) || empty($data[$fieldName])) {
+        $content = $request->getContent();
+        $data = json_decode($content, true);
+        if (!empty($content) && JSON_ERROR_NONE !== json_last_error()) {
+            throw new InvalidJsonHttpException();
+        }
+        if (!is_array($data) || empty($data)) {
+            throw new NoParameterException();
+        }
+
+        $fieldName = key($data);
+        if (empty($data[$fieldName])) {
             throw new MissingFieldHttpException($fieldName);
         }
-        $request->attributes->set($fieldName, $data[$fieldName]);
+
+        if ('coop_tilleuls_forgot_password.reset' === $routeName) {
+            if (!in_array($fieldName, $this->authorizedFields, true)) {
+                throw new UnauthorizedFieldException($fieldName);
+            }
+            $request->attributes->set('propertyName', $fieldName);
+            $request->attributes->set('value', $data[$fieldName]);
+        } else {
+            if ($this->userPasswordField !== $fieldName) {
+                throw new MissingFieldHttpException($this->userPasswordField);
+            }
+
+            $request->attributes->set($fieldName, $data[$fieldName]);
+        }
     }
 
     public function getTokenFromRequest(GetResponseEvent $event)

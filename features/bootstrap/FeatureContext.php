@@ -85,8 +85,12 @@ final class FeatureContext implements Context, SnippetAcceptingContext
 
     /**
      * @Then I reset my password
+     * @Then I reset my password with my :propertyName ":value"
+     *
+     * @param string $propertyName
+     * @param string $value
      */
-    public function iResetMyPassword()
+    public function IResetMyPassword($propertyName = 'email', $value = 'john.doe@example.com')
     {
         $this->createUser();
 
@@ -97,11 +101,12 @@ final class FeatureContext implements Context, SnippetAcceptingContext
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            <<<'JSON'
+            sprintf(<<<'JSON'
 {
-    "email": "john.doe@example.com"
+    "%s": "%s"
 }
 JSON
+            , $propertyName, $value)
         );
     }
 
@@ -194,9 +199,9 @@ JSON
     }
 
     /**
-     * @Then I reset my password using no email address
+     * @Then I reset my password using no parameter
      */
-    public function iResetMyPasswordUsingNoEmailAddress()
+    public function iResetMyPasswordUsingNoParameter()
     {
         $this->client->request('POST', '/forgot_password/');
     }
@@ -314,6 +319,7 @@ JSON
     {
         $user = new User();
         $user->setEmail('john.doe@example.com');
+        $user->setUsername('JohnDoe');
         $user->setPassword('password');
         $this->doctrine->getManager()->persist($user);
         $this->doctrine->getManager()->flush();
