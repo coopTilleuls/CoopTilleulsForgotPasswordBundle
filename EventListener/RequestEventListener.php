@@ -70,7 +70,7 @@ final class RequestEventListener
         }
 
         if ('coop_tilleuls_forgot_password.reset' === $routeName) {
-            if (!in_array($fieldName, $this->authorizedFields)) {
+            if (!in_array($fieldName, $this->authorizedFields, true)) {
                 throw new UnauthorizedFieldException($fieldName);
             }
             $request->attributes->set('propertyName', $fieldName);
