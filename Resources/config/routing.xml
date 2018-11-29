@@ -5,15 +5,15 @@
         http://symfony.com/schema/routing/routing-1.0.xsd">
 
     <route id="coop_tilleuls_forgot_password.reset" path="/" methods="POST">
-        <default key="_controller">coop_tilleuls_forgot_password.controller.forgot_password:resetPasswordAction</default>
+        <default key="_controller">coop_tilleuls_forgot_password.controller.reset_password</default>
     </route>
 
     <route id="coop_tilleuls_forgot_password.update" path="/{tokenValue}" methods="POST">
-        <default key="_controller">coop_tilleuls_forgot_password.controller.forgot_password:updatePasswordAction</default>
+        <default key="_controller">coop_tilleuls_forgot_password.controller.update_password</default>
     </route>
 
     <route id="coop_tilleuls_forgot_password.get_token" path="/{tokenValue}" methods="GET">
-        <default key="_controller">coop_tilleuls_forgot_password.controller.forgot_password:getTokenAction</default>
+        <default key="_controller">coop_tilleuls_forgot_password.controller.get_token</default>
     </route>
 
 </routes>

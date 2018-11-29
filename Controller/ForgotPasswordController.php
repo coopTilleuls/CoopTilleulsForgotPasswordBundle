@@ -12,33 +12,30 @@
 namespace CoopTilleuls\ForgotPasswordBundle\Controller;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
-use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
-use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ *
+ * @deprecated Use invokable controllers instead
  */
 final class ForgotPasswordController
 {
-    private $forgotPasswordManager;
-    private $normalizer;
-    private $groups;
+    private $getToken;
+    private $updatePassword;
+    private $resetPassword;
 
     /**
-     * @param ForgotPasswordManager $forgotPasswordManager
-     * @param NormalizerInterface   $normalizer
-     * @param array                 $groups
+     * @param GetToken       $getToken
+     * @param UpdatePassword $updatePassword
+     * @param ResetPassword  $resetPassword
      */
-    public function __construct(
-        ForgotPasswordManager $forgotPasswordManager,
-        NormalizerInterface $normalizer,
-        array $groups
-    ) {
-        $this->forgotPasswordManager = $forgotPasswordManager;
-        $this->normalizer = $normalizer;
-        $this->groups = $groups;
+    public function __construct(GetToken $getToken, UpdatePassword $updatePassword, ResetPassword $resetPassword)
+    {
+        $this->getToken = $getToken;
+        $this->updatePassword = $updatePassword;
+        $this->resetPassword = $resetPassword;
     }
 
     /**
@@ -49,9 +46,9 @@ final class ForgotPasswordController
      */
     public function resetPasswordAction($propertyName, $value)
     {
-        $this->forgotPasswordManager->resetPassword($propertyName, $value);
+        $resetPassword = $this->resetPassword;
 
-        return new Response('', 204);
+        return $resetPassword($propertyName, $value);
     }
 
     /**
@@ -61,9 +58,9 @@ final class ForgotPasswordController
      */
     public function getTokenAction(AbstractPasswordToken $token)
     {
-        return new JsonResponse(
-            $this->normalizer->normalize($token, 'json', $this->groups ? ['groups' => $this->groups] : [])
-        );
+        $getToken = $this->getToken;
+
+        return $getToken($token);
     }
 
     /**
@@ -74,8 +71,8 @@ final class ForgotPasswordController
      */
     public function updatePasswordAction(AbstractPasswordToken $token, $password)
     {
-        $this->forgotPasswordManager->updatePassword($token, $password);
+        $updatePassword = $this->updatePassword;
 
-        return new Response('', 204);
+        return $updatePassword($token, $password);
     }
 }
