@@ -48,6 +48,11 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
+        // Load API-Platform bridge
+        if (isset($container->getParameter('kernel.bundles')['ApiPlatformBundle'])) {
+            $loader->load('api_platform.xml');
+        }
+
         // Build manager
         if (!$container->hasDefinition($config['manager'])) {
             throw new \LogicException(sprintf('Service "%s" does not exist.', $config['manager']));
