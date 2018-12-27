@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 final class DocumentationNormalizerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ObjectProphecy|NormalizerInterface
+     * @var NormalizerInterface|ObjectProphecy
      */
     private $normalizerMock;
 
