@@ -5,9 +5,22 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="coop_tilleuls_forgot_password.controller.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Controller\ForgotPasswordController" public="true">
+            <argument type="service" id="coop_tilleuls_forgot_password.controller.get_token" />
+            <argument type="service" id="coop_tilleuls_forgot_password.controller.update_password" />
+            <argument type="service" id="coop_tilleuls_forgot_password.controller.reset_password" />
+        </service>
+
+        <service id="coop_tilleuls_forgot_password.controller.reset_password" class="CoopTilleuls\ForgotPasswordBundle\Controller\ResetPassword" public="true">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.forgot_password" />
+        </service>
+
+        <service id="coop_tilleuls_forgot_password.controller.get_token" class="CoopTilleuls\ForgotPasswordBundle\Controller\GetToken" public="true">
             <argument type="service" id="coop_tilleuls_forgot_password.normalizer" />
             <argument>%coop_tilleuls_forgot_password.password_token_serialization_groups%</argument>
+        </service>
+
+        <service id="coop_tilleuls_forgot_password.controller.update_password" class="CoopTilleuls\ForgotPasswordBundle\Controller\UpdatePassword" public="true">
+            <argument type="service" id="coop_tilleuls_forgot_password.manager.forgot_password" />
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager" public="true">
