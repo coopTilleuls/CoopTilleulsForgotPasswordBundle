@@ -18,7 +18,6 @@ interface ManagerInterface
 {
     /**
      * @param string $class
-     * @param array  $criteria
      *
      * @return mixed|null
      */

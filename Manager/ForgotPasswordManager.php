@@ -27,10 +27,7 @@ class ForgotPasswordManager
     private $userClass;
 
     /**
-     * @param PasswordTokenManager     $passwordTokenManager
-     * @param EventDispatcherInterface $dispatcher
-     * @param ManagerInterface         $manager
-     * @param string                   $userClass
+     * @param string $userClass
      */
     public function __construct(
         PasswordTokenManager $passwordTokenManager,
@@ -70,8 +67,7 @@ class ForgotPasswordManager
     }
 
     /**
-     * @param AbstractPasswordToken $passwordToken
-     * @param string                $password
+     * @param string $password
      *
      * @return bool
      */

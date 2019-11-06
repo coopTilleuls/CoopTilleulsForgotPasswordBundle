@@ -40,11 +40,6 @@ final class FeatureContext implements Context, SnippetAcceptingContext
      */
     private $passwordTokenManager;
 
-    /**
-     * @param Client               $client
-     * @param Registry             $doctrine
-     * @param PasswordTokenManager $passwordTokenManager
-     */
     public function __construct(Client $client, Registry $doctrine, PasswordTokenManager $passwordTokenManager)
     {
         $this->client = $client;

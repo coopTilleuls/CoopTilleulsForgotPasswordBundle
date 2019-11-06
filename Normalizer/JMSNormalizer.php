@@ -24,9 +24,6 @@ final class JMSNormalizer implements NormalizerInterface
      */
     private $normalizer;
 
-    /**
-     * @param ArrayTransformerInterface $normalizer
-     */
     public function __construct(ArrayTransformerInterface $normalizer)
     {
         $this->normalizer = $normalizer;

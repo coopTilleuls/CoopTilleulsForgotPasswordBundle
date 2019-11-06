@@ -37,11 +37,6 @@ final class ForgotPasswordEventListener
      */
     private $entityManager;
 
-    /**
-     * @param \Swift_Mailer   $mailer
-     * @param EngineInterface $templating
-     * @param Registry        $doctrine
-     */
     public function __construct(\Swift_Mailer $mailer, EngineInterface $templating, Registry $doctrine)
     {
         $this->mailer = $mailer;
@@ -49,9 +44,6 @@ final class ForgotPasswordEventListener
         $this->entityManager = $doctrine->getManager();
     }
 
-    /**
-     * @param ForgotPasswordEvent $event
-     */
     public function onCreateToken(ForgotPasswordEvent $event)
     {
         $passwordToken = $event->getPasswordToken();
@@ -73,9 +65,6 @@ final class ForgotPasswordEventListener
         }
     }
 
-    /**
-     * @param ForgotPasswordEvent $event
-     */
     public function onUpdatePassword(ForgotPasswordEvent $event)
     {
         $passwordToken = $event->getPasswordToken();

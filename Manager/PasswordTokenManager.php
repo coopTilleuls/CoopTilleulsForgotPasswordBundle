@@ -27,10 +27,9 @@ class PasswordTokenManager
     private $passwordTokenUserField;
 
     /**
-     * @param ManagerInterface $manager
-     * @param string           $passwordTokenClass
-     * @param string           $defaultExpiresIn
-     * @param string           $passwordTokenUserField
+     * @param string $passwordTokenClass
+     * @param string $defaultExpiresIn
+     * @param string $passwordTokenUserField
      */
     public function __construct(
         ManagerInterface $manager,
@@ -45,8 +44,7 @@ class PasswordTokenManager
     }
 
     /**
-     * @param mixed          $user
-     * @param \DateTime|null $expiresAt
+     * @param mixed $user
      *
      * @return AbstractPasswordToken
      */

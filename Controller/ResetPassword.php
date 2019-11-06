@@ -21,9 +21,6 @@ final class ResetPassword
 {
     private $forgotPasswordManager;
 
-    /**
-     * @param ForgotPasswordManager $forgotPasswordManager
-     */
     public function __construct(ForgotPasswordManager $forgotPasswordManager)
     {
         $this->forgotPasswordManager = $forgotPasswordManager;

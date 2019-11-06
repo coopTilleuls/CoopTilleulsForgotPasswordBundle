@@ -10,10 +10,8 @@ Feel free to contribute on it!
 
 ## Requirements
 
-- Symfony 2.3+
-- PHP 5.5+
-
-This bundle also supports Symfony 3.*/4.* & PHP 7
+- Symfony 2.3+, 3.*, 4.*
+- PHP 5.5+, 7.*
 
 ## Documentation
 

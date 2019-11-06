@@ -26,11 +26,6 @@ final class ForgotPasswordController
     private $updatePassword;
     private $resetPassword;
 
-    /**
-     * @param GetToken       $getToken
-     * @param UpdatePassword $updatePassword
-     * @param ResetPassword  $resetPassword
-     */
     public function __construct(GetToken $getToken, UpdatePassword $updatePassword, ResetPassword $resetPassword)
     {
         $this->getToken = $getToken;
@@ -52,8 +47,6 @@ final class ForgotPasswordController
     }
 
     /**
-     * @param AbstractPasswordToken $token
-     *
      * @return JsonResponse
      */
     public function getTokenAction(AbstractPasswordToken $token)
@@ -64,8 +57,7 @@ final class ForgotPasswordController
     }
 
     /**
-     * @param AbstractPasswordToken $token
-     * @param string                $password
+     * @param string $password
      *
      * @return Response
      */

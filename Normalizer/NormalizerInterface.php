@@ -19,9 +19,7 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 interface NormalizerInterface
 {
     /**
-     * @param AbstractPasswordToken $object
-     * @param string                $format
-     * @param array                 $context
+     * @param string $format
      *
      * @return mixed
      */

@@ -65,9 +65,6 @@ abstract class AbstractPasswordToken
         return $this->expiresAt;
     }
 
-    /**
-     * @param \DateTime $expiresAt
-     */
     public function setExpiresAt(\DateTime $expiresAt)
     {
         $this->expiresAt = $expiresAt;

@@ -24,9 +24,6 @@ final class SymfonyNormalizer implements NormalizerInterface
      */
     private $normalizer;
 
-    /**
-     * @param SymfonyNormalizerInterface $normalizer
-     */
     public function __construct(SymfonyNormalizerInterface $normalizer)
     {
         $this->normalizer = $normalizer;

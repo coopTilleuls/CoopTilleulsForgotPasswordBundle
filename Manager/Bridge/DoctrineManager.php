@@ -20,9 +20,6 @@ final class DoctrineManager implements ManagerInterface
 {
     private $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;

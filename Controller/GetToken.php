@@ -23,10 +23,6 @@ final class GetToken
     private $normalizer;
     private $groups;
 
-    /**
-     * @param NormalizerInterface $normalizer
-     * @param array               $groups
-     */
     public function __construct(NormalizerInterface $normalizer, array $groups)
     {
         $this->normalizer = $normalizer;
@@ -34,8 +30,6 @@ final class GetToken
     }
 
     /**
-     * @param AbstractPasswordToken $token
-     *
      * @return JsonResponse
      */
     public function __invoke(AbstractPasswordToken $token)

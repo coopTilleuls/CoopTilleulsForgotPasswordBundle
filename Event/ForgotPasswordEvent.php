@@ -26,8 +26,7 @@ class ForgotPasswordEvent extends Event
     private $password;
 
     /**
-     * @param AbstractPasswordToken $passwordToken
-     * @param string                $password
+     * @param string $password
      */
     public function __construct(AbstractPasswordToken $passwordToken, $password = null)
     {

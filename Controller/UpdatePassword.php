@@ -22,17 +22,13 @@ final class UpdatePassword
 {
     private $forgotPasswordManager;
 
-    /**
-     * @param ForgotPasswordManager $forgotPasswordManager
-     */
     public function __construct(ForgotPasswordManager $forgotPasswordManager)
     {
         $this->forgotPasswordManager = $forgotPasswordManager;
     }
 
     /**
-     * @param AbstractPasswordToken $token
-     * @param string                $password
+     * @param string $password
      *
      * @return Response
      */
