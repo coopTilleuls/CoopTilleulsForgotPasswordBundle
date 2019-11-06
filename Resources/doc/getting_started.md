@@ -165,6 +165,13 @@ CoopTilleulsForgotPasswordBundle provides 2 events allowing you to build your ow
 
 Read full documentation about [usage](usage.md).
 
+## Integration with API Platform
+
+If you're installing CoopTilleulsForgotPasswordBundle in an API Platform project, it's recommended to add the routes
+documentation to the Swagger documentation.
+
+Read full documentation about [integration with API Platform](api_platform.md).
+
 ## Connect your manager
 
 By default, CoopTilleulsForgotPasswordBundle works with Doctrine ORM, but you're free to connect with any system.
