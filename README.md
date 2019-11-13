@@ -10,7 +10,7 @@ Feel free to contribute on it!
 
 ## Requirements
 
-- Symfony 2.3+, 3.*, 4.*
+- Symfony 3.4, 4.*
 - PHP 5.5+, 7.*
 
 ## Documentation
