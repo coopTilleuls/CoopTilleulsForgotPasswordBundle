@@ -7,26 +7,26 @@ application.
 Create an EventListener and listen to `kernel.request` event:
 
 ```php
-namespace AppBundle/Event;
+namespace AppBundle\Event;
 
 // ...
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ForgotPasswordEventListener
 {
     // ...
     /**
-     * @param GetResponseEvent $event
+     * @param RequestEvent $event
      */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         if (!$event->isMasterRequest()
             || !preg_match('/^coop_tilleuls_forgot_password/i', $event->getRequest()->get('_route'))
         ) {
             return;
         }
-        
+
         // User should not be authenticated on forgot password
         $token = $this->tokenStorage->getToken();
         if (null !== $token && $token->getUser() instanceof UserInterface) {

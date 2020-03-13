@@ -13,16 +13,16 @@ namespace CoopTilleuls\ForgotPasswordBundle\EventListener;
 
 use CoopTilleuls\ForgotPasswordBundle\Exception\JsonHttpExceptionInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\KernelEvent;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
 final class ExceptionEventListener
 {
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(KernelEvent $event)
     {
-        $exception = $event->getException();
+        $exception = method_exists($event, 'getThrowable') ? $event->getThrowable() : $event->getException();
         if (!$event->isMasterRequest() || !$exception instanceof JsonHttpExceptionInterface) {
             return;
         }

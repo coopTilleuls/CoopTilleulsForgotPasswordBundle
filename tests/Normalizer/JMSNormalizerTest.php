@@ -25,9 +25,9 @@ final class JMSNormalizerTest extends \PHPUnit_Framework_TestCase
         $normalizerMock = $this->prophesize(ArrayTransformerInterface::class);
         $passwordTokenMock = $this->prophesize(AbstractPasswordToken::class);
 
-        $normalizerMock->toArray($passwordTokenMock)->willReturn('foo')->shouldBeCalledTimes(1);
+        $normalizerMock->toArray($passwordTokenMock)->willReturn(['foo'])->shouldBeCalledTimes(1);
 
         $normalizer = new JMSNormalizer($normalizerMock->reveal());
-        $this->assertEquals('foo', $normalizer->normalize($passwordTokenMock->reveal(), 'json'));
+        $this->assertEquals(['foo'], $normalizer->normalize($passwordTokenMock->reveal(), 'json'));
     }
 }

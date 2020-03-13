@@ -15,6 +15,7 @@ use CoopTilleuls\ForgotPasswordBundle\EventListener\ExceptionEventListener;
 use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
 use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 
 /**
@@ -24,10 +25,15 @@ final class ExceptionEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     public function testOnKernelExceptionInvalid()
     {
-        $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
+        if (class_exists(ExceptionEvent::class)) {
+            $eventMock = $this->prophesize(ExceptionEvent::class);
+            $eventMock->getThrowable()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
+        } else {
+            $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
+            $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
+        }
 
         $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
-        $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
         $eventMock->setResponse(Argument::any())->shouldNotBeCalled();
 
         $listener = new ExceptionEventListener();
@@ -36,10 +42,15 @@ final class ExceptionEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelExceptionSubRequest()
     {
-        $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
+        if (class_exists(ExceptionEvent::class)) {
+            $eventMock = $this->prophesize(ExceptionEvent::class);
+            $eventMock->getThrowable()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
+        } else {
+            $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
+            $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
+        }
 
         $eventMock->isMasterRequest()->willReturn(false)->shouldBeCalledTimes(1);
-        $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
         $eventMock->setResponse(Argument::any())->shouldNotBeCalled();
 
         $listener = new ExceptionEventListener();
@@ -48,13 +59,19 @@ final class ExceptionEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnKernelException()
     {
-        $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
         // Cannot mock exception as it should implement JsonHttpExceptionInterface
         // and extends \Exception, but method \Exception::getMessage is final
         $exception = new MissingFieldHttpException('foo');
 
+        if (class_exists(ExceptionEvent::class)) {
+            $eventMock = $this->prophesize(ExceptionEvent::class);
+            $eventMock->getThrowable()->willReturn($exception)->shouldBeCalledTimes(1);
+        } else {
+            $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
+            $eventMock->getException()->willReturn($exception)->shouldBeCalledTimes(1);
+        }
+
         $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
-        $eventMock->getException()->willReturn($exception)->shouldBeCalledTimes(1);
         $eventMock->setResponse(
             Argument::that(
                 function ($response) {

@@ -16,7 +16,7 @@ use CoopTilleuls\ForgotPasswordBundle\EventListener\RequestEventListener;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\KernelEvent;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -35,7 +35,7 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->managerMock = $this->prophesize(PasswordTokenManager::class);
-        $this->eventMock = $this->prophesize(GetResponseEvent::class);
+        $this->eventMock = $this->prophesize(KernelEvent::class);
         $this->requestMock = $this->prophesize(Request::class);
         $this->parameterBagMock = $this->prophesize(ParameterBag::class);
 

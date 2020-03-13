@@ -3,7 +3,6 @@ name: CI
 on:
   schedule:
     - cron: 0 2 * * 1-5
-  push:
   pull_request:
 
 jobs:
@@ -16,10 +15,9 @@ jobs:
       # https://github.community/t5/GitHub-Actions/GitHub-Actions-Matrix-options-dont-work-as-documented/m-p/29558
       matrix:
         php:
-          - '7.0'
-          - '7.1'
           - '7.2'
           - '7.3'
+          - '7.4'
         dependency:
           - ''
           - '--prefer-stable --prefer-lowest'
@@ -27,22 +25,30 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+
       - name: Install system packages
         run: |
           apt-get update
           apt-get install -y --no-install-recommends \
             unzip
+
       - name: Disable PHP memory limit
         run: echo 'memory_limit=-1' >> /usr/local/etc/php/php.ini
+
       - name: Install Composer
         run: curl -sS -o - https://raw.githubusercontent.com/composer/getcomposer.org/ba13e3fc70f1c66250d1ea7ea4911d593aa1dba5/web/installer | php -- --install-dir=/usr/local/bin --filename=composer --quiet
+
       - name: Update project dependencies
         run: composer update --no-progress --no-suggest --ansi ${{ matrix.dependency }}
-      - name: Run PHPUnit tests
-        run: vendor/bin/phpunit
-      - name: Run php-cs-fixer tests
-        run: vendor/bin/php-cs-fixer fix --dry-run --diff
+
       - name: Run Behat tests
         run: vendor/bin/behat
+
       - name: Run Behat tests with jms/serializer-bundle
         run: vendor/bin/behat -p jmsserializer
+
+      - name: Run PHPUnit tests
+        run: vendor/bin/phpunit
+
+      - name: Run php-cs-fixer tests
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff

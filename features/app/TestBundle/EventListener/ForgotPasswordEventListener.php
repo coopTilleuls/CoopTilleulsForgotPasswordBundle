@@ -16,6 +16,7 @@ use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -28,19 +29,19 @@ final class ForgotPasswordEventListener
     private $mailer;
 
     /**
-     * @var EngineInterface
+     * @var EngineInterface|Environment
      */
-    private $templating;
+    private $twig;
 
     /**
      * @var EntityManagerInterface
      */
     private $entityManager;
 
-    public function __construct(\Swift_Mailer $mailer, EngineInterface $templating, Registry $doctrine)
+    public function __construct(\Swift_Mailer $mailer, $twig, Registry $doctrine)
     {
         $this->mailer = $mailer;
-        $this->templating = $templating;
+        $this->twig = $twig;
         $this->entityManager = $doctrine->getManager();
     }
 
@@ -52,7 +53,7 @@ final class ForgotPasswordEventListener
 
         $swiftMessage = new \Swift_Message(
             'Réinitialisation de votre mot de passe',
-            $this->templating->render(
+            $this->twig->render(
                 'CoopTilleulsTestBundle:ResetPassword:mail.html.twig',
                 ['token' => $passwordToken->getToken()]
             )

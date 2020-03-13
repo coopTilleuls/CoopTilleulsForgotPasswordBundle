@@ -10,38 +10,41 @@ CoopTilleulsForgotPasswordBundle provides 2 events allowing you to build your ow
 On the first user story, user will send its identifier (email, username...), you'll have to send a custom email
 allowing him to reset its password using a valid PasswordToken.
 
-Create an event listener listening to `coop_tilleuls_forgot_password.create_token` event:
-
-```yml
-# AppBundle/Resources/config/services.yml
-services:
-    app.listener.forgot_password:
-        # ...
-        tags:
-            - { name: kernel.event_listener, event: coop_tilleuls_forgot_password.create_token, method: onCreateToken }
-```
-
 ```php
-namespace AppBundle/Event;
+namespace AppBundle\EventSubscriber;
 
 // ...
-use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
+use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Twig\Environment;
 
-class ForgotPasswordEventListener
+final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
 {
-    // ...
+    private $mailer;
+    private $twig;
 
-    /**
-     * @param ForgotPasswordEvent $event
-     */
-    public function onCreateToken(ForgotPasswordEvent $event)
+    public function __construct(\Swift_Mailer $mailer, Environment $twig)
+    {
+        $this->mailer = $mailer;
+        $this->twig = $twig;
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            // Symfony 4.3 and inferior, use 'coop_tilleuls_forgot_password.create_token' event name
+            CreateTokenEvent::class => 'onCreateToken',
+        ];
+    }
+
+    public function onCreateToken(CreateTokenEvent $event)
     {
         $passwordToken = $event->getPasswordToken();
         $user = $passwordToken->getUser();
 
         $swiftMessage = new \Swift_Message(
             'Reset of your password',
-            $this->templating->render(
+            $this->twig->render(
                 'AppBundle:ResetPassword:mail.html.twig',
                 [
                     'reset_password_url' => sprintf('http://www.example.com/forgot-password/%s', $passwordToken->getToken()),
@@ -71,31 +74,31 @@ Your app is ready to receive a JSON request like:
 
 On the second user story, user will send its new password, and you'll have to encode it and save it.
 
-Update your event listener listening to `coop_tilleuls_forgot_password.update_password` event:
-
-```yml
-# app/config/services.yml
-services:
-    app.listener.forgot_password:
-        # ...
-        tags:
-            # ...
-            - { name: kernel.event_listener, event: coop_tilleuls_forgot_password.update_password, method: onUpdatePassword }
-```
-
 ```php
-namespace AppBundle/Event;
+namespace AppBundle\Event;
 
 // ...
-use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
+use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ForgotPasswordEventListener
+final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
 {
-    // ...
-    /**
-     * @param ForgotPasswordEvent $event
-     */
-    public function onUpdatePassword(ForgotPasswordEvent $event)
+    private $userManager;
+
+    public function __construct(UserManager $userManager)
+    {
+        $this->userManager = $userManager;
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            // Symfony 4.3 and inferior, use 'coop_tilleuls_forgot_password.update_password' event name
+            UpdatePasswordEvent::class => 'onCreateToken',
+        ];
+    }
+
+    public function onUpdatePassword(UpdatePasswordEvent $event)
     {
         $passwordToken = $event->getPasswordToken();
         $user = $passwordToken->getUser();

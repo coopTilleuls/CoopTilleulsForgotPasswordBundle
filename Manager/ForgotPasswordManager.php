@@ -12,9 +12,12 @@
 namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
+use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
+use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -60,10 +63,11 @@ class ForgotPasswordManager
         }
 
         // Generate password token
-        $this->dispatcher->dispatch(
-            ForgotPasswordEvent::CREATE_TOKEN,
-            new ForgotPasswordEvent($token)
-        );
+        if (class_exists(Event::class)) {
+            $this->dispatcher->dispatch(new CreateTokenEvent($token));
+        } else {
+            $this->dispatcher->dispatch(ForgotPasswordEvent::CREATE_TOKEN, new CreateTokenEvent($token));
+        }
     }
 
     /**
@@ -74,10 +78,11 @@ class ForgotPasswordManager
     public function updatePassword(AbstractPasswordToken $passwordToken, $password)
     {
         // Update user password
-        $this->dispatcher->dispatch(
-            ForgotPasswordEvent::UPDATE_PASSWORD,
-            new ForgotPasswordEvent($passwordToken, $password)
-        );
+        if (class_exists(Event::class)) {
+            $this->dispatcher->dispatch(new UpdatePasswordEvent($passwordToken, $password));
+        } else {
+            $this->dispatcher->dispatch(ForgotPasswordEvent::UPDATE_PASSWORD, new UpdatePasswordEvent($passwordToken, $password));
+        }
 
         // Remove PasswordToken
         $this->manager->remove($passwordToken);

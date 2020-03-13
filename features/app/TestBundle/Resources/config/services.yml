@@ -1,7 +1,10 @@
 services:
     test.event_listener.forgot_password:
         class: CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\EventListener\ForgotPasswordEventListener
-        arguments: ['@mailer', '@templating', '@doctrine']
+        arguments: ['@mailer', '@twig', '@doctrine']
         tags:
+            - { name: kernel.event_listener, event: CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent, method: onCreateToken }
+            - { name: kernel.event_listener, event: CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent, method: onUpdatePassword }
+            # Symfony 4.3 and inferior
             - { name: kernel.event_listener, event: coop_tilleuls_forgot_password.create_token, method: onCreateToken }
             - { name: kernel.event_listener, event: coop_tilleuls_forgot_password.update_password, method: onUpdatePassword }
