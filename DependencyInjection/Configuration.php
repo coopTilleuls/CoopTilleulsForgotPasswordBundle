@@ -24,8 +24,8 @@ final class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder('forgot_password_bundle');
-        $rootNode = $treeBuilder->root('coop_tilleuls_forgot_password');
+        $treeBuilder = new TreeBuilder('coop_tilleuls_forgot_password');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->beforeNormalization()
