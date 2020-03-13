@@ -49,7 +49,7 @@ class ForgotPasswordManager
     {
         $user = $this->manager->findOneBy($this->userClass, [$propertyName => $value]);
         if (null === $user) {
-            return;
+            return false;
         }
 
         $token = $this->passwordTokenManager->findOneByUser($user);
@@ -61,9 +61,11 @@ class ForgotPasswordManager
 
         // Generate password token
         $this->dispatcher->dispatch(
-            ForgotPasswordEvent::CREATE_TOKEN,
-            new ForgotPasswordEvent($token)
+            new ForgotPasswordEvent($token),
+            ForgotPasswordEvent::CREATE_TOKEN
         );
+
+        return true;
     }
 
     /**
@@ -75,8 +77,8 @@ class ForgotPasswordManager
     {
         // Update user password
         $this->dispatcher->dispatch(
-            ForgotPasswordEvent::UPDATE_PASSWORD,
-            new ForgotPasswordEvent($passwordToken, $password)
+            new ForgotPasswordEvent($passwordToken, $password),
+            ForgotPasswordEvent::UPDATE_PASSWORD
         );
 
         // Remove PasswordToken

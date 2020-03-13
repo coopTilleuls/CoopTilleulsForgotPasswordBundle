@@ -34,8 +34,14 @@ final class UpdatePassword
      */
     public function __invoke(AbstractPasswordToken $token, $password)
     {
-        $this->forgotPasswordManager->updatePassword($token, $password);
+        try {
+            $this->forgotPasswordManager->updatePassword($token, $password);
 
-        return new Response('', 204);
+            return new Response('Password updated', 202);
+        } catch (\Throwable $exception) {
+            return new Response($exception->getMessage(), 500);
+        }
+
+
     }
 }

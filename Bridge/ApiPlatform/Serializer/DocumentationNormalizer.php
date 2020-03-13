@@ -36,8 +36,11 @@ final class DocumentationNormalizer implements NormalizerInterface
             'operationId' => 'postForgotPassword',
             'summary' => 'Generates a token and send email',
             'responses' => [
-                204 => [
-                    'description' => 'Valid email address, no matter if user exists or not',
+                201 => [
+                    'description' => 'Valid email address, token generated and sent',
+                ],
+                404 => [
+                    'description' => 'Valid email address, but user is not found',
                 ],
                 400 => [
                     'description' => 'Missing email parameter or invalid format',
@@ -107,8 +110,8 @@ final class DocumentationNormalizer implements NormalizerInterface
             'operationId' => 'postForgotPasswordToken',
             'summary' => 'Resets user password from token',
             'responses' => [
-                204 => [
-                    'description' => 'Email address format valid, no matter if user exists or not',
+                202 => [
+                    'description' => 'Password updated',
                 ],
                 400 => [
                     'description' => 'Missing password parameter',

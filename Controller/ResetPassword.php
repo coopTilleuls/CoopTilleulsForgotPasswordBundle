@@ -34,8 +34,10 @@ final class ResetPassword
      */
     public function __invoke($propertyName, $value)
     {
-        $this->forgotPasswordManager->resetPassword($propertyName, $value);
+        if(false === $this->forgotPasswordManager->resetPassword($propertyName, $value)) {
+            return new Response('User not found', 404);
+        }
 
-        return new Response('', 204);
+        return new Response('Token sent', 201);
     }
 }

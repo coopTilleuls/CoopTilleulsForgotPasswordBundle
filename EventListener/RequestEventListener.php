@@ -16,7 +16,7 @@ use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -41,7 +41,7 @@ final class RequestEventListener
         $this->passwordTokenManager = $passwordTokenManager;
     }
 
-    public function decodeRequest(GetResponseEvent $event)
+    public function decodeRequest($event)
     {
         $request = $event->getRequest();
         $routeName = $request->attributes->get('_route');
@@ -82,7 +82,7 @@ final class RequestEventListener
         }
     }
 
-    public function getTokenFromRequest(GetResponseEvent $event)
+    public function getTokenFromRequest($event)
     {
         $request = $event->getRequest();
         $routeName = $request->attributes->get('_route');

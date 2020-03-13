@@ -12,7 +12,7 @@
 namespace CoopTilleuls\ForgotPasswordBundle\Event;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
