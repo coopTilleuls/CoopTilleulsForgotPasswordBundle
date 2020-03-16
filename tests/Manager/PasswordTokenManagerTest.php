@@ -14,13 +14,14 @@ namespace Tests\ForgotPasswordBundle\Manager;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class PasswordTokenManagerTest extends \PHPUnit_Framework_TestCase
+final class PasswordTokenManagerTest extends TestCase
 {
     /**
      * @var PasswordTokenManager
@@ -30,7 +31,7 @@ final class PasswordTokenManagerTest extends \PHPUnit_Framework_TestCase
     private $userMock;
     private $tokenMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->managerMock = $this->prophesize(ManagerInterface::class);
         $this->userMock = $this->prophesize(UserInterface::class);

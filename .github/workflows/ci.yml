@@ -51,10 +51,14 @@ jobs:
         run: composer update --no-progress --no-suggest --ansi ${{ matrix.dependency }}
 
       - name: Run Behat tests
-        run: vendor/bin/behat
+        run: |
+          mkdir -p features/app/cache/test/doctrine/orm/Proxies features/app/logs
+          vendor/bin/behat
 
       - name: Run Behat tests with jms/serializer-bundle
-        run: vendor/bin/behat -p jmsserializer
+        run: |
+            mkdir -p features/app/cache/jmsserializer/doctrine/orm/Proxies features/app/logs
+            vendor/bin/behat -p jmsserializer
 
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit

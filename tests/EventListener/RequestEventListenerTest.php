@@ -13,15 +13,21 @@ namespace Tests\ForgotPasswordBundle\EventListener;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\EventListener\RequestEventListener;
+use CoopTilleuls\ForgotPasswordBundle\Exception\InvalidJsonHttpException;
+use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
+use CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException;
+use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
+final class RequestEventListenerTest extends TestCase
 {
     /**
      * @var RequestEventListener
@@ -32,7 +38,7 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
     private $requestMock;
     private $parameterBagMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->managerMock = $this->prophesize(PasswordTokenManager::class);
         $this->eventMock = $this->prophesize(KernelEvent::class);
@@ -58,12 +64,11 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
-    /**
-     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException
-     * @expectedExceptionMessage Parameter "password" is missing.
-     */
     public function testDecodeRequestMissingFieldException()
     {
+        $this->expectException(MissingFieldHttpException::class);
+        $this->expectExceptionMessage('Parameter "password" is missing.');
+
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
         $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
         $this->requestMock->getContent()->willReturn(json_encode(['password' => '']))->shouldBeCalledTimes(1);
@@ -71,12 +76,11 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
-    /**
-     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException
-     * @expectedExceptionMessage No parameter sent.
-     */
     public function testDecodeRequestNoParametersException()
     {
+        $this->expectException(NoParameterException::class);
+        $this->expectExceptionMessage('No parameter sent.');
+
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
         $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
         $this->requestMock->getContent()->willReturn('{}')->shouldBeCalledTimes(1);
@@ -84,12 +88,11 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
-    /**
-     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\InvalidJsonHttpException
-     * @expectedExceptionMessage Invalid JSON data.
-     */
     public function testDecodeRequestInvalidJsonHttpException()
     {
+        $this->expectException(InvalidJsonHttpException::class);
+        $this->expectExceptionMessage('Invalid JSON data.');
+
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
         $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
         $this->requestMock->getContent()->willReturn('{')->shouldBeCalledTimes(1);
@@ -97,12 +100,11 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
-    /**
-     * @expectedException \CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException
-     * @expectedExceptionMessage The parameter "name" is not authorized in your configuration.
-     */
     public function testDecodeRequestUnauthorizedException()
     {
+        $this->expectException(UnauthorizedFieldException::class);
+        $this->expectExceptionMessage('The parameter "name" is not authorized in your configuration.');
+
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.reset')->shouldBeCalledTimes(1);
         $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
         $this->requestMock->getContent()->willReturn(json_encode(['name' => 'foo']))->shouldBeCalledTimes(1);
@@ -129,11 +131,10 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-     */
     public function testGetTokenFromRequestNoTokenException()
     {
+        $this->expectException(NotFoundHttpException::class);
+
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
         $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
         $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledTimes(1);
@@ -142,11 +143,10 @@ final class RequestEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-     */
     public function testGetTokenFromRequestInvalidTokenException()
     {
+        $this->expectException(NotFoundHttpException::class);
+
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);

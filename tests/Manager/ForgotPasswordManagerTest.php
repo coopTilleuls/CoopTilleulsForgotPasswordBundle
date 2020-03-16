@@ -18,6 +18,7 @@ use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -26,7 +27,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEvent
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
+final class ForgotPasswordManagerTest extends TestCase
 {
     /**
      * @var ForgotPasswordManager
@@ -39,7 +40,7 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
     private $tokenMock;
     private $countableMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->passwordManagerMock = $this->prophesize(PasswordTokenManager::class);
         $this->eventDispatcherMock = $this->prophesize(EventDispatcherInterface::class);

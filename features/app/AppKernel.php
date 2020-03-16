@@ -12,6 +12,7 @@
 use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\PasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
@@ -27,6 +28,21 @@ final class AppKernel extends Kernel
 {
     use MicroKernelTrait;
 
+    public function getCacheDir()
+    {
+        return __DIR__.'/cache/'.$this->getEnvironment();
+    }
+
+    public function getLogDir()
+    {
+        return __DIR__.'/logs/'.$this->getEnvironment();
+    }
+
+    public function getProjectDir()
+    {
+        return __DIR__;
+    }
+
     public function registerBundles()
     {
         $bundles = [
@@ -35,6 +51,7 @@ final class AppKernel extends Kernel
             new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
+            new FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle(),
             new CoopTilleuls\ForgotPasswordBundle\CoopTilleulsForgotPasswordBundle(),
             new CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\CoopTilleulsTestBundle(),
         ];
@@ -83,10 +100,11 @@ final class AppKernel extends Kernel
             'test' => null,
             'assets' => null,
             'profiler' => ['collect' => false],
+        ], 'jmsserializer' !== $this->getEnvironment() ? ['serializer' => null] : [], class_exists(KernelBrowser::class) ? [] : [
             'templating' => [
                 'engines' => ['twig'],
             ],
-        ], 'jmsserializer' !== $this->getEnvironment() ? ['serializer' => null] : []));
+        ]));
 
         $c->loadFromExtension('security', [
             'encoders' => [UserInterface::class => 'plaintext'],

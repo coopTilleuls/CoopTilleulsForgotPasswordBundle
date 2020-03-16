@@ -13,12 +13,13 @@ namespace Tests\ForgotPasswordBundle\Normalizer;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\SymfonyNormalizer;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class SymfonyNormalizerTest extends \PHPUnit_Framework_TestCase
+final class SymfonyNormalizerTest extends TestCase
 {
     public function testNormalize()
     {

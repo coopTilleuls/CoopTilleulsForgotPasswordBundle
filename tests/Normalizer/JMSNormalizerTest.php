@@ -14,11 +14,12 @@ namespace Tests\ForgotPasswordBundle\Normalizer;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\JMSNormalizer;
 use JMS\Serializer\ArrayTransformerInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class JMSNormalizerTest extends \PHPUnit_Framework_TestCase
+final class JMSNormalizerTest extends TestCase
 {
     public function testNormalize()
     {

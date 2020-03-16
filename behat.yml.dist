@@ -1,0 +1,33 @@
+# Test with Symfony Serializer
+default:
+    suites:
+        default:
+            contexts:
+                - FeatureContext
+    extensions:
+        FriendsOfBehat\SymfonyExtension:
+            bootstrap: features/app/bootstrap.php
+            kernel:
+                environment: test
+                debug: true
+                class: AppKernel
+                path: features/app/AppKernel.php
+    gherkin:
+        cache: ~
+
+# Test with JmsSerializerBundle
+jmsserializer:
+    suites:
+        default:
+            contexts:
+                - FeatureContext
+    extensions:
+        FriendsOfBehat\SymfonyExtension:
+            bootstrap: features/app/bootstrap.php
+            kernel:
+                environment: jmsserializer
+                debug: true
+                class: AppKernel
+                path: features/app/AppKernel.php
+    gherkin:
+        cache: ~

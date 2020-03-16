@@ -12,13 +12,14 @@
 namespace Tests\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer;
 
 use CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer\DocumentationNormalizer;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class DocumentationNormalizerTest extends \PHPUnit_Framework_TestCase
+final class DocumentationNormalizerTest extends TestCase
 {
     /**
      * @var NormalizerInterface|ObjectProphecy
@@ -30,7 +31,7 @@ final class DocumentationNormalizerTest extends \PHPUnit_Framework_TestCase
      */
     private $normalizer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->normalizerMock = $this->prophesize(NormalizerInterface::class);
         $this->normalizer = new DocumentationNormalizer($this->normalizerMock->reveal());

@@ -13,6 +13,7 @@ namespace Tests\ForgotPasswordBundle\EventListener;
 
 use CoopTilleuls\ForgotPasswordBundle\EventListener\ExceptionEventListener;
 use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -21,7 +22,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class ExceptionEventListenerTest extends \PHPUnit_Framework_TestCase
+final class ExceptionEventListenerTest extends TestCase
 {
     public function testOnKernelExceptionInvalid()
     {
