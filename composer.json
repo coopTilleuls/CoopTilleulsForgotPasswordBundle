@@ -1,5 +1,5 @@
 {
-    "name": "imaximius/forgot-password-bundle",
+    "name": "tilleuls/forgot-password-bundle",
     "type": "symfony-bundle",
     "description": "Provides a 'forgot password' feature for a REST API",
     "keywords": [
