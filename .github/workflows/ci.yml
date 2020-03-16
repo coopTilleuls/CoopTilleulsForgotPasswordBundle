@@ -7,7 +7,7 @@ on:
 
 jobs:
   tests:
-    name: Tests (PHP ${{ matrix.php }})
+    name: Tests PHP ${{ matrix.php }} - Symfony ${{ matrix.symfony }} (${{ matrix.dependency }})
     runs-on: ubuntu-latest
     container:
       image: php:${{ matrix.php }}
@@ -18,8 +18,12 @@ jobs:
           - '7.2'
           - '7.3'
           - '7.4'
+        symfony:
+          - '3.4.*'
+          - '4.4.*'
+          - '5.0.*'
         dependency:
-          - ''
+          - '--prefer-stable'
           - '--prefer-stable --prefer-lowest'
       fail-fast: false
     steps:
@@ -37,6 +41,11 @@ jobs:
 
       - name: Install Composer
         run: curl -sS -o - https://raw.githubusercontent.com/composer/getcomposer.org/ba13e3fc70f1c66250d1ea7ea4911d593aa1dba5/web/installer | php -- --install-dir=/usr/local/bin --filename=composer --quiet
+
+      - name: Configure Symfony
+        run: |
+          composer global require symfony/flex
+          composer config extra.symfony.require "${{ matrix.symfony }}"
 
       - name: Update project dependencies
         run: composer update --no-progress --no-suggest --ansi ${{ matrix.dependency }}
