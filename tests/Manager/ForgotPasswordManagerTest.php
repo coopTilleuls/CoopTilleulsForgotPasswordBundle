@@ -21,7 +21,7 @@ use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -71,7 +71,7 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         $this->managerMock->findOneBy('App\Entity\User', ['email' => 'foo@example.com'])->willReturn($this->userMock->reveal())->shouldBeCalledTimes(1);
         $this->passwordManagerMock->findOneByUser($this->userMock->reveal())->willReturn(null)->shouldBeCalledTimes(1);
         $this->passwordManagerMock->createPasswordToken($this->userMock->reveal())->willReturn($tokenMock->reveal())->shouldBeCalledTimes(1);
-        if (class_exists(Event::class)) {
+        if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
             $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($tokenMock) {
                 return $event instanceof CreateTokenEvent && is_null($event->getPassword()) && $tokenMock->reveal() === $event->getPasswordToken();
             }))->shouldBeCalledTimes(1);
@@ -92,7 +92,7 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         $this->passwordManagerMock->findOneByUser($this->userMock->reveal())->willReturn($this->tokenMock->reveal())->shouldBeCalledTimes(1);
         $this->tokenMock->isExpired()->willReturn(true)->shouldBeCalledTimes(1);
         $this->passwordManagerMock->createPasswordToken($this->userMock->reveal())->willReturn($tokenMock->reveal())->shouldBeCalledTimes(1);
-        if (class_exists(Event::class)) {
+        if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
             $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($tokenMock) {
                 return $event instanceof CreateTokenEvent && is_null($event->getPassword()) && $tokenMock->reveal() === $event->getPasswordToken();
             }))->shouldBeCalledTimes(1);
@@ -123,7 +123,7 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
         $this->managerMock->findOneBy('App\Entity\User', ['email' => 'foo@example.com'])->willReturn($this->userMock->reveal())->shouldBeCalledTimes(1);
         $this->passwordManagerMock->findOneByUser($this->userMock->reveal())->willReturn($token)->shouldBeCalledTimes(1);
 
-        if (class_exists(Event::class)) {
+        if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
             $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($token) {
                 return $event instanceof CreateTokenEvent && is_null($event->getPassword()) && $token === $event->getPasswordToken();
             }))->shouldBeCalledTimes(1);
@@ -140,7 +140,7 @@ final class ForgotPasswordManagerTest extends \PHPUnit_Framework_TestCase
     {
         $token = $this->tokenMock->reveal();
 
-        if (class_exists(Event::class)) {
+        if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
             $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($token) {
                 return $event instanceof UpdatePasswordEvent && 'bar' === $event->getPassword() && $token === $event->getPasswordToken();
             }))->shouldBeCalledTimes(1);
