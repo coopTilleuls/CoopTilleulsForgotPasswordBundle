@@ -15,11 +15,12 @@ use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\DoctrineManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class DoctrineManagerTest extends \PHPUnit_Framework_TestCase
+final class DoctrineManagerTest extends TestCase
 {
     /**
      * @var DoctrineManager
@@ -30,7 +31,7 @@ final class DoctrineManagerTest extends \PHPUnit_Framework_TestCase
     private $repositoryMock;
     private $objectMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registryMock = $this->prophesize(ManagerRegistry::class);
         $this->managerMock = $this->prophesize(ObjectManager::class);

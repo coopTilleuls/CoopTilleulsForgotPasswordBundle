@@ -15,13 +15,14 @@ use CoopTilleuls\ForgotPasswordBundle\Controller\ResetPassword;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Vincent Chalamon <vincentchalamon@gmail.com>
  */
-final class ResetPasswordTest extends \PHPUnit_Framework_TestCase
+final class ResetPasswordTest extends TestCase
 {
     /**
      * @var ForgotPasswordManager|ObjectProphecy
@@ -38,7 +39,7 @@ final class ResetPasswordTest extends \PHPUnit_Framework_TestCase
      */
     private $tokenMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->managerMock = $this->prophesize(ForgotPasswordManager::class);
         $this->normalizerMock = $this->prophesize(NormalizerInterface::class);

@@ -10,20 +10,21 @@
  */
 
 use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Tools\SchemaTool;
+use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class FeatureContext implements Context, SnippetAcceptingContext
+final class FeatureContext implements Context
 {
     /**
      * @var Registry
@@ -31,7 +32,7 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     private $doctrine;
 
     /**
-     * @var Client
+     * @var Client|KernelBrowser
      */
     private $client;
 
@@ -40,7 +41,7 @@ final class FeatureContext implements Context, SnippetAcceptingContext
      */
     private $passwordTokenManager;
 
-    public function __construct(Client $client, Registry $doctrine, PasswordTokenManager $passwordTokenManager)
+    public function __construct($client, Registry $doctrine, PasswordTokenManager $passwordTokenManager)
     {
         $this->client = $client;
         $this->doctrine = $doctrine;
@@ -110,23 +111,22 @@ JSON
      */
     public function iShouldReceiveAnEmail()
     {
-        \PHPUnit_Framework_Assert::assertTrue(
+        Assert::assertTrue(
             $this->client->getResponse()->isSuccessful(),
             sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
-        \PHPUnit_Framework_Assert::assertEmpty($this->client->getResponse()->getContent());
+        Assert::assertEmpty($this->client->getResponse()->getContent());
 
         /** @var MessageDataCollector $mailCollector */
         $mailCollector = $this->client->getProfile()->getCollector('swiftmailer');
-        \PHPUnit_Framework_Assert::assertEquals(1, $mailCollector->getMessageCount(), 'No email has been sent');
+        Assert::assertEquals(1, $mailCollector->getMessageCount(), 'No email has been sent');
 
-        /** @var \Swift_Mime_Message[] $messages */
         $messages = $mailCollector->getMessages();
-        \PHPUnit_Framework_Assert::assertInstanceOf('Swift_Message', $messages[0]);
-        \PHPUnit_Framework_Assert::assertEquals('Réinitialisation de votre mot de passe', $messages[0]->getSubject());
-        \PHPUnit_Framework_Assert::assertEquals('no-reply@example.com', key($messages[0]->getFrom()));
-        \PHPUnit_Framework_Assert::assertEquals('john.doe@example.com', key($messages[0]->getTo()));
-        \PHPUnit_Framework_Assert::assertRegExp('/http:\/\/www\.example\.com\/forgot_password\/(.*)/', $messages[0]->getBody());
+        Assert::assertInstanceOf('Swift_Message', $messages[0]);
+        Assert::assertEquals('Réinitialisation de votre mot de passe', $messages[0]->getSubject());
+        Assert::assertEquals('no-reply@example.com', key($messages[0]->getFrom()));
+        Assert::assertEquals('john.doe@example.com', key($messages[0]->getTo()));
+        Assert::assertRegExp('/http:\/\/www\.example\.com\/forgot_password\/(.*)/', $messages[0]->getBody());
     }
 
     /**
@@ -134,7 +134,7 @@ JSON
      */
     public function thePageShouldNotBeFound()
     {
-        \PHPUnit_Framework_Assert::assertTrue(
+        Assert::assertTrue(
             $this->client->getResponse()->isNotFound(),
             sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
@@ -145,7 +145,7 @@ JSON
      */
     public function theResponseShouldBeEmpty()
     {
-        \PHPUnit_Framework_Assert::assertTrue(
+        Assert::assertTrue(
             $this->client->getResponse()->isEmpty(),
             sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
@@ -158,13 +158,13 @@ JSON
      */
     public function theRequestShouldBeInvalidWithMessage($message)
     {
-        \PHPUnit_Framework_Assert::assertEquals(
+        Assert::assertEquals(
             400,
             $this->client->getResponse()->getStatusCode(),
             sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
-        \PHPUnit_Framework_Assert::assertJson($this->client->getResponse()->getContent());
-        \PHPUnit_Framework_Assert::assertJsonStringEqualsJsonString(sprintf(<<<'JSON'
+        Assert::assertJson($this->client->getResponse()->getContent());
+        Assert::assertJsonStringEqualsJsonString(sprintf(<<<'JSON'
 {
     "message": "%s"
 }
@@ -290,11 +290,11 @@ JSON
      */
     public function iShouldGetAPasswordToken()
     {
-        \PHPUnit_Framework_Assert::assertTrue(
+        Assert::assertTrue(
             $this->client->getResponse()->isSuccessful(),
             sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
-        \PHPUnit_Framework_Assert::assertJson($this->client->getResponse()->getContent());
+        Assert::assertJson($this->client->getResponse()->getContent());
     }
 
     /**

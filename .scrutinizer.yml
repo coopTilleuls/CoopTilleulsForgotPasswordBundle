@@ -2,14 +2,13 @@ checks:
     php: true
 
 build_failure_conditions:
-    - 'issues.severity(>= MAJOR).new.exists'
     - 'project.metric_change("scrutinizer.quality", < -0.10)'
     - 'project.metric_change("scrutinizer.test_coverage", < -0.10)'
 
 build:
     environment:
         php:
-            version: 7.2
+            version: 7.4
             ini:
                 error_reporting: 16383
     tests:

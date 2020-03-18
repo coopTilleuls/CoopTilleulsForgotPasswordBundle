@@ -14,13 +14,14 @@ namespace Tests\ForgotPasswordBundle\Controller;
 use CoopTilleuls\ForgotPasswordBundle\Controller\GetToken;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @author Vincent Chalamon <vincentchalamon@gmail.com>
  */
-final class GetTokenTest extends \PHPUnit_Framework_TestCase
+final class GetTokenTest extends TestCase
 {
     /**
      * @var NormalizerInterface|ObjectProphecy
@@ -32,7 +33,7 @@ final class GetTokenTest extends \PHPUnit_Framework_TestCase
      */
     private $tokenMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->normalizerMock = $this->prophesize(NormalizerInterface::class);
         $this->tokenMock = $this->prophesize(AbstractPasswordToken::class);

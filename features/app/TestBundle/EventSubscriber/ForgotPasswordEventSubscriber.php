@@ -9,18 +9,22 @@
  * file that was distributed with this source code.
  */
 
-namespace CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\EventListener;
+namespace CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\EventSubscriber;
 
+use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
+use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Twig\Environment;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
-final class ForgotPasswordEventListener
+final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
 {
     /**
      * @var \Swift_Mailer
@@ -28,23 +32,34 @@ final class ForgotPasswordEventListener
     private $mailer;
 
     /**
-     * @var EngineInterface
+     * @var EngineInterface|Environment
      */
-    private $templating;
+    private $twig;
 
     /**
      * @var EntityManagerInterface
      */
     private $entityManager;
 
-    public function __construct(\Swift_Mailer $mailer, EngineInterface $templating, Registry $doctrine)
+    public function __construct(\Swift_Mailer $mailer, $twig, Registry $doctrine)
     {
         $this->mailer = $mailer;
-        $this->templating = $templating;
+        $this->twig = $twig;
         $this->entityManager = $doctrine->getManager();
     }
 
-    public function onCreateToken(ForgotPasswordEvent $event)
+    public static function getSubscribedEvents()
+    {
+        return [
+            CreateTokenEvent::class => 'onCreateToken',
+            UpdatePasswordEvent::class => 'onUpdatePassword',
+            // Symfony 4.3 and inferior
+            ForgotPasswordEvent::CREATE_TOKEN => 'onCreateToken',
+            ForgotPasswordEvent::UPDATE_PASSWORD => 'onUpdatePassword',
+        ];
+    }
+
+    public function onCreateToken(CreateTokenEvent $event)
     {
         $passwordToken = $event->getPasswordToken();
         /** @var User $user */
@@ -52,8 +67,8 @@ final class ForgotPasswordEventListener
 
         $swiftMessage = new \Swift_Message(
             'Réinitialisation de votre mot de passe',
-            $this->templating->render(
-                'CoopTilleulsTestBundle:ResetPassword:mail.html.twig',
+            $this->twig->render(
+                '@CoopTilleulsTest/ResetPassword/mail.html.twig',
                 ['token' => $passwordToken->getToken()]
             )
         );
@@ -65,7 +80,7 @@ final class ForgotPasswordEventListener
         }
     }
 
-    public function onUpdatePassword(ForgotPasswordEvent $event)
+    public function onUpdatePassword(UpdatePasswordEvent $event)
     {
         $passwordToken = $event->getPasswordToken();
         /** @var User $user */

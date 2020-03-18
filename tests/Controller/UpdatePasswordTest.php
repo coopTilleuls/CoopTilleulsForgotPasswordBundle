@@ -14,13 +14,14 @@ namespace Tests\ForgotPasswordBundle\Controller;
 use CoopTilleuls\ForgotPasswordBundle\Controller\UpdatePassword;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Vincent Chalamon <vincentchalamon@gmail.com>
  */
-final class UpdatePasswordTest extends \PHPUnit_Framework_TestCase
+final class UpdatePasswordTest extends TestCase
 {
     /**
      * @var ForgotPasswordManager|ObjectProphecy
@@ -32,7 +33,7 @@ final class UpdatePasswordTest extends \PHPUnit_Framework_TestCase
      */
     private $tokenMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->managerMock = $this->prophesize(ForgotPasswordManager::class);
         $this->tokenMock = $this->prophesize(AbstractPasswordToken::class);
