@@ -94,7 +94,7 @@ final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
     {
         return [
             // Symfony 4.3 and inferior, use 'coop_tilleuls_forgot_password.update_password' event name
-            UpdatePasswordEvent::class => 'onCreateToken',
+            UpdatePasswordEvent::class => 'onUpdatePassword',
         ];
     }
 
