@@ -11,8 +11,6 @@
 
 namespace CoopTilleuls\ForgotPasswordBundle\Manager\Bridge;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
@@ -20,7 +18,10 @@ final class DoctrineManager implements ManagerInterface
 {
     private $registry;
 
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @var \Doctrine\Common\Persistence\ManagerRegistry|\Doctrine\Persistence\ManagerRegistry
+     */
+    public function __construct($registry)
     {
         $this->registry = $registry;
     }

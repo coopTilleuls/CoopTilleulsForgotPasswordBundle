@@ -12,9 +12,9 @@
 namespace Tests\ForgotPasswordBundle\Manager\Bridge;
 
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\DoctrineManager;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -33,9 +33,9 @@ final class DoctrineManagerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->registryMock = $this->prophesize(ManagerRegistry::class);
-        $this->managerMock = $this->prophesize(ObjectManager::class);
-        $this->repositoryMock = $this->prophesize(ObjectRepository::class);
+        $this->registryMock = $this->prophesize(Registry::class);
+        $this->managerMock = $this->prophesize(EntityManagerInterface::class);
+        $this->repositoryMock = $this->prophesize(EntityRepository::class);
         $this->objectMock = $this->prophesize(\stdClass::class);
 
         $this->doctrineManager = new DoctrineManager($this->registryMock->reveal());

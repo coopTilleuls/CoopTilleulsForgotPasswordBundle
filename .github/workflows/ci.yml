@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: 0 2 * * 1-5
   pull_request:
+  push:
+    branches:
+      - master
 
 jobs:
   tests:
@@ -21,7 +24,7 @@ jobs:
         symfony:
           - '3.4.*'
           - '4.4.*'
-          - '5.0.*'
+          - '5.1.*'
         dependency:
           - '--prefer-stable'
           - '--prefer-stable --prefer-lowest'
