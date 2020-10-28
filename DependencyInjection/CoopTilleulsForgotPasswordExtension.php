@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\DependencyInjection;
 
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\JMSNormalizer;
@@ -28,7 +30,7 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
     /**
      * {@inheritdoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);

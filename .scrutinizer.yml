@@ -14,7 +14,7 @@ build:
     tests:
         override:
             -
-                command: 'vendor/bin/phpunit --coverage-clover=coverage-report'
+                command: 'vendor/bin/simple-phpunit --coverage-clover=coverage-report'
                 coverage:
                     file: 'coverage-report'
                     format: 'php-clover'

@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Tests\ForgotPasswordBundle\Normalizer;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
@@ -21,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class JMSNormalizerTest extends TestCase
 {
-    public function testNormalize()
+    public function testNormalize(): void
     {
         $normalizerMock = $this->prophesize(ArrayTransformerInterface::class);
         $passwordTokenMock = $this->prophesize(AbstractPasswordToken::class);

@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Tests\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
@@ -45,7 +47,7 @@ final class PasswordTokenManagerTest extends TestCase
         );
     }
 
-    public function testCreatePasswordToken()
+    public function testCreatePasswordToken(): void
     {
         $this->managerMock->persist(Argument::that(function ($object) {
             return $object instanceof AbstractPasswordToken
@@ -58,14 +60,14 @@ final class PasswordTokenManagerTest extends TestCase
         $this->manager->createPasswordToken($this->userMock->reveal(), new \DateTime('2016-10-11 10:00:00'));
     }
 
-    public function testFindOneByToken()
+    public function testFindOneByToken(): void
     {
         $this->managerMock->findOneBy(PasswordToken::class, ['token' => 'foo'])->willReturn('bar')->shouldBeCalledTimes(1);
 
         $this->assertEquals('bar', $this->manager->findOneByToken('foo'));
     }
 
-    public function testFindOneByUser()
+    public function testFindOneByUser(): void
     {
         $this->managerMock->findOneBy(PasswordToken::class, ['user' => $this->userMock->reveal()])->willReturn('bar')->shouldBeCalledTimes(1);
 
@@ -77,7 +79,7 @@ final class PasswordToken extends AbstractPasswordToken
 {
     private $user;
 
-    public function getId()
+    public function getId(): void
     {
     }
 
@@ -86,7 +88,7 @@ final class PasswordToken extends AbstractPasswordToken
         return $this->user;
     }
 
-    public function setUser($user)
+    public function setUser($user): void
     {
         $this->user = $user;
     }

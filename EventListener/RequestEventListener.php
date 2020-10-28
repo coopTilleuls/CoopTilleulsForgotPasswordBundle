@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\EventListener;
 
 use CoopTilleuls\ForgotPasswordBundle\Exception\InvalidJsonHttpException;
@@ -41,13 +43,13 @@ final class RequestEventListener
         $this->passwordTokenManager = $passwordTokenManager;
     }
 
-    public function decodeRequest(KernelEvent $event)
+    public function decodeRequest(KernelEvent $event): void
     {
         $request = $event->getRequest();
         $routeName = $request->attributes->get('_route');
-        if (!$event->isMasterRequest() || !in_array(
+        if (!$event->isMasterRequest() || !\in_array(
                 $routeName,
-                ['coop_tilleuls_forgot_password.reset', 'coop_tilleuls_forgot_password.update']
+                ['coop_tilleuls_forgot_password.reset', 'coop_tilleuls_forgot_password.update'], true
             )
         ) {
             return;
@@ -58,7 +60,7 @@ final class RequestEventListener
         if (!empty($content) && JSON_ERROR_NONE !== json_last_error()) {
             throw new InvalidJsonHttpException();
         }
-        if (!is_array($data) || empty($data)) {
+        if (!\is_array($data) || empty($data)) {
             throw new NoParameterException();
         }
 
@@ -68,7 +70,7 @@ final class RequestEventListener
         }
 
         if ('coop_tilleuls_forgot_password.reset' === $routeName) {
-            if (!in_array($fieldName, $this->authorizedFields, true)) {
+            if (!\in_array($fieldName, $this->authorizedFields, true)) {
                 throw new UnauthorizedFieldException($fieldName);
             }
             $request->attributes->set('propertyName', $fieldName);
@@ -82,13 +84,13 @@ final class RequestEventListener
         }
     }
 
-    public function getTokenFromRequest(KernelEvent $event)
+    public function getTokenFromRequest(KernelEvent $event): void
     {
         $request = $event->getRequest();
         $routeName = $request->attributes->get('_route');
-        if (!$event->isMasterRequest() || !in_array(
+        if (!$event->isMasterRequest() || !\in_array(
                 $routeName,
-                ['coop_tilleuls_forgot_password.get_token', 'coop_tilleuls_forgot_password.update']
+                ['coop_tilleuls_forgot_password.get_token', 'coop_tilleuls_forgot_password.update'], true
             )
         ) {
             return;

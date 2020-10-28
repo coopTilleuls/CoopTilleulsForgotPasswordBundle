@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\EventSubscriber;
 
 use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
@@ -59,7 +61,7 @@ final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onCreateToken(CreateTokenEvent $event)
+    public function onCreateToken(CreateTokenEvent $event): void
     {
         $passwordToken = $event->getPasswordToken();
         /** @var User $user */
@@ -80,7 +82,7 @@ final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function onUpdatePassword(UpdatePasswordEvent $event)
+    public function onUpdatePassword(UpdatePasswordEvent $event): void
     {
         $passwordToken = $event->getPasswordToken();
         /** @var User $user */

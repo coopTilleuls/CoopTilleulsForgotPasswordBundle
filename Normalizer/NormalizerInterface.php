@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\Normalizer;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
@@ -20,8 +22,6 @@ interface NormalizerInterface
 {
     /**
      * @param string $format
-     *
-     * @return mixed
      */
     public function normalize(AbstractPasswordToken $object, $format, array $context = []);
 }

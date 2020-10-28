@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Tests\ForgotPasswordBundle\Manager\Bridge;
 
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\DoctrineManager;
@@ -41,7 +43,7 @@ final class DoctrineManagerTest extends TestCase
         $this->doctrineManager = new DoctrineManager($this->registryMock->reveal());
     }
 
-    public function testFindOneBy()
+    public function testFindOneBy(): void
     {
         $this->registryMock->getManagerForClass('class')->willReturn($this->managerMock->reveal())->shouldBeCalledTimes(1);
         $this->managerMock->getRepository('class')->willReturn($this->repositoryMock->reveal())->shouldBeCalledTimes(1);
@@ -50,18 +52,18 @@ final class DoctrineManagerTest extends TestCase
         $this->assertEquals('foo', $this->doctrineManager->findOneBy('class', ['criteria']));
     }
 
-    public function testPersist()
+    public function testPersist(): void
     {
-        $this->registryMock->getManagerForClass(get_class($this->objectMock->reveal()))->willReturn($this->managerMock->reveal())->shouldBeCalledTimes(1);
+        $this->registryMock->getManagerForClass(\get_class($this->objectMock->reveal()))->willReturn($this->managerMock->reveal())->shouldBeCalledTimes(1);
         $this->managerMock->persist($this->objectMock->reveal())->shouldBeCalledTimes(1);
         $this->managerMock->flush()->shouldBeCalledTimes(1);
 
         $this->doctrineManager->persist($this->objectMock->reveal());
     }
 
-    public function testRemove()
+    public function testRemove(): void
     {
-        $this->registryMock->getManagerForClass(get_class($this->objectMock->reveal()))->willReturn($this->managerMock->reveal())->shouldBeCalledTimes(1);
+        $this->registryMock->getManagerForClass(\get_class($this->objectMock->reveal()))->willReturn($this->managerMock->reveal())->shouldBeCalledTimes(1);
         $this->managerMock->remove($this->objectMock->reveal())->shouldBeCalledTimes(1);
         $this->managerMock->flush()->shouldBeCalledTimes(1);
 

@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Tests\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer;
 
 use CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer\DocumentationNormalizer;
@@ -37,13 +39,13 @@ final class DocumentationNormalizerTest extends TestCase
         $this->normalizer = new DocumentationNormalizer($this->normalizerMock->reveal());
     }
 
-    public function testItSupportsDecoratedSupport()
+    public function testItSupportsDecoratedSupport(): void
     {
         $this->normalizerMock->supportsNormalization('foo', 'bar')->willReturn(true)->shouldBeCalledTimes(1);
         $this->assertTrue($this->normalizer->supportsNormalization('foo', 'bar'));
     }
 
-    public function testItDecoratesNormalizedData()
+    public function testItDecoratesNormalizedData(): void
     {
         $this->normalizerMock->normalize(new \stdClass(), 'bar', [])->willReturn([
             'tags' => [['name' => 'Login']],

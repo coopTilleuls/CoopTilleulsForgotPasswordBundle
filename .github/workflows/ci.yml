@@ -2,7 +2,8 @@ name: CI
 
 on:
   schedule:
-    - cron: 0 2 * * 1-5
+    # Every sunday at 02:00
+    - cron: 0 2 * * 0
   pull_request:
   push:
     branches:
@@ -10,48 +11,86 @@ on:
 
 jobs:
   tests:
-    name: Tests PHP ${{ matrix.php }} - Symfony ${{ matrix.symfony }} (${{ matrix.dependency }})
+    name: Tests PHP ${{ matrix.php }} ${{ matrix.dependency }} (Symfony ${{ matrix.symfony }})
     runs-on: ubuntu-latest
-    container:
-      image: php:${{ matrix.php }}
     strategy:
-      # https://github.community/t5/GitHub-Actions/GitHub-Actions-Matrix-options-dont-work-as-documented/m-p/29558
       matrix:
         php:
           - '7.2'
           - '7.3'
           - '7.4'
+          - 'rc'
         symfony:
           - '3.4.*'
           - '4.4.*'
           - '5.1.*'
         dependency:
-          - '--prefer-stable'
-          - '--prefer-stable --prefer-lowest'
+          - ''
+          - 'lowest'
+        include:
+          - php: '7.4'
+            dependency: ''
+            symfony: '5.1.*'
+            bootable: true
+        exclude:
+          - symfony: '3.4.*'
+            dependency: 'lowest'
+          - symfony: '4.4.*'
+            dependency: 'lowest'
       fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Install system packages
-        run: |
-          apt-get update
-          apt-get install -y --no-install-recommends \
-            unzip
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: composer:v2, flex
+          tools: php-cs-fixer
 
-      - name: Disable PHP memory limit
-        run: echo 'memory_limit=-1' >> /usr/local/etc/php/php.ini
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      - name: Install Composer
-        run: curl -sS -o - https://raw.githubusercontent.com/composer/getcomposer.org/ba13e3fc70f1c66250d1ea7ea4911d593aa1dba5/web/installer | php -- --install-dir=/usr/local/bin --filename=composer --quiet
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Configure Symfony
-        run: |
-          composer global require symfony/flex
-          composer config extra.symfony.require "${{ matrix.symfony }}"
+        run: composer config extra.symfony.require "${{ matrix.symfony }}"
 
       - name: Update project dependencies
-        run: composer update --no-progress --no-suggest --ansi ${{ matrix.dependency }}
+        if: matrix.dependency == ''
+        run: composer update --no-progress --ansi --prefer-stable
+
+      - name: Update project dependencies lowest
+        if: matrix.dependency == 'lowest'
+        run: composer update --no-progress --ansi --prefer-lowest --prefer-stable
+
+      - name: Disable deprecations notices for lowest dependencies
+        if: matrix.dependency == 'lowest'
+        run: echo "SYMFONY_DEPRECATIONS_HELPER=weak" >> $GITHUB_ENV
+
+      - name: Bundle is bootable
+        if: matrix.bootable
+        env:
+          SKELETON_VERSION: ${{matrix.symfony}}
+        run: |
+          composer create-project "symfony/skeleton:${SKELETON_VERSION}" flex
+          cd flex
+          composer config extra.symfony.allow-contrib true
+          composer req --ignore-platform-reqs tilleuls/forgot-password-bundle
+
+      - name: Run php-cs-fixer tests
+        if: matrix.php != 'rc'
+        run: php-cs-fixer fix --diff --dry-run
+
+      - name: Run PHPUnit tests
+        run: vendor/bin/simple-phpunit --colors=always --testdox
 
       - name: Run Behat tests
         run: |
@@ -60,11 +99,5 @@ jobs:
 
       - name: Run Behat tests with jms/serializer-bundle
         run: |
-            mkdir -p features/app/cache/jmsserializer/doctrine/orm/Proxies features/app/logs
-            vendor/bin/behat -p jmsserializer
-
-      - name: Run PHPUnit tests
-        run: vendor/bin/phpunit
-
-      - name: Run php-cs-fixer tests
-        run: vendor/bin/php-cs-fixer fix --dry-run --diff
+          mkdir -p features/app/cache/jmsserializer/doctrine/orm/Proxies features/app/logs
+          vendor/bin/behat -p jmsserializer
