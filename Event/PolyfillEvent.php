@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
@@ -16,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Contracts\EventDispatcher\Event as ContractsEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-if (\is_subclass_of(EventDispatcher::class, EventDispatcherInterface::class)) {
+if (is_subclass_of(EventDispatcher::class, EventDispatcherInterface::class)) {
     // Symfony 4.4 and upper
     abstract class PolyfillEvent extends ContractsEvent
     {

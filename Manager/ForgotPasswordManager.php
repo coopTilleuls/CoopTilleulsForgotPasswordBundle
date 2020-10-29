@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
@@ -48,7 +50,7 @@ class ForgotPasswordManager
      * @param $propertyName
      * @param $value
      */
-    public function resetPassword($propertyName, $value)
+    public function resetPassword($propertyName, $value): void
     {
         $user = $this->manager->findOneBy($this->userClass, [$propertyName => $value]);
         if (null === $user) {

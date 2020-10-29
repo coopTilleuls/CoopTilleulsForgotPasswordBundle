@@ -9,20 +9,74 @@ For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 EOF;
 
+$finder = PhpCsFixer\Finder::create()
+    ->in(__DIR__)
+    ->exclude(['vendor', 'flex', 'var', 'features/app/cache']);
+
 return PhpCsFixer\Config::create()
+    ->setRiskyAllowed(true)
     ->setRules([
+        '@DoctrineAnnotation' => true,
+        '@PHP71Migration' => true,
+        '@PHP71Migration:risky' => true,
+        '@PHPUnit60Migration:risky' => true,
         '@Symfony' => true,
-        'ordered_imports' => true,
+        '@Symfony:risky' => true,
+        'align_multiline_comment' => [
+            'comment_type' => 'phpdocs_only',
+        ],
+        'array_indentation' => true,
+        'array_syntax' => [
+            'syntax' => 'short',
+        ],
+        'braces' => [
+            'allow_single_line_closure' => true,
+        ],
+        'compact_nullable_typehint' => true,
+        'doctrine_annotation_array_assignment' => [
+            'operator' => '=',
+        ],
+        'doctrine_annotation_spaces' => [
+            'after_array_assignments_equals' => false,
+            'before_array_assignments_equals' => false,
+        ],
+        'no_extra_blank_lines' => [
+            'tokens' => [
+                'break',
+                'continue',
+                'curly_brace_block',
+                'extra',
+                'parenthesis_brace_block',
+                'return',
+                'square_brace_block',
+                'throw',
+                'use',
+            ],
+        ],
+        'no_superfluous_phpdoc_tags' => true,
+        'no_useless_else' => true,
+        'no_useless_return' => true,
+        'ordered_imports' => [
+            'importsOrder' => [
+                'class',
+                'function',
+                'const',
+            ],
+            'sortAlgorithm' => 'alpha',
+        ],
+        'php_unit_method_casing' => [
+            'case' => 'camel_case',
+        ],
         'phpdoc_order' => true,
-        'array_syntax' => ['syntax' => 'short'],
-        'header_comment' => ['header' => $header],
-        'phpdoc_types_order' => ['null_adjustment'=> 'always_last'],
+        'phpdoc_trim_consecutive_blank_line_separation' => true,
+        'strict_comparison' => true,
+        'strict_param' => true,
+        'void_return' => true,
+        'header_comment' => [
+            'header' => $header,
+            'location' => 'after_open',
+        ],
     ])
-    ->setFinder(
-        PhpCsFixer\Finder::create()
-            ->exclude('vendor')
-            ->exclude('var')
-            ->exclude('features/app/cache')
-            ->in(__DIR__)
-    )
+    ->setFinder($finder)
+    ->setUsingCache(false)
 ;

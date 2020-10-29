@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\PasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -62,12 +64,12 @@ final class AppKernel extends Kernel
         return $bundles;
     }
 
-    protected function configureRoutes(RouteCollectionBuilder $routes)
+    protected function configureRoutes(RouteCollectionBuilder $routes): void
     {
         $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml', '/forgot_password');
     }
 
-    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
+    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader): void
     {
         $c->loadFromExtension('coop_tilleuls_forgot_password', [
             'password_token_class' => PasswordToken::class,

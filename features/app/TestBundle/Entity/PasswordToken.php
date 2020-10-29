@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
@@ -57,7 +59,7 @@ final class PasswordToken extends AbstractPasswordToken
     /**
      * @param User $user
      */
-    public function setUser($user)
+    public function setUser($user): void
     {
         $this->user = $user;
     }

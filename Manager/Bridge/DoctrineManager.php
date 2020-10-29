@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\Manager\Bridge;
 
 /**
@@ -39,9 +41,9 @@ final class DoctrineManager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function persist($object)
+    public function persist($object): void
     {
-        $manager = $this->registry->getManagerForClass(get_class($object));
+        $manager = $this->registry->getManagerForClass(\get_class($object));
         $manager->persist($object);
         $manager->flush();
     }
@@ -49,9 +51,9 @@ final class DoctrineManager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function remove($object)
+    public function remove($object): void
     {
-        $manager = $this->registry->getManagerForClass(get_class($object));
+        $manager = $this->registry->getManagerForClass(\get_class($object));
         $manager->remove($object);
         $manager->flush();
     }

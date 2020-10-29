@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Tests\ForgotPasswordBundle\Controller;
 
 use CoopTilleuls\ForgotPasswordBundle\Controller\ResetPassword;
@@ -46,7 +48,7 @@ final class ResetPasswordTest extends TestCase
         $this->tokenMock = $this->prophesize(AbstractPasswordToken::class);
     }
 
-    public function testResetPasswordAction()
+    public function testResetPasswordAction(): void
     {
         $this->managerMock->resetPassword('email', 'foo@example.com')->shouldBeCalledTimes(1);
         $controller = new ResetPassword($this->managerMock->reveal());

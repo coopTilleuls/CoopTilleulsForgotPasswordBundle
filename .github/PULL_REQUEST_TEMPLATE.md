@@ -1,3 +1,4 @@
+<!-- Please update this template with something that matches your PR -->
 | Q             | A
 | ------------- | ---
 | Bug fix?      | yes/no
@@ -7,5 +8,3 @@
 | Tests pass?   | yes
 | Fixed tickets | #1234, #5678
 | License       | MIT
-
-*Please update this template with something that matches your PR*

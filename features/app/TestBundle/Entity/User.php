@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -70,7 +72,7 @@ final class User implements UserInterface
     /**
      * @param string $email
      */
-    public function setEmail($email)
+    public function setEmail($email): void
     {
         $this->email = $email;
     }
@@ -86,7 +88,7 @@ final class User implements UserInterface
     /**
      * @param string $username
      */
-    public function setUsername($username)
+    public function setUsername($username): void
     {
         $this->username = $username;
     }
@@ -102,7 +104,7 @@ final class User implements UserInterface
     /**
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword($password): void
     {
         $this->password = $password;
     }
@@ -110,21 +112,21 @@ final class User implements UserInterface
     /**
      * {@inheritdoc}
      */
-    public function getRoles()
+    public function getRoles(): void
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSalt()
+    public function getSalt(): void
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 }

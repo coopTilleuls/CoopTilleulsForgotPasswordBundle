@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Tests\ForgotPasswordBundle\Controller;
 
 use CoopTilleuls\ForgotPasswordBundle\Controller\UpdatePassword;
@@ -39,7 +41,7 @@ final class UpdatePasswordTest extends TestCase
         $this->tokenMock = $this->prophesize(AbstractPasswordToken::class);
     }
 
-    public function testUpdatePasswordAction()
+    public function testUpdatePasswordAction(): void
     {
         $this->managerMock->updatePassword($this->tokenMock->reveal(), 'bar')->shouldBeCalledTimes(1);
         $controller = new UpdatePassword($this->managerMock->reveal());

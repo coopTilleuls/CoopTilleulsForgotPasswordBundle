@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\Entity;
 
 /**
@@ -31,14 +33,8 @@ abstract class AbstractPasswordToken
      */
     abstract public function getId();
 
-    /**
-     * @return mixed
-     */
     abstract public function getUser();
 
-    /**
-     * @param mixed $user
-     */
     abstract public function setUser($user);
 
     /**
@@ -52,7 +48,7 @@ abstract class AbstractPasswordToken
     /**
      * @param string $token
      */
-    public function setToken($token)
+    public function setToken($token): void
     {
         $this->token = $token;
     }
@@ -65,7 +61,7 @@ abstract class AbstractPasswordToken
         return $this->expiresAt;
     }
 
-    public function setExpiresAt(\DateTime $expiresAt)
+    public function setExpiresAt(\DateTime $expiresAt): void
     {
         $this->expiresAt = $expiresAt;
     }

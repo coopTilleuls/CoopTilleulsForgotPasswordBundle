@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Tests\ForgotPasswordBundle\EventListener;
 
 use CoopTilleuls\ForgotPasswordBundle\EventListener\ExceptionEventListener;
@@ -24,7 +26,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
  */
 final class ExceptionEventListenerTest extends TestCase
 {
-    public function testOnKernelExceptionInvalid()
+    public function testOnKernelExceptionInvalid(): void
     {
         if (class_exists(ExceptionEvent::class)) {
             $eventMock = $this->prophesize(ExceptionEvent::class);
@@ -41,7 +43,7 @@ final class ExceptionEventListenerTest extends TestCase
         $listener->onKernelException($eventMock->reveal());
     }
 
-    public function testOnKernelExceptionSubRequest()
+    public function testOnKernelExceptionSubRequest(): void
     {
         if (class_exists(ExceptionEvent::class)) {
             $eventMock = $this->prophesize(ExceptionEvent::class);
@@ -58,7 +60,7 @@ final class ExceptionEventListenerTest extends TestCase
         $listener->onKernelException($eventMock->reveal());
     }
 
-    public function testOnKernelException()
+    public function testOnKernelException(): void
     {
         // Cannot mock exception as it should implement JsonHttpExceptionInterface
         // and extends \Exception, but method \Exception::getMessage is final

@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer;
 
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;

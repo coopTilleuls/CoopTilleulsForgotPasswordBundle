@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\Manager\Bridge;
 
 /**
@@ -23,13 +25,7 @@ interface ManagerInterface
      */
     public function findOneBy($class, array $criteria);
 
-    /**
-     * @param mixed $object
-     */
     public function persist($object);
 
-    /**
-     * @param mixed $object
-     */
     public function remove($object);
 }

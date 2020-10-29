@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 use Behat\Behat\Context\Context;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User;
@@ -51,7 +53,7 @@ final class FeatureContext implements Context
     /**
      * @BeforeScenario
      */
-    public function resetDatabase()
+    public function resetDatabase(): void
     {
         $purger = new ORMPurger($this->doctrine->getManager());
         $purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
@@ -66,7 +68,7 @@ final class FeatureContext implements Context
     /**
      * @Given I have a valid token
      */
-    public function iHaveAValidToken()
+    public function iHaveAValidToken(): void
     {
         $this->passwordTokenManager->createPasswordToken($this->createUser());
     }
@@ -74,7 +76,7 @@ final class FeatureContext implements Context
     /**
      * @Given I have an expired token
      */
-    public function iHaveAnExpiredToken()
+    public function iHaveAnExpiredToken(): void
     {
         $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('-1 minute'));
     }
@@ -86,7 +88,7 @@ final class FeatureContext implements Context
      * @param string $propertyName
      * @param string $value
      */
-    public function IResetMyPassword($propertyName = 'email', $value = 'john.doe@example.com')
+    public function IResetMyPassword($propertyName = 'email', $value = 'john.doe@example.com'): void
     {
         $this->createUser();
 
@@ -109,7 +111,7 @@ JSON
     /**
      * @Then I should receive an email
      */
-    public function iShouldReceiveAnEmail()
+    public function iShouldReceiveAnEmail(): void
     {
         Assert::assertTrue(
             $this->client->getResponse()->isSuccessful(),
@@ -132,7 +134,7 @@ JSON
     /**
      * @When the page should not be found
      */
-    public function thePageShouldNotBeFound()
+    public function thePageShouldNotBeFound(): void
     {
         Assert::assertTrue(
             $this->client->getResponse()->isNotFound(),
@@ -143,7 +145,7 @@ JSON
     /**
      * @Then the response should be empty
      */
-    public function theResponseShouldBeEmpty()
+    public function theResponseShouldBeEmpty(): void
     {
         Assert::assertTrue(
             $this->client->getResponse()->isEmpty(),
@@ -156,7 +158,7 @@ JSON
      *
      * @param string $message
      */
-    public function theRequestShouldBeInvalidWithMessage($message)
+    public function theRequestShouldBeInvalidWithMessage($message): void
     {
         Assert::assertEquals(
             400,
@@ -177,7 +179,7 @@ JSON
     /**
      * @Then I reset my password using invalid email address
      */
-    public function iResetMyPasswordUsingInvalidEmailAddress()
+    public function iResetMyPasswordUsingInvalidEmailAddress(): void
     {
         $this->client->request(
             'POST',
@@ -196,7 +198,7 @@ JSON
     /**
      * @Then I reset my password using no parameter
      */
-    public function iResetMyPasswordUsingNoParameter()
+    public function iResetMyPasswordUsingNoParameter(): void
     {
         $this->client->request('POST', '/forgot_password/');
     }
@@ -204,7 +206,7 @@ JSON
     /**
      * @Then I update my password
      */
-    public function iUpdateMyPassword()
+    public function iUpdateMyPassword(): void
     {
         $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
 
@@ -225,7 +227,7 @@ JSON
     /**
      * @Then I update my password using no password
      */
-    public function iUpdateMyPasswordUsingNoPassword()
+    public function iUpdateMyPasswordUsingNoPassword(): void
     {
         $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
 
@@ -235,7 +237,7 @@ JSON
     /**
      * @Then I update my password using an invalid token
      */
-    public function iUpdateMyPasswordUsingAnInvalidToken()
+    public function iUpdateMyPasswordUsingAnInvalidToken(): void
     {
         $this->client->request(
             'POST',
@@ -254,7 +256,7 @@ JSON
     /**
      * @Then I update my password using an expired token
      */
-    public function iUpdateMyPasswordUsingAnExpiredToken()
+    public function iUpdateMyPasswordUsingAnExpiredToken(): void
     {
         $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('-1 minute'));
 
@@ -275,7 +277,7 @@ JSON
     /**
      * @Then I get a password token
      */
-    public function iGetAPasswordToken()
+    public function iGetAPasswordToken(): void
     {
         $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
         $token->setToken('d7xtQlJVyN61TzWtrY6xy37zOxB66BqMSDXEbXBbo2Mw4Jjt9C');
@@ -288,7 +290,7 @@ JSON
     /**
      * @Then I should get a password token
      */
-    public function iShouldGetAPasswordToken()
+    public function iShouldGetAPasswordToken(): void
     {
         Assert::assertTrue(
             $this->client->getResponse()->isSuccessful(),
@@ -300,7 +302,7 @@ JSON
     /**
      * @Then I get a password token using an expired token
      */
-    public function iGetAPasswordTokenUsingAnExpiredToken()
+    public function iGetAPasswordTokenUsingAnExpiredToken(): void
     {
         $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('-1 minute'));
 

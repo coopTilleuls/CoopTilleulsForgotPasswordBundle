@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -35,16 +37,16 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->beforeNormalization()
                 ->ifTrue(function ($config) {
-                    return array_key_exists('password_token_class', $config) || array_key_exists('user_class', $config);
+                    return \array_key_exists('password_token_class', $config) || \array_key_exists('user_class', $config);
                 })
                 ->then(function ($config) {
-                    if (array_key_exists('password_token_class', $config)) {
+                    if (\array_key_exists('password_token_class', $config)) {
                         if (!isset($config['password_token'])) {
                             $config['password_token'] = [];
                         }
                         $config['password_token']['class'] = $config['password_token_class'];
                     }
-                    if (array_key_exists('user_class', $config)) {
+                    if (\array_key_exists('user_class', $config)) {
                         if (!isset($config['user'])) {
                             $config['user'] = [];
                         }

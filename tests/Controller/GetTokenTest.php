@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Tests\ForgotPasswordBundle\Controller;
 
 use CoopTilleuls\ForgotPasswordBundle\Controller\GetToken;
@@ -39,7 +41,7 @@ final class GetTokenTest extends TestCase
         $this->tokenMock = $this->prophesize(AbstractPasswordToken::class);
     }
 
-    public function testGetTokenAction()
+    public function testGetTokenAction(): void
     {
         $this->normalizerMock->normalize($this->tokenMock->reveal(), 'json', ['groups' => ['foo']])
             ->willReturn(['foo' => 'bar'])

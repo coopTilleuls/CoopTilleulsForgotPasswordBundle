@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
@@ -44,8 +46,6 @@ class PasswordTokenManager
     }
 
     /**
-     * @param mixed $user
-     *
      * @return AbstractPasswordToken
      */
     public function createPasswordToken($user, \DateTime $expiresAt = null)
@@ -53,7 +53,7 @@ class PasswordTokenManager
         /** @var AbstractPasswordToken $passwordToken */
         $passwordToken = new $this->passwordTokenClass();
 
-        if (version_compare(phpversion(), '7.0', '>')) {
+        if (version_compare(PHP_VERSION, '7.0', '>')) {
             $passwordToken->setToken(bin2hex(random_bytes(25)));
         } else {
             $factory = new Factory();
@@ -83,8 +83,6 @@ class PasswordTokenManager
     }
 
     /**
-     * @param mixed $user
-     *
      * @return AbstractPasswordToken
      */
     public function findOneByUser($user)

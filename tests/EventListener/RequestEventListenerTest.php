@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Tests\ForgotPasswordBundle\EventListener;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
@@ -55,7 +57,7 @@ final class RequestEventListenerTest extends TestCase
         );
     }
 
-    public function testDecodeRequestInvalidRoute()
+    public function testDecodeRequestInvalidRoute(): void
     {
         $this->parameterBagMock->get('_route')->willReturn('foo')->shouldBeCalledTimes(1);
         $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
@@ -64,7 +66,7 @@ final class RequestEventListenerTest extends TestCase
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
-    public function testDecodeRequestMissingFieldException()
+    public function testDecodeRequestMissingFieldException(): void
     {
         $this->expectException(MissingFieldHttpException::class);
         $this->expectExceptionMessage('Parameter "password" is missing.');
@@ -76,7 +78,7 @@ final class RequestEventListenerTest extends TestCase
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
-    public function testDecodeRequestNoParametersException()
+    public function testDecodeRequestNoParametersException(): void
     {
         $this->expectException(NoParameterException::class);
         $this->expectExceptionMessage('No parameter sent.');
@@ -88,7 +90,7 @@ final class RequestEventListenerTest extends TestCase
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
-    public function testDecodeRequestInvalidJsonHttpException()
+    public function testDecodeRequestInvalidJsonHttpException(): void
     {
         $this->expectException(InvalidJsonHttpException::class);
         $this->expectExceptionMessage('Invalid JSON data.');
@@ -100,7 +102,7 @@ final class RequestEventListenerTest extends TestCase
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
-    public function testDecodeRequestUnauthorizedException()
+    public function testDecodeRequestUnauthorizedException(): void
     {
         $this->expectException(UnauthorizedFieldException::class);
         $this->expectExceptionMessage('The parameter "name" is not authorized in your configuration.');
@@ -112,7 +114,7 @@ final class RequestEventListenerTest extends TestCase
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
-    public function testDecodeRequest()
+    public function testDecodeRequest(): void
     {
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
         $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
@@ -122,7 +124,7 @@ final class RequestEventListenerTest extends TestCase
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
-    public function testGetTokenFromRequestInvalidRoute()
+    public function testGetTokenFromRequestInvalidRoute(): void
     {
         $this->parameterBagMock->get('_route')->willReturn('foo')->shouldBeCalledTimes(1);
         $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
@@ -131,7 +133,7 @@ final class RequestEventListenerTest extends TestCase
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
     }
 
-    public function testGetTokenFromRequestNoTokenException()
+    public function testGetTokenFromRequestNoTokenException(): void
     {
         $this->expectException(NotFoundHttpException::class);
 
@@ -143,7 +145,7 @@ final class RequestEventListenerTest extends TestCase
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
     }
 
-    public function testGetTokenFromRequestInvalidTokenException()
+    public function testGetTokenFromRequestInvalidTokenException(): void
     {
         $this->expectException(NotFoundHttpException::class);
 
@@ -158,7 +160,7 @@ final class RequestEventListenerTest extends TestCase
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
     }
 
-    public function testGetTokenFromRequest()
+    public function testGetTokenFromRequest(): void
     {
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
