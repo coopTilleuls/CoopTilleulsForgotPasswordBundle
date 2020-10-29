@@ -55,10 +55,6 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
             $loader->load('api_platform.xml');
         }
 
-        // Build manager
-        if (!$container->hasDefinition($config['manager'])) {
-            throw new \LogicException(sprintf('Service "%s" does not exist.', $config['manager']));
-        }
         $container->setAlias('coop_tilleuls_forgot_password.manager', $config['manager']);
 
         // Build normalizer
