@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- https://phpunit.de/manual/current/en/appendixes.configuration.html -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/8.3/phpunit.xsd" backupGlobals="false" colors="true" bootstrap="features/app/bootstrap.php">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/9.4/phpunit.xsd" backupGlobals="false" colors="true" bootstrap="features/app/bootstrap.php">
     <php>
         <ini name="error_reporting" value="-1" />
-        <env name="SYMFONY_PHPUNIT_REMOVE" value="symfony/yaml" />
+        <env name="SYMFONY_PHPUNIT_VERSION" value="9.4" />
     </php>
 
     <testsuites>

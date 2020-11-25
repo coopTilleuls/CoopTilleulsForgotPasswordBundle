@@ -17,12 +17,15 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\JMSNormalizer;
 use JMS\Serializer\ArrayTransformerInterface;
 use PHPUnit\Framework\TestCase;
+use Tests\ForgotPasswordBundle\ProphecyTrait;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
 final class JMSNormalizerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testNormalize(): void
     {
         $normalizerMock = $this->prophesize(ArrayTransformerInterface::class);

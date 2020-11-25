@@ -20,12 +20,15 @@ use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Tests\ForgotPasswordBundle\ProphecyTrait;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
 final class ExceptionEventListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testOnKernelExceptionInvalid(): void
     {
         if (class_exists(ExceptionEvent::class)) {

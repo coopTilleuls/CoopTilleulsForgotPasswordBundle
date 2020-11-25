@@ -20,12 +20,15 @@ use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\ForgotPasswordBundle\ProphecyTrait;
 
 /**
  * @author Vincent Chalamon <vincentchalamon@gmail.com>
  */
 final class ResetPasswordTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var ForgotPasswordManager|ObjectProphecy
      */

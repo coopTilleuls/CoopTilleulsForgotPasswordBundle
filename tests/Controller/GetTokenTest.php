@@ -19,12 +19,15 @@ use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Tests\ForgotPasswordBundle\ProphecyTrait;
 
 /**
  * @author Vincent Chalamon <vincentchalamon@gmail.com>
  */
 final class GetTokenTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var NormalizerInterface|ObjectProphecy
      */
