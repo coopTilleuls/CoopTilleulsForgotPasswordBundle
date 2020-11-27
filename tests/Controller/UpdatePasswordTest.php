@@ -19,12 +19,15 @@ use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\ForgotPasswordBundle\ProphecyTrait;
 
 /**
  * @author Vincent Chalamon <vincentchalamon@gmail.com>
  */
 final class UpdatePasswordTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var ForgotPasswordManager|ObjectProphecy
      */

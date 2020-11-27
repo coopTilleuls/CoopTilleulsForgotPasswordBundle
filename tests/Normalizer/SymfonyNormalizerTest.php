@@ -17,12 +17,15 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\SymfonyNormalizer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Tests\ForgotPasswordBundle\ProphecyTrait;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
 final class SymfonyNormalizerTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testNormalize(): void
     {
         $normalizerMock = $this->prophesize(NormalizerInterface::class);

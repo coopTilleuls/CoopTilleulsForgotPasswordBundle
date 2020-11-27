@@ -19,12 +19,15 @@ use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Tests\ForgotPasswordBundle\ProphecyTrait;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
 final class PasswordTokenManagerTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var PasswordTokenManager
      */

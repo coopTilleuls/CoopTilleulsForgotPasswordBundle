@@ -17,12 +17,15 @@ use CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer\Documentatio
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Tests\ForgotPasswordBundle\ProphecyTrait;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
  */
 final class DocumentationNormalizerTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var NormalizerInterface|ObjectProphecy
      */

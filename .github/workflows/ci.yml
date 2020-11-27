@@ -11,32 +11,21 @@ on:
 
 jobs:
   tests:
-    name: Tests PHP ${{ matrix.php }} ${{ matrix.dependency }} (Symfony ${{ matrix.symfony }})
+    name: Tests PHP ${{ matrix.php }} (Symfony ${{ matrix.symfony }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
         php:
-          - '7.2'
           - '7.3'
           - '7.4'
-          - 'rc'
+          - '8.0'
         symfony:
-          - '3.4.*'
           - '4.4.*'
           - '5.1.*'
-        dependency:
-          - ''
-          - 'lowest'
         include:
           - php: '7.4'
-            dependency: ''
             symfony: '5.1.*'
             bootable: true
-        exclude:
-          - symfony: '3.4.*'
-            dependency: 'lowest'
-          - symfony: '4.4.*'
-            dependency: 'lowest'
       fail-fast: false
     steps:
       - name: Checkout
@@ -64,16 +53,12 @@ jobs:
         run: composer config extra.symfony.require "${{ matrix.symfony }}"
 
       - name: Update project dependencies
-        if: matrix.dependency == ''
+        if: matrix.php != '8.0'
         run: composer update --no-progress --ansi --prefer-stable
 
-      - name: Update project dependencies lowest
-        if: matrix.dependency == 'lowest'
-        run: composer update --no-progress --ansi --prefer-lowest --prefer-stable
-
-      - name: Disable deprecations notices for lowest dependencies
-        if: matrix.dependency == 'lowest'
-        run: echo "SYMFONY_DEPRECATIONS_HELPER=weak" >> $GITHUB_ENV
+      - name: Update project dependencies
+        if: matrix.php == '8.0'
+        run: composer update --no-progress --ansi --prefer-stable --ignore-platform-req=php
 
       - name: Bundle is bootable
         if: matrix.bootable
@@ -86,7 +71,7 @@ jobs:
           composer req --ignore-platform-reqs tilleuls/forgot-password-bundle
 
       - name: Run php-cs-fixer tests
-        if: matrix.php != 'rc'
+        if: matrix.php != '8.0' && matrix.php != '8.1'
         run: php-cs-fixer fix --diff --dry-run
 
       - name: Run PHPUnit tests
