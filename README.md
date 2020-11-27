@@ -10,10 +10,6 @@ Feel free to contribute on it!
 [![Packagist Version](https://img.shields.io/packagist/v/tilleuls/forgot-password-bundle.svg?style=flat-square)](https://packagist.org/packages/tilleuls/forgot-password-bundle)
 [![Software license](https://img.shields.io/github/license/coopTilleuls/CoopTilleulsForgotPasswordBundle.svg?style=flat-square)](https://github.com/coopTilleuls/CoopTilleulsForgotPasswordBundle/blob/master/LICENSE)
 
-## Requirements
-
-- Symfony 3.4, 4.*, 5.*
-
 ## Documentation
 
 Full documentation is available at [Resources/doc](Resources/doc/getting_started.md).
