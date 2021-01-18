@@ -16,6 +16,8 @@ namespace AppBundle\EventSubscriber;
 // ...
 use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Twig\Environment;
 
 final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
@@ -23,7 +25,7 @@ final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
     private $mailer;
     private $twig;
 
-    public function __construct(\Swift_Mailer $mailer, Environment $twig)
+    public function __construct(MailerInterface $mailer, Environment $twig)
     {
         $this->mailer = $mailer;
         $this->twig = $twig;
@@ -42,20 +44,17 @@ final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
         $passwordToken = $event->getPasswordToken();
         $user = $passwordToken->getUser();
 
-        $swiftMessage = new \Swift_Message(
-            'Reset of your password',
-            $this->twig->render(
+        $message = (new Email())
+            ->from('no-reply@example.com')
+            ->to($user->getEmail())
+            ->subject('Reset your password')
+            ->html($this->twig->render(
                 'AppBundle:ResetPassword:mail.html.twig',
                 [
                     'reset_password_url' => sprintf('http://www.example.com/forgot-password/%s', $passwordToken->getToken()),
                 ]
-            )
-        );
-
-        $swiftMessage->setFrom('no-reply@example.com');
-        $swiftMessage->setTo($user->getEmail());
-        $swiftMessage->setContentType('text/html');
-        if (0 === $this->mailer->send($swiftMessage)) {
+            ));
+        if (0 === $this->mailer->send($message)) {
             throw new \RuntimeException('Unable to send email');
         }
     }
