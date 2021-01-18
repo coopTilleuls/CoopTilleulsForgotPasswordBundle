@@ -50,7 +50,6 @@ final class AppKernel extends Kernel
         $bundles = [
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
-            new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle(),
@@ -80,10 +79,6 @@ final class AppKernel extends Kernel
             'use_jms_serializer' => 'jmsserializer' === $this->getEnvironment(),
         ]);
 
-        $c->loadFromExtension('swiftmailer', [
-            'disable_delivery' => true,
-        ]);
-
         $c->loadFromExtension('doctrine', [
             'dbal' => [
                 'driver' => 'pdo_sqlite',
@@ -99,6 +94,9 @@ final class AppKernel extends Kernel
 
         $c->loadFromExtension('framework', array_merge([
             'secret' => 'CoopTilleulsForgotPasswordBundle',
+            'mailer' => [
+                'dsn' => 'null://null',
+            ],
             'test' => null,
             'assets' => null,
             'profiler' => ['collect' => false],

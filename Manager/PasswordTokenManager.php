@@ -53,7 +53,7 @@ class PasswordTokenManager
         /** @var AbstractPasswordToken $passwordToken */
         $passwordToken = new $this->passwordTokenClass();
 
-        if (version_compare(PHP_VERSION, '7.0', '>')) {
+        if (version_compare(\PHP_VERSION, '7.0', '>')) {
             $passwordToken->setToken(bin2hex(random_bytes(25)));
         } else {
             $factory = new Factory();

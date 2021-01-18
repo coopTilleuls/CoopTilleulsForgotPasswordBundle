@@ -21,7 +21,8 @@ use Doctrine\ORM\Tools\SchemaTool;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
+use Symfony\Component\Mailer\DataCollector\MessageDataCollector;
+use Symfony\Component\Mime\RawMessage;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -120,15 +121,17 @@ JSON
         Assert::assertEmpty($this->client->getResponse()->getContent());
 
         /** @var MessageDataCollector $mailCollector */
-        $mailCollector = $this->client->getProfile()->getCollector('swiftmailer');
-        Assert::assertEquals(1, $mailCollector->getMessageCount(), 'No email has been sent');
+        $mailCollector = $this->client->getProfile()->getCollector('mailer');
+        $messages = $mailCollector->getEvents()->getMessages();
+        Assert::assertCount(1, $messages, 'No email has been sent');
 
-        $messages = $mailCollector->getMessages();
-        Assert::assertInstanceOf('Swift_Message', $messages[0]);
-        Assert::assertEquals('Réinitialisation de votre mot de passe', $messages[0]->getSubject());
-        Assert::assertEquals('no-reply@example.com', key($messages[0]->getFrom()));
-        Assert::assertEquals('john.doe@example.com', key($messages[0]->getTo()));
-        Assert::assertRegExp('/http:\/\/www\.example\.com\/forgot_password\/(.*)/', $messages[0]->getBody());
+        /** @var \Symfony\Component\Mime\Email $message */
+        $message = $messages[0];
+        Assert::assertInstanceOf(RawMessage::class, $message);
+        Assert::assertEquals('Réinitialisation de votre mot de passe', $message->getSubject());
+        Assert::assertEquals('no-reply@example.com', $message->getFrom()[0]->getAddress());
+        Assert::assertEquals('john.doe@example.com', $message->getTo()[0]->getAddress());
+        Assert::assertMatchesRegularExpression('/http:\/\/www\.example\.com\/forgot_password\/(.*)/', $message->getHtmlBody());
     }
 
     /**
