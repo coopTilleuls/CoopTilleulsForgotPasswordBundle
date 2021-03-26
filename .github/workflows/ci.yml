@@ -21,7 +21,7 @@ jobs:
           - '8.0'
         symfony:
           - '4.4.*'
-          - '5.1.*'
+          - '5.2.*'
         include:
           - php: '7.4'
             symfony: '5.1.*'
@@ -35,8 +35,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: composer:v2, flex
-          tools: php-cs-fixer
+          tools: composer:v2, flex, php-cs-fixer
 
       - name: Get Composer Cache Directory
         id: composer-cache
