@@ -6,7 +6,7 @@ Feel free to contribute on it!
 
 [![Actions Status](https://github.com/coopTilleuls/CoopTilleulsForgotPasswordBundle/workflows/CI/badge.svg)](https://github.com/coopTilleuls/CoopTilleulsForgotPasswordBundle/actions)
 [![Packagist Version](https://img.shields.io/packagist/v/tilleuls/forgot-password-bundle.svg?style=flat-square)](https://packagist.org/packages/tilleuls/forgot-password-bundle)
-[![Software license](https://img.shields.io/github/license/coopTilleuls/CoopTilleulsForgotPasswordBundle.svg?style=flat-square)](https://github.com/coopTilleuls/CoopTilleulsForgotPasswordBundle/blob/master/LICENSE)
+[![Software license](https://img.shields.io/github/license/coopTilleuls/CoopTilleulsForgotPasswordBundle.svg?style=flat-square)](https://github.com/coopTilleuls/CoopTilleulsForgotPasswordBundle/blob/main/LICENSE)
 
 ## Documentation
 
