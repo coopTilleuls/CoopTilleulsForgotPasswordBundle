@@ -22,8 +22,8 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
  */
 class ForgotPasswordEvent extends PolyfillEvent
 {
-    const CREATE_TOKEN = 'coop_tilleuls_forgot_password.create_token';
-    const UPDATE_PASSWORD = 'coop_tilleuls_forgot_password.update_password';
+    public const CREATE_TOKEN = 'coop_tilleuls_forgot_password.create_token';
+    public const UPDATE_PASSWORD = 'coop_tilleuls_forgot_password.update_password';
 
     protected $passwordToken;
     protected $password;
