@@ -26,6 +26,9 @@ jobs:
           - php: '8.0'
             symfony: '5.3.*'
             bootable: true
+        exclude:
+          - php: '8.0'
+            symfony: '4.4.*'
       fail-fast: false
     steps:
       - name: Checkout
@@ -48,7 +51,7 @@ jobs:
         run: composer config extra.symfony.require "${{ matrix.symfony }}"
       - name: Configure dependencies
         if: matrix.php == '8.0'
-        run: composer req --dev laminas/laminas-code:^4.0
+        run: composer require laminas/laminas-code:^4.0 --dev --no-install --no-update
       - name: Update project dependencies
         run: composer update --no-progress --ansi --prefer-stable
       - name: Bundle is bootable
