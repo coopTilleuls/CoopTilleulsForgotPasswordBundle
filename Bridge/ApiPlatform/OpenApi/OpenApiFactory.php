@@ -42,7 +42,7 @@ final class OpenApiFactory implements OpenApiFactoryInterface
 
         // Add POST /forgot-password/ path
         /** @var PathItem $path */
-        $path = $paths->getPath('/forgot-password/');
+        $path = $paths->getPath('/forgot-password/') ?: new PathItem();
         $paths->addPath('/forgot-password/', $path->withPost(new Operation(
             'postForgotPassword',
             ['Forgot password'],
@@ -81,7 +81,7 @@ final class OpenApiFactory implements OpenApiFactoryInterface
 
         // Add GET /forgot-password/{token} path
         /** @var PathItem $path */
-        $path = $paths->getPath('/forgot-password/{token}');
+        $path = $paths->getPath('/forgot-password/{token}') ?: new PathItem();
         $paths->addPath('/forgot-password/', $path->withGet(new Operation(
             'getForgotPassword',
             ['Forgot password'],
@@ -123,7 +123,7 @@ final class OpenApiFactory implements OpenApiFactoryInterface
 
         // Add POST /forgot-password/{token} path
         /** @var PathItem $path */
-        $path = $paths->getPath('/forgot-password/{token}');
+        $path = $paths->getPath('/forgot-password/{token}') ?: new PathItem();
         $paths->addPath('/forgot-password/', $path->withPost(new Operation(
             'postForgotPasswordToken',
             ['Forgot password'],
