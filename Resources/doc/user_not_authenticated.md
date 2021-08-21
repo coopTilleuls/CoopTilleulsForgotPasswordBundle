@@ -7,18 +7,25 @@ application.
 Create an EventListener and listen to `kernel.request` event:
 
 ```php
-namespace AppBundle\Event;
+// src/EventSubscriber/ForgotPasswordEventSubscriber.php
+namespace App\EventSubscriber;
 
 // ...
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class ForgotPasswordEventListener
+final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
 {
-    // ...
-    /**
-     * @param RequestEvent $event
-     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            // Symfony 4.3 and inferior, use 'kernel.request' event name
+            KernelEvents::REQUEST => 'onKernelRequest',
+        ];
+    }
+
     public function onKernelRequest(RequestEvent $event)
     {
         if (!$event->isMasterRequest()
@@ -34,14 +41,4 @@ class ForgotPasswordEventListener
         }
     }
 }
-```
-
-Register this service:
-
-```yml
-# AppBundle/Resources/config/services.yml
-services:
-    app.listener.forgot_password:
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 ```
