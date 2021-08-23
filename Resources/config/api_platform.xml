@@ -9,5 +9,11 @@
                  class="CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer\DocumentationNormalizer">
             <argument type="service" id="coop_tilleuls_forgot_password.normalizer.documentation.inner"/>
         </service>
+
+        <service id="coop_tilleuls_forgot_password.openapi.factory" public="false"
+                 decorates="api_platform.openapi.factory"
+                 class="CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\OpenApi\OpenApiFactory">
+            <argument type="service" id="coop_tilleuls_forgot_password.openapi.factory.inner"/>
+        </service>
     </services>
 </container>

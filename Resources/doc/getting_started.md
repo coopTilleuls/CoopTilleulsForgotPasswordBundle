@@ -16,16 +16,11 @@ composer require tilleuls/forgot-password-bundle
 Register this bundle in your kernel:
 
 ```php
-// app/AppKernel.php
-public function registerBundles()
-{
-    $bundles = [
-        new CoopTilleuls\ForgotPasswordBundle\CoopTilleulsForgotPasswordBundle(),
-        // ...
-    ];
-
+// config/bundles.php
+return [
     // ...
-}
+    CoopTilleuls\ForgotPasswordBundle\CoopTilleulsForgotPasswordBundle::class => ['all' => true],
+];
 ```
 
 ## Configuration
@@ -35,10 +30,10 @@ public function registerBundles()
 Load routing:
 
 ```yml
-# app/config/routing.yml
+# config/routes/coop_tilleuls_forgot_password.yaml
 coop_tilleuls_forgot_password:
-    resource: '@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml'
-    prefix:   '/forgot_password'
+    resource: "@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml"
+    prefix:   /forgot_password
 ```
 
 This provides 2 main routes:
@@ -51,7 +46,8 @@ CoopTilleulsForgotPasswordBundle provides an abstract _mapped superclass_, you'l
 `PasswordToken` entity for your project:
 
 ```php
-namespace AppBundle\Entity;
+// src/Entity/PasswordToken.php
+namespace App\Entity;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Doctrine\ORM\Mapping as ORM;
@@ -73,7 +69,7 @@ class PasswordToken extends AbstractPasswordToken
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity=User::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
@@ -109,16 +105,23 @@ class PasswordToken extends AbstractPasswordToken
 Enable required configuration:
 
 ```yml
-# app/config/config.yml
+# config/packages/coop_tilleuls_forgot_password.yaml
 coop_tilleuls_forgot_password:
-    password_token_class: 'AppBundle\Entity\PasswordToken'
-    user_class:           'AppBundle\Entity\User'
+    password_token:
+        class: App\Entity\PasswordToken # required
+        expires_in: 1 day
+        user_field: user
+        serialization_groups: []
+    user:
+        class: App\Entity\User # required
+        email_field: email
+        password_field: password
 ```
 
 Update your security to allow anonymous users to reset their password:
 
 ```yml
-# app/config/security.yml
+# config/packages/security.yaml
 security:
     # ...
     firewalls:
@@ -136,7 +139,7 @@ By default, this bundle will look for `email` field on user class to retrieve it
 for 1 day, and will set a `password` field when sent. Here is the default configuration:
 
 ```yml
-# app/config/config.yml
+# config/packages/coop_tilleuls_forgot_password.yaml
 coop_tilleuls_forgot_password:
     password_token:
         class: App\Entity\PasswordToken # required

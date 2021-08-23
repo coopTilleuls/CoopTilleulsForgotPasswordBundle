@@ -11,7 +11,8 @@ On the first user story, user will send its identifier (email, username...), you
 allowing him to reset its password using a valid PasswordToken.
 
 ```php
-namespace AppBundle\EventSubscriber;
+// src/EventSubscriber/ForgotPasswordEventSubscriber.php
+namespace App\EventSubscriber;
 
 // ...
 use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
@@ -49,7 +50,7 @@ final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
             ->to($user->getEmail())
             ->subject('Reset your password')
             ->html($this->twig->render(
-                'AppBundle:ResetPassword:mail.html.twig',
+                'App:ResetPassword:mail.html.twig',
                 [
                     'reset_password_url' => sprintf('http://www.example.com/forgot-password/%s', $passwordToken->getToken()),
                 ]
@@ -74,7 +75,8 @@ Your app is ready to receive a JSON request like:
 On the second user story, user will send its new password, and you'll have to encode it and save it.
 
 ```php
-namespace AppBundle\Event;
+// src/EventSubscriber/ForgotPasswordEventSubscriber.php
+namespace App\EventSubscriber;
 
 // ...
 use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;

@@ -9,7 +9,8 @@ Supposing you want to use your custom entity manager, you'll have to create a se
 `CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface`:
 
 ```php
-namespace AppBundle\Manager;
+// src/Manager/FooManager.php
+namespace App\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 
@@ -43,23 +44,13 @@ class FooManager implements ManagerInterface
 }
 ```
 
-Now, declare it as service:
-
-```yml
-# AppBundle/Resources/config/services.yml
-services:
-    app.manager.foo:
-        class: AppBundle/Manager/FooManager
-        arguments: ['@foo']
-```
-
 ## Update configuration
 
 Update your configuration to set your service as default one to use by CoopTilleulsForgotPasswordBundle:
 
 ```yml
-# app/config/config.yml
+# config/packages/coop_tilleuls_forgot_password.yaml
 coop_tilleuls_forgot_password:
     # ...
-    manager: 'app.manager.foo'
+    manager: 'App\Manager\FooManager'
 ```
