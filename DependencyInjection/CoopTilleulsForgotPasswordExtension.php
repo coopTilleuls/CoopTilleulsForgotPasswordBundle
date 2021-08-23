@@ -65,5 +65,9 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
         if (!$container->hasDefinition('api_platform.swagger.normalizer.documentation')) {
             $container->removeDefinition('coop_tilleuls_forgot_password.normalizer.documentation');
         }
+
+        if (!$container->hasDefinition('api_platform.openapi.factory')) {
+            $container->removeDefinition('coop_tilleuls_forgot_password.openapi.factory');
+        }
     }
 }
