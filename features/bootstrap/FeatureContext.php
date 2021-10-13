@@ -16,7 +16,6 @@ use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Tools\SchemaTool;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\Client;
@@ -60,7 +59,7 @@ final class FeatureContext implements Context
         $purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
         try {
             $purger->purge();
-        } catch (DBALException $e) {
+        } catch (\Exception $e) {
             $schemaTool = new SchemaTool($this->doctrine->getManager());
             $schemaTool->createSchema($this->doctrine->getManager()->getMetadataFactory()->getAllMetadata());
         }
