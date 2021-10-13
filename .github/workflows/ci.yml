@@ -55,14 +55,14 @@ jobs:
       - name: Update project dependencies
         run: composer update --no-progress --ansi --prefer-stable
       - name: Bundle is bootable
-        if: matrix.bootable
+        if: ${{ matrix.bootable && github.event_name == 'push' }}
         env:
           SKELETON_VERSION: ${{ matrix.symfony }}
         run: |
           composer create-project "symfony/skeleton:${SKELETON_VERSION}" flex
           cd flex
           composer config extra.symfony.allow-contrib true
-          composer req --ignore-platform-reqs tilleuls/forgot-password-bundle
+          composer req --ignore-platform-reqs tilleuls/forgot-password-bundle:dev-${GITHUB_REF#refs/heads/}
       - name: Run php-cs-fixer tests
         run: php-cs-fixer fix --diff --dry-run
       - name: Run PHPUnit tests
