@@ -55,9 +55,7 @@ final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
                     'reset_password_url' => sprintf('http://www.example.com/forgot-password/%s', $passwordToken->getToken()),
                 ]
             ));
-        if (0 === $this->mailer->send($message)) {
-            throw new \RuntimeException('Unable to send email');
-        }
+        $this->mailer->send($message);
     }
 }
 ```
