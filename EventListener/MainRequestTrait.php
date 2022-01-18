@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Event\KernelEvent;
  */
 trait MainRequestTrait
 {
-    protected function isMainRequest(KernelEvent $event): bool
+    private function isMainRequest(KernelEvent $event): bool
     {
         return method_exists($event, 'isMainRequest') ? $event->isMainRequest() : $event->isMasterRequest();
     }
