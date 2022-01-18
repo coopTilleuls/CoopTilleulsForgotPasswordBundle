@@ -27,6 +27,7 @@ jobs:
           - php: '8.0'
             symfony: '5.4.*'
             bootable: true
+            quality: true
         exclude:
           - php: '8.0'
             symfony: '4.4.*'
