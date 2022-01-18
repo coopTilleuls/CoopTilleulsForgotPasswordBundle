@@ -26,6 +26,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class RequestEventListener
 {
+    use MainRequestTrait;
+
     private $authorizedFields;
     private $userPasswordField;
     private $passwordTokenManager;
@@ -47,7 +49,7 @@ final class RequestEventListener
     {
         $request = $event->getRequest();
         $routeName = $request->attributes->get('_route');
-        if (!$event->isMasterRequest() || !\in_array(
+        if (!$this->isMainRequest($event) || !\in_array(
                 $routeName,
                 ['coop_tilleuls_forgot_password.reset', 'coop_tilleuls_forgot_password.update'], true
             )
@@ -88,7 +90,7 @@ final class RequestEventListener
     {
         $request = $event->getRequest();
         $routeName = $request->attributes->get('_route');
-        if (!$event->isMasterRequest() || !\in_array(
+        if (!$this->isMainRequest($event) || !\in_array(
                 $routeName,
                 ['coop_tilleuls_forgot_password.get_token', 'coop_tilleuls_forgot_password.update'], true
             )
