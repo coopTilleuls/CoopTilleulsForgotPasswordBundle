@@ -70,8 +70,7 @@ jobs:
           composer req --ignore-platform-reqs tilleuls/forgot-password-bundle:dev-${GITHUB_REF#refs/heads/}
       - name: Run php-cs-fixer tests
         run: php-cs-fixer fix --diff --dry-run
-        env:
-          PHP_CS_FIXER_IGNORE_ENV: 1
+        if: matrix.php >= '7.4'
       - name: Run PHPUnit tests
         run: vendor/bin/simple-phpunit --colors=always --testdox
       - name: Run Behat tests
