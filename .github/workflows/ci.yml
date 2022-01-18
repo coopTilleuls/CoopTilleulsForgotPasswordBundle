@@ -30,6 +30,10 @@ jobs:
         exclude:
           - php: '8.0'
             symfony: '4.4.*'
+          - php: '7.3'
+            symfony: '6.0.*'
+          - php: '7.4'
+            symfony: '6.0.*'
       fail-fast: false
     steps:
       - name: Checkout
