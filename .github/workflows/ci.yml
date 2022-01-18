@@ -25,7 +25,7 @@ jobs:
           - '6.0.*'
         include:
           - php: '8.0'
-            symfony: '5.3.*'
+            symfony: '5.4.*'
             bootable: true
         exclude:
           - php: '8.0'
