@@ -27,7 +27,7 @@ final class DocumentationNormalizer implements NormalizerInterface
         $this->decorated = $decorated;
     }
 
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = []): array
     {
         $docs = $this->decorated->normalize($object, $format, $context);
 
