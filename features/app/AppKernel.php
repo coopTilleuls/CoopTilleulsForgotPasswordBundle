@@ -30,22 +30,22 @@ final class AppKernel extends Kernel
 {
     use MicroKernelTrait;
 
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return __DIR__.'/cache/'.$this->getEnvironment();
     }
 
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return __DIR__.'/logs/'.$this->getEnvironment();
     }
 
-    public function getProjectDir()
+    public function getProjectDir(): string
     {
         return __DIR__;
     }
 
-    public function registerBundles()
+    public function registerBundles(): array
     {
         $bundles = [
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),

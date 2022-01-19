@@ -154,7 +154,7 @@ final class DocumentationNormalizer implements NormalizerInterface
         return $docs;
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null): bool
     {
         return $this->decorated->supportsNormalization($data, $format);
     }
