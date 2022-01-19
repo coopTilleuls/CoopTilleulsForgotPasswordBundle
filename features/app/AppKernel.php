@@ -64,6 +64,11 @@ final class AppKernel extends Kernel
         return $bundles;
     }
 
+    protected function configureRoutes(RouteCollectionBuilder $routes): void
+    {
+        $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml', '/forgot_password');
+    }
+
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader): void
     {
         $c->loadFromExtension('coop_tilleuls_forgot_password', [
