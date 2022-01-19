@@ -112,8 +112,9 @@ final class User implements UserInterface
     /**
      * {@inheritdoc}
      */
-    public function getRoles(): void
+    public function getRoles(): array
     {
+        return [];
     }
 
     /**
