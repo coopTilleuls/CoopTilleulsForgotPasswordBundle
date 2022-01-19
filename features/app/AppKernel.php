@@ -19,6 +19,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -106,12 +107,20 @@ final class AppKernel extends Kernel
             ],
         ]));
 
-        $mainFirewallBeforeSymfony6 = [];
+        $firewallExtra = [];
+        $passwordHashers = [
+            'password_hashers' => [
+                PasswordAuthenticatedUserInterface::class => 'auto',
+                UserInterface::class => [
+                    'algorithm' => 'plaintext',
+                ],
+            ],
+        ];
         if (Kernel::VERSION_ID < 60000) {
-            $mainFirewallBeforeSymfony6 = ['anonymous' => true];
+            $firewallExtra = ['anonymous' => true];
+            $passwordHashers = ['encoders' => [UserInterface::class => 'plaintext']];
         }
-        $c->loadFromExtension('security', [
-            'encoders' => [UserInterface::class => 'plaintext'],
+        $c->loadFromExtension('security', $passwordHashers + [
             'providers' => [
                 'in_memory' => [
                     'memory' => [
@@ -126,7 +135,7 @@ final class AppKernel extends Kernel
                     'pattern' => '^/',
                     'stateless' => true,
                     'http_basic' => null,
-                ] + $mainFirewallBeforeSymfony6,
+                ] + $firewallExtra,
             ],
             'access_control' => [
                 ['path' => '^/forgot_password', 'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY'],
