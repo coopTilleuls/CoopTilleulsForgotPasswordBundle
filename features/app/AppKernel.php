@@ -107,7 +107,7 @@ final class AppKernel extends Kernel
         ]));
 
         $mainFirewallBeforeSymfony6 = [];
-        if (AppKernel::VERSION_ID < 60000) {
+        if (Kernel::VERSION_ID < 60000) {
             $mainFirewallBeforeSymfony6 = ['anonymous' => true];
         }
         $c->loadFromExtension('security', [
