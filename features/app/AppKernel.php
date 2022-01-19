@@ -106,6 +106,10 @@ final class AppKernel extends Kernel
             ],
         ]));
 
+        $mainFirewallBeforeSymfony6 = [];
+        if (AppKernel::VERSION_ID < 60000) {
+            $mainFirewallBeforeSymfony6 = ['anonymous' => true];
+        }
         $c->loadFromExtension('security', [
             'encoders' => [UserInterface::class => 'plaintext'],
             'providers' => [
@@ -121,9 +125,8 @@ final class AppKernel extends Kernel
                 'main' => [
                     'pattern' => '^/',
                     'stateless' => true,
-                    'anonymous' => true,
                     'http_basic' => null,
-                ],
+                ] + $mainFirewallBeforeSymfony6,
             ],
             'access_control' => [
                 ['path' => '^/forgot_password', 'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY'],
