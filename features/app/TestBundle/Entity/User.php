@@ -130,4 +130,9 @@ final class User implements UserInterface
     public function eraseCredentials(): void
     {
     }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
 }
