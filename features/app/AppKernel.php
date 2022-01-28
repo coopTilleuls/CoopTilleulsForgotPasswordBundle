@@ -130,10 +130,12 @@ final class AppKernel extends Kernel
                 ],
             ],
         ];
+        $anonymousRole = 'PUBLIC_ACCESS';
 
         if (6 > Kernel::MAJOR_VERSION) {
             $firewallExtra = ['anonymous' => true];
             $passwordHashers = ['encoders' => [UserInterface::class => 'plaintext']];
+            $anonymousRole = 'IS_AUTHENTICATED_ANONYMOUSLY';
         }
 
         $container->{$method}('security', $passwordHashers + [
@@ -154,7 +156,7 @@ final class AppKernel extends Kernel
                 ] + $firewallExtra,
             ],
             'access_control' => [
-                ['path' => '^/forgot_password', 'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY'],
+                ['path' => '^/forgot_password', 'roles' => $anonymousRole],
                 ['path' => '^/', 'roles' => 'IS_AUTHENTICATED_FULLY'],
             ],
         ]);
