@@ -19,10 +19,9 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\RouteCollectionBuilder;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Symfony\Component\Routing\RouteCollectionBuilder;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Test purpose micro-kernel.
@@ -126,16 +125,17 @@ final class AppKernel extends Kernel
         $firewallExtra = [];
         $passwordHashers = [
             'password_hashers' => [
-                PasswordAuthenticatedUserInterface::class => 'auto',
                 UserInterface::class => [
                     'algorithm' => 'plaintext',
                 ],
             ],
         ];
-        if (Kernel::VERSION_ID < 60000) {
+
+        if (6 > Kernel::MAJOR_VERSION) {
             $firewallExtra = ['anonymous' => true];
             $passwordHashers = ['encoders' => [UserInterface::class => 'plaintext']];
         }
+
         $container->{$method}('security', $passwordHashers + [
             'providers' => [
                 'in_memory' => [
