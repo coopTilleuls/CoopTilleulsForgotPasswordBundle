@@ -22,10 +22,12 @@ use Symfony\Component\HttpKernel\Event\KernelEvent;
  */
 final class ExceptionEventListener
 {
+    use MainRequestTrait;
+
     public function onKernelException(KernelEvent $event): void
     {
         $exception = method_exists($event, 'getThrowable') ? $event->getThrowable() : $event->getException();
-        if (!$event->isMasterRequest() || !$exception instanceof JsonHttpExceptionInterface) {
+        if (!$this->isMainRequest($event) || !$exception instanceof JsonHttpExceptionInterface) {
             return;
         }
 

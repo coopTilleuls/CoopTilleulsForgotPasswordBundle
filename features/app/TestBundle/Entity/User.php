@@ -112,8 +112,9 @@ final class User implements UserInterface
     /**
      * {@inheritdoc}
      */
-    public function getRoles(): void
+    public function getRoles(): array
     {
+        return [];
     }
 
     /**
@@ -128,5 +129,10 @@ final class User implements UserInterface
      */
     public function eraseCredentials(): void
     {
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
     }
 }

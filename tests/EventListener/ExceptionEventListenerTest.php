@@ -39,7 +39,11 @@ final class ExceptionEventListenerTest extends TestCase
             $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
         }
 
-        $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(ExceptionEvent::class, 'isMainRequest')) {
+            $eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
         $eventMock->setResponse(Argument::any())->shouldNotBeCalled();
 
         $listener = new ExceptionEventListener();
@@ -56,7 +60,11 @@ final class ExceptionEventListenerTest extends TestCase
             $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
         }
 
-        $eventMock->isMasterRequest()->willReturn(false)->shouldBeCalledTimes(1);
+        if (method_exists(ExceptionEvent::class, 'isMainRequest')) {
+            $eventMock->isMainRequest()->willReturn(false)->shouldBeCalledTimes(1);
+        } else {
+            $eventMock->isMasterRequest()->willReturn(false)->shouldBeCalledTimes(1);
+        }
         $eventMock->setResponse(Argument::any())->shouldNotBeCalled();
 
         $listener = new ExceptionEventListener();
@@ -76,8 +84,11 @@ final class ExceptionEventListenerTest extends TestCase
             $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
             $eventMock->getException()->willReturn($exception)->shouldBeCalledTimes(1);
         }
-
-        $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(ExceptionEvent::class, 'isMainRequest')) {
+            $eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
         $eventMock->setResponse(
             Argument::that(
                 function ($response) {

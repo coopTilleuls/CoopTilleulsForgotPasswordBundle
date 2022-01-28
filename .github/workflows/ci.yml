@@ -21,14 +21,20 @@ jobs:
           - '8.0'
         symfony:
           - '4.4.*'
-          - '5.3.*'
+          - '5.4.*'
+          - '6.0.*'
         include:
           - php: '8.0'
-            symfony: '5.3.*'
+            symfony: '5.4.*'
             bootable: true
+            quality: true
         exclude:
           - php: '8.0'
             symfony: '4.4.*'
+          - php: '7.3'
+            symfony: '6.0.*'
+          - php: '7.4'
+            symfony: '6.0.*'
       fail-fast: false
     steps:
       - name: Checkout
@@ -65,6 +71,7 @@ jobs:
           composer req --ignore-platform-reqs tilleuls/forgot-password-bundle:dev-${GITHUB_REF#refs/heads/}
       - name: Run php-cs-fixer tests
         run: php-cs-fixer fix --diff --dry-run
+        if: matrix.quality
       - name: Run PHPUnit tests
         run: vendor/bin/simple-phpunit --colors=always --testdox
       - name: Run Behat tests

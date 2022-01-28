@@ -27,7 +27,7 @@ final class DocumentationNormalizer implements NormalizerInterface
         $this->decorated = $decorated;
     }
 
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = []): array
     {
         $docs = $this->decorated->normalize($object, $format, $context);
 
@@ -154,7 +154,7 @@ final class DocumentationNormalizer implements NormalizerInterface
         return $docs;
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null): bool
     {
         return $this->decorated->supportsNormalization($data, $format);
     }

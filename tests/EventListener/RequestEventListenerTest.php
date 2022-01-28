@@ -63,7 +63,11 @@ final class RequestEventListenerTest extends TestCase
     public function testDecodeRequestInvalidRoute(): void
     {
         $this->parameterBagMock->get('_route')->willReturn('foo')->shouldBeCalledTimes(1);
-        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(KernelEvent::class, 'isMainRequest')) {
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
         $this->requestMock->getContent()->shouldNotBeCalled();
 
         $this->listener->decodeRequest($this->eventMock->reveal());
@@ -75,7 +79,11 @@ final class RequestEventListenerTest extends TestCase
         $this->expectExceptionMessage('Parameter "password" is missing.');
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
-        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(KernelEvent::class, 'isMainRequest')) {
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
         $this->requestMock->getContent()->willReturn(json_encode(['password' => '']))->shouldBeCalledTimes(1);
 
         $this->listener->decodeRequest($this->eventMock->reveal());
@@ -87,7 +95,11 @@ final class RequestEventListenerTest extends TestCase
         $this->expectExceptionMessage('No parameter sent.');
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
-        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(KernelEvent::class, 'isMainRequest')) {
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
         $this->requestMock->getContent()->willReturn('{}')->shouldBeCalledTimes(1);
 
         $this->listener->decodeRequest($this->eventMock->reveal());
@@ -99,7 +111,12 @@ final class RequestEventListenerTest extends TestCase
         $this->expectExceptionMessage('Invalid JSON data.');
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
-        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(KernelEvent::class, 'isMainRequest')) {
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
+
         $this->requestMock->getContent()->willReturn('{')->shouldBeCalledTimes(1);
 
         $this->listener->decodeRequest($this->eventMock->reveal());
@@ -111,7 +128,11 @@ final class RequestEventListenerTest extends TestCase
         $this->expectExceptionMessage('The parameter "name" is not authorized in your configuration.');
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.reset')->shouldBeCalledTimes(1);
-        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(KernelEvent::class, 'isMainRequest')) {
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
         $this->requestMock->getContent()->willReturn(json_encode(['name' => 'foo']))->shouldBeCalledTimes(1);
 
         $this->listener->decodeRequest($this->eventMock->reveal());
@@ -120,7 +141,11 @@ final class RequestEventListenerTest extends TestCase
     public function testDecodeRequest(): void
     {
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
-        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(KernelEvent::class, 'isMainRequest')) {
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
         $this->requestMock->getContent()->willReturn(json_encode(['password' => 'bar']))->shouldBeCalledTimes(1);
         $this->parameterBagMock->set('password', 'bar')->shouldBeCalledTimes(1);
 
@@ -130,7 +155,11 @@ final class RequestEventListenerTest extends TestCase
     public function testGetTokenFromRequestInvalidRoute(): void
     {
         $this->parameterBagMock->get('_route')->willReturn('foo')->shouldBeCalledTimes(1);
-        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(KernelEvent::class, 'isMainRequest')) {
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
         $this->requestMock->getContent()->shouldNotBeCalled();
 
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
@@ -141,7 +170,11 @@ final class RequestEventListenerTest extends TestCase
         $this->expectException(NotFoundHttpException::class);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
-        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(KernelEvent::class, 'isMainRequest')) {
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
         $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledTimes(1);
         $this->managerMock->findOneByToken('foo')->shouldBeCalledTimes(1);
 
@@ -155,7 +188,11 @@ final class RequestEventListenerTest extends TestCase
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
-        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(KernelEvent::class, 'isMainRequest')) {
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
         $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledTimes(1);
         $this->managerMock->findOneByToken('foo')->willReturn($tokenMock->reveal())->shouldBeCalledTimes(1);
         $tokenMock->isExpired()->willReturn(true)->shouldBeCalledTimes(1);
@@ -168,7 +205,11 @@ final class RequestEventListenerTest extends TestCase
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
-        $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        if (method_exists(KernelEvent::class, 'isMainRequest')) {
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        } else {
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+        }
         $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledTimes(1);
         $this->managerMock->findOneByToken('foo')->willReturn($tokenMock->reveal())->shouldBeCalledTimes(1);
         $tokenMock->isExpired()->willReturn(false)->shouldBeCalledTimes(1);

@@ -17,7 +17,9 @@ use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -30,22 +32,22 @@ final class AppKernel extends Kernel
 {
     use MicroKernelTrait;
 
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return __DIR__.'/cache/'.$this->getEnvironment();
     }
 
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return __DIR__.'/logs/'.$this->getEnvironment();
     }
 
-    public function getProjectDir()
+    public function getProjectDir(): string
     {
         return __DIR__;
     }
 
-    public function registerBundles()
+    public function registerBundles(): array
     {
         $bundles = [
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
@@ -63,14 +65,28 @@ final class AppKernel extends Kernel
         return $bundles;
     }
 
-    protected function configureRoutes(RouteCollectionBuilder $routes): void
+    /**
+     * @param RoutingConfigurator|RouteCollectionBuilder $routes
+     */
+    protected function configureRoutes($routes): void
     {
+        if ($routes instanceof RoutingConfigurator) {
+            $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml')->prefix('/forgot_password');
+
+            return;
+        }
+
         $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml', '/forgot_password');
     }
 
-    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader): void
+    /**
+     * @param ContainerConfigurator|ContainerBuilder $container
+     */
+    protected function configureContainer($container, LoaderInterface $loader): void
     {
-        $c->loadFromExtension('coop_tilleuls_forgot_password', [
+        $method = $container instanceof ContainerConfigurator ? 'extension' : 'loadFromExtension';
+
+        $container->{$method}('coop_tilleuls_forgot_password', [
             'password_token_class' => PasswordToken::class,
             'user_class' => User::class,
             'user' => [
@@ -79,7 +95,7 @@ final class AppKernel extends Kernel
             'use_jms_serializer' => 'jmsserializer' === $this->getEnvironment(),
         ]);
 
-        $c->loadFromExtension('doctrine', [
+        $container->{$method}('doctrine', [
             'dbal' => [
                 'driver' => 'pdo_sqlite',
                 'path' => '%kernel.cache_dir%/db.sqlite',
@@ -92,7 +108,7 @@ final class AppKernel extends Kernel
             ],
         ]);
 
-        $c->loadFromExtension('framework', array_merge([
+        $container->{$method}('framework', array_merge([
             'secret' => 'CoopTilleulsForgotPasswordBundle',
             'mailer' => [
                 'dsn' => 'null://null',
@@ -106,8 +122,23 @@ final class AppKernel extends Kernel
             ],
         ]));
 
-        $c->loadFromExtension('security', [
-            'encoders' => [UserInterface::class => 'plaintext'],
+        $firewallExtra = [];
+        $passwordHashers = [
+            'password_hashers' => [
+                UserInterface::class => [
+                    'algorithm' => 'plaintext',
+                ],
+            ],
+        ];
+        $anonymousRole = 'PUBLIC_ACCESS';
+
+        if (6 > Kernel::MAJOR_VERSION) {
+            $firewallExtra = ['anonymous' => true];
+            $passwordHashers = ['encoders' => [UserInterface::class => 'plaintext']];
+            $anonymousRole = 'IS_AUTHENTICATED_ANONYMOUSLY';
+        }
+
+        $container->{$method}('security', $passwordHashers + [
             'providers' => [
                 'in_memory' => [
                     'memory' => [
@@ -121,12 +152,11 @@ final class AppKernel extends Kernel
                 'main' => [
                     'pattern' => '^/',
                     'stateless' => true,
-                    'anonymous' => true,
                     'http_basic' => null,
-                ],
+                ] + $firewallExtra,
             ],
             'access_control' => [
-                ['path' => '^/forgot_password', 'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY'],
+                ['path' => '^/forgot_password', 'roles' => $anonymousRole],
                 ['path' => '^/', 'roles' => 'IS_AUTHENTICATED_FULLY'],
             ],
         ]);
