@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace CoopTilleuls\ForgotPasswordBundle;
 
+use CoopTilleuls\ForgotPasswordBundle\DependencyInjection\CompilerPass\ApiPlatformCompilerPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -20,4 +22,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 final class CoopTilleulsForgotPasswordBundle extends Bundle
 {
+    public function build(ContainerBuilder $container): void
+    {
+        $container->addCompilerPass(new ApiPlatformCompilerPass());
+    }
 }
