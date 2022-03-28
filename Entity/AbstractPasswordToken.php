@@ -28,9 +28,6 @@ abstract class AbstractPasswordToken
      */
     protected $expiresAt;
 
-    /**
-     * @return int
-     */
     abstract public function getId();
 
     abstract public function getUser();
