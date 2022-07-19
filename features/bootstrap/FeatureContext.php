@@ -104,7 +104,7 @@ final class FeatureContext implements Context
     "%s": "%s"
 }
 JSON
-            , $propertyName, $value)
+                , $propertyName, $value)
         );
     }
 
@@ -173,8 +173,8 @@ JSON
     "message": "%s"
 }
 JSON
-                , str_ireplace('"', '\"', $message)
-            ), $this->client->getResponse()->getContent()
+            , str_ireplace('"', '\"', $message)
+        ), $this->client->getResponse()->getContent()
         );
     }
 

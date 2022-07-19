@@ -57,7 +57,7 @@ final class PasswordTokenManagerTest extends TestCase
                    && '2016-10-11 10:00:00' === $object->getExpiresAt()->format('Y-m-d H:i:s')
                    && preg_match('/^[A-z\d]{50}$/', $object->getToken())
                    && $this->userMock->reveal() === $object->getUser()
-                ;
+            ;
         }))->shouldBeCalledTimes(1);
 
         $this->manager->createPasswordToken($this->userMock->reveal(), new \DateTime('2016-10-11 10:00:00'));

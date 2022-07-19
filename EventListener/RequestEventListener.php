@@ -50,9 +50,9 @@ final class RequestEventListener
         $request = $event->getRequest();
         $routeName = $request->attributes->get('_route');
         if (!$this->isMainRequest($event) || !\in_array(
-                $routeName,
-                ['coop_tilleuls_forgot_password.reset', 'coop_tilleuls_forgot_password.update'], true
-            )
+            $routeName,
+            ['coop_tilleuls_forgot_password.reset', 'coop_tilleuls_forgot_password.update'], true
+        )
         ) {
             return;
         }
@@ -91,9 +91,9 @@ final class RequestEventListener
         $request = $event->getRequest();
         $routeName = $request->attributes->get('_route');
         if (!$this->isMainRequest($event) || !\in_array(
-                $routeName,
-                ['coop_tilleuls_forgot_password.get_token', 'coop_tilleuls_forgot_password.update'], true
-            )
+            $routeName,
+            ['coop_tilleuls_forgot_password.get_token', 'coop_tilleuls_forgot_password.update'], true
+        )
         ) {
             return;
         }
