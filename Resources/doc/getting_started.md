@@ -33,12 +33,12 @@ Load routing:
 # config/routes/coop_tilleuls_forgot_password.yaml
 coop_tilleuls_forgot_password:
     resource: "@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml"
-    prefix:   /forgot_password
+    prefix:   /forgot-password
 ```
 
 This provides 2 main routes:
-- `POST /forgot_password/`: receives user email (or custom field configured through `email_field`)
-- `POST /forgot_password/{token}`: update user password (or custom field configured through `password_field`)
+- `POST /forgot-password/`: receives user email (or custom field configured through `email_field`)
+- `POST /forgot-password/{token}`: update user password (or custom field configured through `password_field`)
 
 ### Create your entity
 
@@ -131,7 +131,7 @@ security:
             anonymous: true
 
     access_control:
-        - { path: ^/forgot_password, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/forgot-password, role: IS_AUTHENTICATED_ANONYMOUSLY }
         # ...
 ```
 

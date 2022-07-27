@@ -48,27 +48,27 @@ final class DoctrineManagerTest extends TestCase
 
     public function testFindOneBy(): void
     {
-        $this->registryMock->getManagerForClass('class')->willReturn($this->managerMock->reveal())->shouldBeCalledTimes(1);
-        $this->managerMock->getRepository('class')->willReturn($this->repositoryMock->reveal())->shouldBeCalledTimes(1);
-        $this->repositoryMock->findOneBy(['criteria'])->willReturn('foo')->shouldBeCalledTimes(1);
+        $this->registryMock->getManagerForClass('class')->willReturn($this->managerMock->reveal())->shouldBeCalledOnce();
+        $this->managerMock->getRepository('class')->willReturn($this->repositoryMock->reveal())->shouldBeCalledOnce();
+        $this->repositoryMock->findOneBy(['criteria'])->willReturn('foo')->shouldBeCalledOnce();
 
         $this->assertEquals('foo', $this->doctrineManager->findOneBy('class', ['criteria']));
     }
 
     public function testPersist(): void
     {
-        $this->registryMock->getManagerForClass(\get_class($this->objectMock->reveal()))->willReturn($this->managerMock->reveal())->shouldBeCalledTimes(1);
-        $this->managerMock->persist($this->objectMock->reveal())->shouldBeCalledTimes(1);
-        $this->managerMock->flush()->shouldBeCalledTimes(1);
+        $this->registryMock->getManagerForClass(\get_class($this->objectMock->reveal()))->willReturn($this->managerMock->reveal())->shouldBeCalledOnce();
+        $this->managerMock->persist($this->objectMock->reveal())->shouldBeCalledOnce();
+        $this->managerMock->flush()->shouldBeCalledOnce();
 
         $this->doctrineManager->persist($this->objectMock->reveal());
     }
 
     public function testRemove(): void
     {
-        $this->registryMock->getManagerForClass(\get_class($this->objectMock->reveal()))->willReturn($this->managerMock->reveal())->shouldBeCalledTimes(1);
-        $this->managerMock->remove($this->objectMock->reveal())->shouldBeCalledTimes(1);
-        $this->managerMock->flush()->shouldBeCalledTimes(1);
+        $this->registryMock->getManagerForClass(\get_class($this->objectMock->reveal()))->willReturn($this->managerMock->reveal())->shouldBeCalledOnce();
+        $this->managerMock->remove($this->objectMock->reveal())->shouldBeCalledOnce();
+        $this->managerMock->flush()->shouldBeCalledOnce();
 
         $this->doctrineManager->remove($this->objectMock->reveal());
     }

@@ -58,21 +58,21 @@ final class PasswordTokenManagerTest extends TestCase
                    && preg_match('/^[A-z\d]{50}$/', $object->getToken())
                    && $this->userMock->reveal() === $object->getUser()
             ;
-        }))->shouldBeCalledTimes(1);
+        }))->shouldBeCalledOnce();
 
         $this->manager->createPasswordToken($this->userMock->reveal(), new \DateTime('2016-10-11 10:00:00'));
     }
 
     public function testFindOneByToken(): void
     {
-        $this->managerMock->findOneBy(PasswordToken::class, ['token' => 'foo'])->willReturn('bar')->shouldBeCalledTimes(1);
+        $this->managerMock->findOneBy(PasswordToken::class, ['token' => 'foo'])->willReturn('bar')->shouldBeCalledOnce();
 
         $this->assertEquals('bar', $this->manager->findOneByToken('foo'));
     }
 
     public function testFindOneByUser(): void
     {
-        $this->managerMock->findOneBy(PasswordToken::class, ['user' => $this->userMock->reveal()])->willReturn('bar')->shouldBeCalledTimes(1);
+        $this->managerMock->findOneBy(PasswordToken::class, ['user' => $this->userMock->reveal()])->willReturn('bar')->shouldBeCalledOnce();
 
         $this->assertEquals('bar', $this->manager->findOneByUser($this->userMock->reveal()));
     }

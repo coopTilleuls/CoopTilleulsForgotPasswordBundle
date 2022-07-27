@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer;
 
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
@@ -21,19 +22,22 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 final class DocumentationNormalizer implements NormalizerInterface
 {
     private $decorated;
+    private $router;
 
-    public function __construct(NormalizerInterface $decorated)
+    public function __construct(NormalizerInterface $decorated, RouterInterface $router)
     {
         $this->decorated = $decorated;
+        $this->router = $router;
     }
 
     public function normalize($object, $format = null, array $context = []): array
     {
+        $routes = $this->router->getRouteCollection();
         $docs = $this->decorated->normalize($object, $format, $context);
 
         // Add POST /forgot-password/ path
         $docs['tags'][] = ['name' => 'Forgot password'];
-        $docs['paths']['/forgot-password/']['post'] = [
+        $docs['paths'][$routes->get('coop_tilleuls_forgot_password.reset')->getPath()]['post'] = [
             'tags' => ['Forgot password'],
             'operationId' => 'postForgotPassword',
             'summary' => 'Generates a token and send email',
@@ -68,7 +72,7 @@ final class DocumentationNormalizer implements NormalizerInterface
         ];
 
         // Add GET /forgot-password/{token} path
-        $docs['paths']['/forgot-password/{token}']['get'] = [
+        $docs['paths'][$routes->get('coop_tilleuls_forgot_password.get_token')->getPath()]['get'] = [
             'tags' => ['Forgot password'],
             'operationId' => 'getForgotPassword',
             'summary' => 'Validates token',
@@ -104,7 +108,7 @@ final class DocumentationNormalizer implements NormalizerInterface
         ];
 
         // Add POST /forgot-password/{token} path
-        $docs['paths']['/forgot-password/{token}']['post'] = [
+        $docs['paths'][$routes->get('coop_tilleuls_forgot_password.update')->getPath()]['post'] = [
             'tags' => ['Forgot password'],
             'operationId' => 'postForgotPasswordToken',
             'summary' => 'Resets user password from token',
@@ -154,7 +158,7 @@ final class DocumentationNormalizer implements NormalizerInterface
         return $docs;
     }
 
-    public function supportsNormalization($data, $format = null): bool
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $this->decorated->supportsNormalization($data, $format);
     }

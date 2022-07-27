@@ -53,7 +53,7 @@ final class ResetPasswordTest extends TestCase
 
     public function testResetPasswordAction(): void
     {
-        $this->managerMock->resetPassword('email', 'foo@example.com')->shouldBeCalledTimes(1);
+        $this->managerMock->resetPassword('email', 'foo@example.com')->shouldBeCalledOnce();
         $controller = new ResetPassword($this->managerMock->reveal());
         $response = $controller('email', 'foo@example.com');
         $this->assertInstanceOf(Response::class, $response);

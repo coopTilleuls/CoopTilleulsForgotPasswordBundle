@@ -48,7 +48,7 @@ final class GetTokenTest extends TestCase
     {
         $this->normalizerMock->normalize($this->tokenMock->reveal(), 'json', ['groups' => ['foo']])
             ->willReturn(['foo' => 'bar'])
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledOnce();
         $controller = new GetToken($this->normalizerMock->reveal(), ['foo']);
         $response = $controller($this->tokenMock->reveal());
         $this->assertInstanceOf(JsonResponse::class, $response);

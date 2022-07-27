@@ -71,12 +71,12 @@ final class AppKernel extends Kernel
     protected function configureRoutes($routes): void
     {
         if ($routes instanceof RoutingConfigurator) {
-            $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml')->prefix('/forgot_password');
+            $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml')->prefix('/api/forgot-password');
 
             return;
         }
 
-        $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml', '/forgot_password');
+        $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml', '/api/forgot-password');
     }
 
     /**
@@ -156,7 +156,7 @@ final class AppKernel extends Kernel
                 ] + $firewallExtra,
             ],
             'access_control' => [
-                ['path' => '^/forgot_password', 'roles' => $anonymousRole],
+                ['path' => '^/api/forgot-password', 'roles' => $anonymousRole],
                 ['path' => '^/', 'roles' => 'IS_AUTHENTICATED_FULLY'],
             ],
         ]);

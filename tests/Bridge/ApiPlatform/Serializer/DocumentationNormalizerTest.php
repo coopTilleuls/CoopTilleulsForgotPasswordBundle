@@ -16,6 +16,9 @@ namespace Tests\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer;
 use CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer\DocumentationNormalizer;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Tests\ForgotPasswordBundle\ProphecyTrait;
 
@@ -32,6 +35,21 @@ final class DocumentationNormalizerTest extends TestCase
     private $normalizerMock;
 
     /**
+     * @var RouterInterface|ObjectProphecy
+     */
+    private $routerMock;
+
+    /**
+     * @var RouteCollection|ObjectProphecy
+     */
+    private $routeCollectionMock;
+
+    /**
+     * @var Route|ObjectProphecy
+     */
+    private $routeMock;
+
+    /**
      * @var DocumentationNormalizer
      */
     private $normalizer;
@@ -39,17 +57,26 @@ final class DocumentationNormalizerTest extends TestCase
     protected function setUp(): void
     {
         $this->normalizerMock = $this->prophesize(NormalizerInterface::class);
-        $this->normalizer = new DocumentationNormalizer($this->normalizerMock->reveal());
+        $this->routerMock = $this->prophesize(RouterInterface::class);
+        $this->routeCollectionMock = $this->prophesize(RouteCollection::class);
+        $this->routeMock = $this->prophesize(Route::class);
+        $this->normalizer = new DocumentationNormalizer($this->normalizerMock->reveal(), $this->routerMock->reveal());
     }
 
     public function testItSupportsDecoratedSupport(): void
     {
-        $this->normalizerMock->supportsNormalization('foo', 'bar')->willReturn(true)->shouldBeCalledTimes(1);
+        $this->normalizerMock->supportsNormalization('foo', 'bar')->willReturn(true)->shouldBeCalledOnce();
         $this->assertTrue($this->normalizer->supportsNormalization('foo', 'bar'));
     }
 
     public function testItDecoratesNormalizedData(): void
     {
+        $this->routerMock->getRouteCollection()->willReturn($this->routeCollectionMock)->shouldBeCalledOnce();
+        $this->routeCollectionMock->get('coop_tilleuls_forgot_password.reset')->willReturn($this->routeMock)->shouldBeCalledOnce();
+        $this->routeCollectionMock->get('coop_tilleuls_forgot_password.get_token')->willReturn($this->routeMock)->shouldBeCalledOnce();
+        $this->routeCollectionMock->get('coop_tilleuls_forgot_password.update')->willReturn($this->routeMock)->shouldBeCalledOnce();
+        $this->routeMock->getPath()->willReturn('/api/forgot-password/', '/api/forgot-password/{token}', '/api/forgot-password/{token}')->shouldBeCalledTimes(3);
+
         $this->normalizerMock->normalize(new \stdClass(), 'bar', [])->willReturn([
             'tags' => [['name' => 'Login']],
             'paths' => [
@@ -96,7 +123,7 @@ final class DocumentationNormalizerTest extends TestCase
                     ],
                 ],
             ],
-        ])->shouldBeCalledTimes(1);
+        ])->shouldBeCalledOnce();
         $this->assertEquals([
             'tags' => [['name' => 'Login'], ['name' => 'Forgot password']],
             'paths' => [
@@ -125,7 +152,7 @@ final class DocumentationNormalizerTest extends TestCase
                         ],
                     ],
                 ],
-                '/forgot-password/' => [
+                '/api/forgot-password/' => [
                     'post' => [
                         'tags' => ['Forgot password'],
                         'operationId' => 'postForgotPassword',
@@ -150,7 +177,7 @@ final class DocumentationNormalizerTest extends TestCase
                         ],
                     ],
                 ],
-                '/forgot-password/{token}' => [
+                '/api/forgot-password/{token}' => [
                     'get' => [
                         'tags' => ['Forgot password'],
                         'operationId' => 'getForgotPassword',

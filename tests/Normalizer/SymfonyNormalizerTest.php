@@ -31,7 +31,7 @@ final class SymfonyNormalizerTest extends TestCase
         $normalizerMock = $this->prophesize(NormalizerInterface::class);
         $passwordTokenMock = $this->prophesize(AbstractPasswordToken::class);
 
-        $normalizerMock->normalize($passwordTokenMock, 'json', [])->willReturn('foo')->shouldBeCalledTimes(1);
+        $normalizerMock->normalize($passwordTokenMock, 'json', [])->willReturn('foo')->shouldBeCalledOnce();
 
         $normalizer = new SymfonyNormalizer($normalizerMock->reveal());
         $this->assertEquals('foo', $normalizer->normalize($passwordTokenMock->reveal(), 'json'));

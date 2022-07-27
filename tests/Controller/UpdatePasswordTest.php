@@ -46,7 +46,7 @@ final class UpdatePasswordTest extends TestCase
 
     public function testUpdatePasswordAction(): void
     {
-        $this->managerMock->updatePassword($this->tokenMock->reveal(), 'bar')->shouldBeCalledTimes(1);
+        $this->managerMock->updatePassword($this->tokenMock->reveal(), 'bar')->shouldBeCalledOnce();
         $controller = new UpdatePassword($this->managerMock->reveal());
         $response = $controller($this->tokenMock->reveal(), 'bar');
         $this->assertInstanceOf(Response::class, $response);

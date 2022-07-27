@@ -33,16 +33,16 @@ final class ExceptionEventListenerTest extends TestCase
     {
         if (class_exists(ExceptionEvent::class)) {
             $eventMock = $this->prophesize(ExceptionEvent::class);
-            $eventMock->getThrowable()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
+            $eventMock->getThrowable()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledOnce();
         } else {
             $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
-            $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
+            $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledOnce();
         }
 
         if (method_exists(ExceptionEvent::class, 'isMainRequest')) {
-            $eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
         $eventMock->setResponse(Argument::any())->shouldNotBeCalled();
 
@@ -54,16 +54,16 @@ final class ExceptionEventListenerTest extends TestCase
     {
         if (class_exists(ExceptionEvent::class)) {
             $eventMock = $this->prophesize(ExceptionEvent::class);
-            $eventMock->getThrowable()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
+            $eventMock->getThrowable()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledOnce();
         } else {
             $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
-            $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledTimes(1);
+            $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledOnce();
         }
 
         if (method_exists(ExceptionEvent::class, 'isMainRequest')) {
-            $eventMock->isMainRequest()->willReturn(false)->shouldBeCalledTimes(1);
+            $eventMock->isMainRequest()->willReturn(false)->shouldBeCalledOnce();
         } else {
-            $eventMock->isMasterRequest()->willReturn(false)->shouldBeCalledTimes(1);
+            $eventMock->isMasterRequest()->willReturn(false)->shouldBeCalledOnce();
         }
         $eventMock->setResponse(Argument::any())->shouldNotBeCalled();
 
@@ -79,15 +79,15 @@ final class ExceptionEventListenerTest extends TestCase
 
         if (class_exists(ExceptionEvent::class)) {
             $eventMock = $this->prophesize(ExceptionEvent::class);
-            $eventMock->getThrowable()->willReturn($exception)->shouldBeCalledTimes(1);
+            $eventMock->getThrowable()->willReturn($exception)->shouldBeCalledOnce();
         } else {
             $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
-            $eventMock->getException()->willReturn($exception)->shouldBeCalledTimes(1);
+            $eventMock->getException()->willReturn($exception)->shouldBeCalledOnce();
         }
         if (method_exists(ExceptionEvent::class, 'isMainRequest')) {
-            $eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
         $eventMock->setResponse(
             Argument::that(
@@ -100,7 +100,7 @@ final class ExceptionEventListenerTest extends TestCase
                     400 === $response->getStatusCode();
                 }
             )
-        )->shouldBeCalledTimes(1);
+        )->shouldBeCalledOnce();
 
         $listener = new ExceptionEventListener();
         $listener->onKernelException($eventMock->reveal());

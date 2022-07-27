@@ -18,6 +18,7 @@ use ApiPlatform\Core\OpenApi\Model\Operation;
 use ApiPlatform\Core\OpenApi\Model\PathItem;
 use ApiPlatform\Core\OpenApi\Model\RequestBody;
 use ApiPlatform\Core\OpenApi\OpenApi;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @author Vincent Chalamon <vincent@les-tilleuls.coop>
@@ -25,10 +26,12 @@ use ApiPlatform\Core\OpenApi\OpenApi;
 final class OpenApiFactory implements OpenApiFactoryInterface
 {
     private $decorated;
+    private $router;
 
-    public function __construct(OpenApiFactoryInterface $decorated)
+    public function __construct(OpenApiFactoryInterface $decorated, RouterInterface $router)
     {
         $this->decorated = $decorated;
+        $this->router = $router;
     }
 
     /**
@@ -36,8 +39,10 @@ final class OpenApiFactory implements OpenApiFactoryInterface
      */
     public function __invoke(array $context = []): OpenApi
     {
+        $routes = $this->router->getRouteCollection();
         $openApi = ($this->decorated)($context);
         $schemas = $openApi->getComponents()->getSchemas();
+        $paths = $openApi->getPaths();
 
         $schemas['ForgotPassword:reset'] = new \ArrayObject([
             'type' => 'object',
@@ -63,28 +68,22 @@ final class OpenApiFactory implements OpenApiFactoryInterface
             ],
         ]);
 
-        $pathItem = new PathItem(
-            'ForgotPassword',
-            null,
-            null,
-            null,
-            null,
-            new Operation(
-                'postForgotPassword',
-                ['Forgot password'],
-                [
+        $resetForgotPasswordPath = $routes->get('coop_tilleuls_forgot_password.reset')->getPath();
+        $paths->addPath($resetForgotPasswordPath, ($paths->getPath($resetForgotPasswordPath) ?: new PathItem())
+            ->withRef('ForgotPassword')
+            ->withPost((new Operation())
+                ->withOperationId('postForgotPassword')
+                ->withTags(['Forgot password'])
+                ->withResponses([
                     204 => [
                         'description' => 'Valid email address, no matter if user exists or not',
                     ],
                     400 => [
                         'description' => 'Missing email parameter or invalid format',
                     ],
-                ],
-                'Generates a token and send email',
-                '',
-                null,
-                [],
-                new RequestBody(
+                ])
+                ->withSummary('Generates a token and send email')
+                ->withRequestBody(new RequestBody(
                     'Request a new password',
                     new \ArrayObject([
                         'application/json' => [
@@ -93,19 +92,17 @@ final class OpenApiFactory implements OpenApiFactoryInterface
                             ],
                         ],
                     ])
-                )
+                ))
             )
         );
-        $openApi->getPaths()->addPath('/forgot_password/', $pathItem);
 
-        $pathItem = new PathItem(
-            'ForgotPassword',
-            null,
-            '',
-            new Operation(
-                'getForgotPassword',
-                ['Forgot password'],
-                [
+        $getForgotPasswordPath = $routes->get('coop_tilleuls_forgot_password.get_token')->getPath();
+        $paths->addPath($getForgotPasswordPath, ($paths->getPath($getForgotPasswordPath) ?: new PathItem())
+            ->withRef('ForgotPassword')
+            ->withGet((new Operation())
+                ->withOperationId('getForgotPassword')
+                ->withTags(['Forgot password'])
+                ->withResponses([
                     200 => [
                         'description' => 'Authenticated user',
                         'content' => [
@@ -119,11 +116,9 @@ final class OpenApiFactory implements OpenApiFactoryInterface
                     404 => [
                         'description' => 'Token not found or expired',
                     ],
-                ],
-                'Validates token',
-                '',
-                null,
-                [
+                ])
+                ->withSummary('Validates token')
+                ->withParameters([
                     [
                         'name' => 'token',
                         'in' => 'path',
@@ -132,13 +127,17 @@ final class OpenApiFactory implements OpenApiFactoryInterface
                             'type' => 'string',
                         ],
                     ],
-                ]
-            ),
-            null,
-            new Operation(
-                'postForgotPasswordToken',
-                ['Forgot password'],
-                [
+                ])
+            )
+        );
+
+        $updateForgotPasswordPath = $routes->get('coop_tilleuls_forgot_password.update')->getPath();
+        $paths->addPath($updateForgotPasswordPath, ($paths->getPath($updateForgotPasswordPath) ?: new PathItem())
+            ->withRef('ForgotPassword')
+            ->withPost((new Operation())
+                ->withOperationId('postForgotPasswordToken')
+                ->withTags(['Forgot password'])
+                ->withResponses([
                     204 => [
                         'description' => 'Email address format valid, no matter if user exists or not',
                     ],
@@ -148,11 +147,9 @@ final class OpenApiFactory implements OpenApiFactoryInterface
                     404 => [
                         'description' => 'Token not found',
                     ],
-                ],
-                'Resets user password from token',
-                '',
-                null,
-                [
+                ])
+                ->withSummary('Validates token')
+                ->withParameters([
                     [
                         'name' => 'token',
                         'in' => 'path',
@@ -161,8 +158,8 @@ final class OpenApiFactory implements OpenApiFactoryInterface
                             'type' => 'string',
                         ],
                     ],
-                ],
-                new RequestBody(
+                ])
+                ->withRequestBody(new RequestBody(
                     'Reset password',
                     new \ArrayObject([
                         'application/json' => [
@@ -171,10 +168,9 @@ final class OpenApiFactory implements OpenApiFactoryInterface
                             ],
                         ],
                     ])
-                )
+                ))
             )
         );
-        $openApi->getPaths()->addPath('/forgot_password/{token}', $pathItem);
 
         return $openApi;
     }
