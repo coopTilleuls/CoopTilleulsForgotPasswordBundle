@@ -16,25 +16,32 @@ jobs:
     strategy:
       matrix:
         php:
-          - '7.3'
+          # Only PHP supported versions: https://www.php.net/supported-versions.php
           - '7.4'
           - '8.0'
+          - '8.1'
         symfony:
+          # Only Symfony supported versions: https://symfony.com/releases
           - '4.4.*'
           - '5.4.*'
           - '6.0.*'
+          - '6.1.*'
         include:
-          - php: '8.0'
+          - php: '8.1'
             symfony: '5.4.*'
             bootable: true
             quality: true
-        exclude:
-          - php: '8.0'
-            symfony: '4.4.*'
-          - php: '7.3'
-            symfony: '6.0.*'
           - php: '7.4'
-            symfony: '6.0.*'
+            laminas: '^3.4'
+        exclude:
+          # Symfony 6.0.* requires PHP >= 8.0
+          - symfony: '6.0.*'
+            php: '7.4'
+          # Symfony 6.1.* requires PHP >= 8.1
+          - symfony: '6.1.*'
+            php: '7.4'
+          - symfony: '6.1.*'
+            php: '8.0'
       fail-fast: false
     steps:
       - name: Checkout
@@ -56,16 +63,14 @@ jobs:
       - name: Configure Symfony
         run: composer config extra.symfony.require "${{ matrix.symfony }}"
       - name: Configure dependencies
-        if: matrix.php == '8.0'
-        run: composer require laminas/laminas-code:^4.0 --dev --no-install --no-update
+        if: matrix.laminas
+        run: composer require laminas/laminas-code:${{ matrix.laminas }} --dev --no-install --no-update
       - name: Update project dependencies
         run: composer update --no-progress --ansi --prefer-stable
       - name: Bundle is bootable
         if: ${{ matrix.bootable && github.event_name == 'push' }}
-        env:
-          SKELETON_VERSION: ${{ matrix.symfony }}
         run: |
-          composer create-project "symfony/skeleton:${SKELETON_VERSION}" flex
+          composer create-project "symfony/skeleton:${{ matrix.symfony }}" flex
           cd flex
           composer config extra.symfony.allow-contrib true
           composer req --ignore-platform-reqs tilleuls/forgot-password-bundle:dev-${GITHUB_REF#refs/heads/}

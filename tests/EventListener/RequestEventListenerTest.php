@@ -50,7 +50,7 @@ final class RequestEventListenerTest extends TestCase
         $this->requestMock = $this->prophesize(Request::class);
         $this->parameterBagMock = $this->prophesize(ParameterBag::class);
 
-        $this->eventMock->getRequest()->willReturn($this->requestMock->reveal())->shouldBeCalledTimes(1);
+        $this->eventMock->getRequest()->willReturn($this->requestMock->reveal())->shouldBeCalledOnce();
         $this->requestMock->attributes = $this->parameterBagMock->reveal();
 
         $this->listener = new RequestEventListener(
@@ -62,11 +62,11 @@ final class RequestEventListenerTest extends TestCase
 
     public function testDecodeRequestInvalidRoute(): void
     {
-        $this->parameterBagMock->get('_route')->willReturn('foo')->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('_route')->willReturn('foo')->shouldBeCalledOnce();
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
-            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
         $this->requestMock->getContent()->shouldNotBeCalled();
 
@@ -78,13 +78,13 @@ final class RequestEventListenerTest extends TestCase
         $this->expectException(MissingFieldHttpException::class);
         $this->expectExceptionMessage('Parameter "password" is missing.');
 
-        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
-            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
-        $this->requestMock->getContent()->willReturn(json_encode(['password' => '']))->shouldBeCalledTimes(1);
+        $this->requestMock->getContent()->willReturn(json_encode(['password' => '']))->shouldBeCalledOnce();
 
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
@@ -94,13 +94,13 @@ final class RequestEventListenerTest extends TestCase
         $this->expectException(NoParameterException::class);
         $this->expectExceptionMessage('No parameter sent.');
 
-        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
-            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
-        $this->requestMock->getContent()->willReturn('{}')->shouldBeCalledTimes(1);
+        $this->requestMock->getContent()->willReturn('{}')->shouldBeCalledOnce();
 
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
@@ -110,14 +110,14 @@ final class RequestEventListenerTest extends TestCase
         $this->expectException(InvalidJsonHttpException::class);
         $this->expectExceptionMessage('Invalid JSON data.');
 
-        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
-            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
 
-        $this->requestMock->getContent()->willReturn('{')->shouldBeCalledTimes(1);
+        $this->requestMock->getContent()->willReturn('{')->shouldBeCalledOnce();
 
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
@@ -127,38 +127,38 @@ final class RequestEventListenerTest extends TestCase
         $this->expectException(UnauthorizedFieldException::class);
         $this->expectExceptionMessage('The parameter "name" is not authorized in your configuration.');
 
-        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.reset')->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.reset')->shouldBeCalledOnce();
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
-            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
-        $this->requestMock->getContent()->willReturn(json_encode(['name' => 'foo']))->shouldBeCalledTimes(1);
+        $this->requestMock->getContent()->willReturn(json_encode(['name' => 'foo']))->shouldBeCalledOnce();
 
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
     public function testDecodeRequest(): void
     {
-        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
-            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
-        $this->requestMock->getContent()->willReturn(json_encode(['password' => 'bar']))->shouldBeCalledTimes(1);
-        $this->parameterBagMock->set('password', 'bar')->shouldBeCalledTimes(1);
+        $this->requestMock->getContent()->willReturn(json_encode(['password' => 'bar']))->shouldBeCalledOnce();
+        $this->parameterBagMock->set('password', 'bar')->shouldBeCalledOnce();
 
         $this->listener->decodeRequest($this->eventMock->reveal());
     }
 
     public function testGetTokenFromRequestInvalidRoute(): void
     {
-        $this->parameterBagMock->get('_route')->willReturn('foo')->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('_route')->willReturn('foo')->shouldBeCalledOnce();
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
-            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
         $this->requestMock->getContent()->shouldNotBeCalled();
 
@@ -169,14 +169,14 @@ final class RequestEventListenerTest extends TestCase
     {
         $this->expectException(NotFoundHttpException::class);
 
-        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
-            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
-        $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledTimes(1);
-        $this->managerMock->findOneByToken('foo')->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledOnce();
+        $this->managerMock->findOneByToken('foo')->shouldBeCalledOnce();
 
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
     }
@@ -187,15 +187,15 @@ final class RequestEventListenerTest extends TestCase
 
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
-        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
-            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
-        $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledTimes(1);
-        $this->managerMock->findOneByToken('foo')->willReturn($tokenMock->reveal())->shouldBeCalledTimes(1);
-        $tokenMock->isExpired()->willReturn(true)->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledOnce();
+        $this->managerMock->findOneByToken('foo')->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
+        $tokenMock->isExpired()->willReturn(true)->shouldBeCalledOnce();
 
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
     }
@@ -204,16 +204,16 @@ final class RequestEventListenerTest extends TestCase
     {
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
-        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
-            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
-            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledTimes(1);
+            $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
-        $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledTimes(1);
-        $this->managerMock->findOneByToken('foo')->willReturn($tokenMock->reveal())->shouldBeCalledTimes(1);
-        $tokenMock->isExpired()->willReturn(false)->shouldBeCalledTimes(1);
-        $this->parameterBagMock->set('token', $tokenMock->reveal())->shouldBeCalledTimes(1);
+        $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledOnce();
+        $this->managerMock->findOneByToken('foo')->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
+        $tokenMock->isExpired()->willReturn(false)->shouldBeCalledOnce();
+        $this->parameterBagMock->set('token', $tokenMock->reveal())->shouldBeCalledOnce();
 
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
     }

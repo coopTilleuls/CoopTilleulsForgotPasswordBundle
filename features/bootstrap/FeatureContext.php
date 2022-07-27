@@ -95,7 +95,7 @@ final class FeatureContext implements Context
         $this->client->enableProfiler();
         $this->client->request(
             'POST',
-            '/forgot_password/',
+            '/api/forgot-password/',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -130,7 +130,7 @@ JSON
         Assert::assertEquals('Réinitialisation de votre mot de passe', $message->getSubject());
         Assert::assertEquals('no-reply@example.com', $message->getFrom()[0]->getAddress());
         Assert::assertEquals('john.doe@example.com', $message->getTo()[0]->getAddress());
-        Assert::assertMatchesRegularExpression('/http:\/\/www\.example\.com\/forgot_password\/(.*)/', $message->getHtmlBody());
+        Assert::assertMatchesRegularExpression('/http:\/\/www\.example\.com\/api\/forgot-password\/(.*)/', $message->getHtmlBody());
     }
 
     /**
@@ -185,7 +185,7 @@ JSON
     {
         $this->client->request(
             'POST',
-            '/forgot_password/',
+            '/api/forgot-password/',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -202,7 +202,7 @@ JSON
      */
     public function iResetMyPasswordUsingNoParameter(): void
     {
-        $this->client->request('POST', '/forgot_password/');
+        $this->client->request('POST', '/api/forgot-password/');
     }
 
     /**
@@ -214,7 +214,7 @@ JSON
 
         $this->client->request(
             'POST',
-            sprintf('/forgot_password/%s', $token->getToken()),
+            sprintf('/api/forgot-password/%s', $token->getToken()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -233,7 +233,7 @@ JSON
     {
         $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
 
-        $this->client->request('POST', sprintf('/forgot_password/%s', $token->getToken()));
+        $this->client->request('POST', sprintf('/api/forgot-password/%s', $token->getToken()));
     }
 
     /**
@@ -243,7 +243,7 @@ JSON
     {
         $this->client->request(
             'POST',
-            '/forgot_password/12345',
+            '/api/forgot-password/12345',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -264,7 +264,7 @@ JSON
 
         $this->client->request(
             'POST',
-            sprintf('/forgot_password/%s', $token->getToken()),
+            sprintf('/api/forgot-password/%s', $token->getToken()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -286,7 +286,7 @@ JSON
         $this->doctrine->getManager()->persist($token);
         $this->doctrine->getManager()->flush();
 
-        $this->client->request('GET', sprintf('/forgot_password/%s', $token->getToken()));
+        $this->client->request('GET', sprintf('/api/forgot-password/%s', $token->getToken()));
     }
 
     /**
@@ -308,7 +308,7 @@ JSON
     {
         $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('-1 minute'));
 
-        $this->client->request('GET', sprintf('/forgot_password/%s', $token->getToken()));
+        $this->client->request('GET', sprintf('/api/forgot-password/%s', $token->getToken()));
     }
 
     /**
