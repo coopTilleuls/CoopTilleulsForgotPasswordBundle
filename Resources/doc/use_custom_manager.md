@@ -1,7 +1,6 @@
-Use custom manager
-------------------
+# Use custom manager
 
-By default, CoopTilleulsForgotPasswordBundle works with Doctrine ORM, but you're free to connect with any system.
+By default, this bundles works with Doctrine ORM, but you're free to connect with any system.
 
 ## Create your custom manager
 
@@ -12,32 +11,22 @@ Supposing you want to use your custom entity manager, you'll have to create a se
 // src/Manager/FooManager.php
 namespace App\Manager;
 
+use App\Entity\PasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 
-class FooManager implements ManagerInterface
+final class FooManager implements ManagerInterface
 {
-    private $foo;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function findOneBy($class, array $criteria)
+    public function findOneBy($class, array $criteria): ?PasswordToken
     {
         // Find & return an object of a specific class according to criteria
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function persist($object)
+    public function persist($object): void
     {
         // Save PasswordToken object
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function remove($object)
+    public function remove($object): void
     {
         // Remove PasswordToken object
     }
@@ -46,9 +35,9 @@ class FooManager implements ManagerInterface
 
 ## Update configuration
 
-Update your configuration to set your service as default one to use by CoopTilleulsForgotPasswordBundle:
+Update your configuration to set your service as default one to use by this bundle:
 
-```yml
+```yaml
 # config/packages/coop_tilleuls_forgot_password.yaml
 coop_tilleuls_forgot_password:
     # ...
