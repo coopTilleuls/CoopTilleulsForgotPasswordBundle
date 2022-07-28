@@ -61,6 +61,12 @@ final class AppKernel extends Kernel
         if ('jmsserializer' === $this->getEnvironment()) {
             $bundles[] = new JMS\SerializerBundle\JMSSerializerBundle();
         }
+        if (class_exists(\ApiPlatform\Symfony\Bundle\ApiPlatformBundle::class)) {
+            $bundles[] = new ApiPlatform\Symfony\Bundle\ApiPlatformBundle();
+        } else {
+            // BC api-platform/core:^2.7
+            $bundles[] = new ApiPlatform\Core\Bridge\Symfony\Bundle\ApiPlatformBundle();
+        }
 
         return $bundles;
     }
@@ -72,11 +78,13 @@ final class AppKernel extends Kernel
     {
         if ($routes instanceof RoutingConfigurator) {
             $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml')->prefix('/api/forgot-password');
+            $routes->import('.', 'api_platform')->prefix('/api');
 
             return;
         }
 
         $routes->import('@CoopTilleulsForgotPasswordBundle/Resources/config/routing.xml', '/api/forgot-password');
+        $routes->import('.', '/api', 'api_platform');
     }
 
     /**
@@ -122,7 +130,7 @@ final class AppKernel extends Kernel
             ],
         ]));
 
-        $firewallExtra = [];
+        $firewallExtra = ['lazy' => true];
         $passwordHashers = [
             'password_hashers' => [
                 UserInterface::class => [
@@ -149,6 +157,10 @@ final class AppKernel extends Kernel
                 ],
             ],
             'firewalls' => [
+                'docs' => [
+                    'pattern' => '^/api/((index|docs|contexts/[A-z]+)(\.[A-z]+)?)?$',
+                    'security' => false,
+                ],
                 'main' => [
                     'pattern' => '^/',
                     'stateless' => true,

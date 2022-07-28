@@ -19,7 +19,12 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
 use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mailer\DataCollector\MessageDataCollector;
 use Symfony\Component\Mime\RawMessage;
 
@@ -43,11 +48,23 @@ final class FeatureContext implements Context
      */
     private $passwordTokenManager;
 
-    public function __construct($client, Registry $doctrine, PasswordTokenManager $passwordTokenManager)
+    /**
+     * @var Application
+     */
+    private $application;
+
+    /**
+     * @var OutputInterface
+     */
+    private $output;
+
+    public function __construct($client, Registry $doctrine, PasswordTokenManager $passwordTokenManager, KernelInterface $kernel)
     {
         $this->client = $client;
         $this->doctrine = $doctrine;
         $this->passwordTokenManager = $passwordTokenManager;
+        $this->application = new Application($kernel);
+        $this->output = new BufferedOutput();
     }
 
     /**
@@ -149,7 +166,6 @@ JSON
      */
     public function theResponseShouldBeEmpty(): void
     {
-        dump($this->client->getResponse()->getContent());
         Assert::assertTrue(
             $this->client->getResponse()->isEmpty(),
             sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
@@ -322,6 +338,165 @@ JSON
         $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('-1 minute'));
 
         $this->client->request('GET', sprintf('/api/forgot-password/%s', $token->getToken()));
+    }
+
+    /**
+     * @When I get the OpenApi documentation
+     */
+    public function iGetOpenApiDocumentation(): void
+    {
+        $exitCode = $this->application->doRun(new ArgvInput(['behat-test', 'api:openapi:export']), $this->output);
+        Assert::assertEquals(0, $exitCode, sprintf('Unable to run "api:openapi:export" command: got %s exit code.', $exitCode));
+    }
+
+    /**
+     * @Then I should get an OpenApi documentation updated
+     */
+    public function iShouldGetAnOpenApiDocumentationUpdated(): void
+    {
+        $output = $this->output->fetch();
+        Assert::assertJson($output);
+
+        $openApi = json_decode($output, true);
+        Assert::assertEquals([
+            '/api/forgot-password/' => [
+                'ref' => 'ForgotPassword',
+                'post' => [
+                    'operationId' => 'postForgotPassword',
+                    'tags' => ['Forgot password'],
+                    'responses' => [
+                        204 => [
+                            'description' => 'Valid email address, no matter if user exists or not',
+                        ],
+                        400 => [
+                            'description' => 'Missing email parameter or invalid format',
+                        ],
+                    ],
+                    'summary' => 'Generates a token and send email',
+                    'description' => '',
+                    'parameters' => [],
+                    'requestBody' => [
+                        'description' => 'Request a new password',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/ForgotPassword:request',
+                                ],
+                            ],
+                        ],
+                        'required' => true,
+                    ],
+                    'deprecated' => false,
+                ],
+                'parameters' => [],
+            ],
+            '/api/forgot-password/{tokenValue}' => [
+                'ref' => 'ForgotPassword',
+                'get' => [
+                    'operationId' => 'getForgotPassword',
+                    'tags' => ['Forgot password'],
+                    'responses' => [
+                        200 => [
+                            'description' => 'Authenticated user',
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/ForgotPassword:validate',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        404 => [
+                            'description' => 'Token not found or expired',
+                        ],
+                    ],
+                    'summary' => 'Validates token',
+                    'description' => '',
+                    'parameters' => [
+                        [
+                            'name' => 'token',
+                            'in' => 'path',
+                            'required' => true,
+                            'schema' => [
+                                'type' => 'string',
+                            ],
+                        ],
+                    ],
+                    'deprecated' => false,
+                ],
+                'post' => [
+                    'operationId' => 'postForgotPasswordToken',
+                    'tags' => ['Forgot password'],
+                    'responses' => [
+                        204 => [
+                            'description' => 'Email address format valid, no matter if user exists or not',
+                        ],
+                        400 => [
+                            'description' => 'Missing password parameter',
+                        ],
+                        404 => [
+                            'description' => 'Token not found',
+                        ],
+                    ],
+                    'summary' => 'Validates token',
+                    'description' => '',
+                    'parameters' => [
+                        [
+                            'name' => 'token',
+                            'in' => 'path',
+                            'required' => true,
+                            'schema' => [
+                                'type' => 'string',
+                            ],
+                        ],
+                    ],
+                    'requestBody' => [
+                        'description' => 'Reset password',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/ForgotPassword:reset',
+                                ],
+                            ],
+                        ],
+                        'required' => true,
+                    ],
+                    'deprecated' => false,
+                ],
+                'parameters' => [],
+            ],
+        ], $openApi['paths']);
+        Assert::assertEquals([
+            'schemas' => [
+                'ForgotPassword:reset' => [
+                    'type' => 'object',
+                    'required' => ['password'],
+                    'properties' => [
+                        'password' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                ],
+                'ForgotPassword:validate' => [
+                    'type' => 'object',
+                ],
+                'ForgotPassword:request' => [
+                    'type' => 'object',
+                    'required' => ['email'],
+                    'properties' => [
+                        'email' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                ],
+            ],
+            'responses' => [],
+            'parameters' => [],
+            'examples' => [],
+            'requestBodies' => [],
+            'headers' => [],
+            'securitySchemes' => [],
+        ], $openApi['components']);
     }
 
     /**

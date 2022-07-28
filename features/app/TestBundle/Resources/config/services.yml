@@ -8,4 +8,4 @@ services:
     FeatureContext:
         class: FeatureContext
         public: true
-        arguments: ['@test.client', '@doctrine', '@coop_tilleuls_forgot_password.manager.password_token']
+        arguments: ['@test.client', '@doctrine', '@coop_tilleuls_forgot_password.manager.password_token', '@kernel']

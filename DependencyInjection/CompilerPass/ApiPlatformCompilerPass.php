@@ -27,7 +27,7 @@ final class ApiPlatformCompilerPass implements CompilerPassInterface
             $container->removeDefinition('coop_tilleuls_forgot_password.normalizer.documentation');
         }
 
-        if (!$container->hasDefinition('api_platform.openapi.factory')) {
+        if (!$container->hasDefinition('api_platform.openapi.factory') && !$container->hasAlias('api_platform.openapi.factory')) {
             $container->removeDefinition('coop_tilleuls_forgot_password.openapi.factory');
         }
     }
