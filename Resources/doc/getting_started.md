@@ -124,8 +124,9 @@ security:
 
 ## Overriding the GET /forgot-password/{token} response
 
-By default, when you send a GET /forgot-password/{token} request, it serializes the token object in JSON, using
-the `coop_tilleuls_forgot_password.password_token.serialization_groups` configuration option.
+By default, when you send a GET /forgot-password/{token} request, it serializes the token object in JSON, including the
+User object through the relationship, using the `coop_tilleuls_forgot_password.password_token.serialization_groups`
+configuration option.
 
 If you want, for instance, to return an empty response, you can easily override this route by your own:
 
