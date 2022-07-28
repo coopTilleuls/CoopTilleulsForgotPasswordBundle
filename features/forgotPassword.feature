@@ -42,6 +42,11 @@ Feature: I need to be able to reset my password
         When I update my password using no password
         Then the request should be invalid with message 'No parameter sent.'
 
+    Scenario: I can update my password using a valid token and a password
+        When I update my password
+        Then the response should be empty
+        And the password should have been updated
+
     Scenario: I can get a password token
         When I get a password token
         Then I should get a password token
