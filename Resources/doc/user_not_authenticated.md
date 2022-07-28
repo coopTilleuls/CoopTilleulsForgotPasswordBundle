@@ -1,10 +1,9 @@
-Ensure user is not authenticated
---------------------------------
+# Ensure user is not authenticated
 
-When a user requests a new password, or reset it, user shouldn't be authenticated. But this part is part of your own
+When a user requests a new password, or reset it, it shouldn't be authenticated. But this part is part of your own
 application.
 
-Create an EventListener and listen to `kernel.request` event:
+Create an EventSubscriber and listen to `kernel.request` event:
 
 ```php
 // src/EventSubscriber/ForgotPasswordEventSubscriber.php
@@ -18,7 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             // Symfony 4.3 and inferior, use 'kernel.request' event name
@@ -26,11 +25,9 @@ final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
-        if (!$event->isMasterRequest()
-            || !preg_match('/^coop_tilleuls_forgot_password/i', $event->getRequest()->get('_route'))
-        ) {
+        if (!$event->isMasterRequest() || !str_starts_with($event->getRequest()->get('_route'), 'coop_tilleuls_forgot_password')) {
             return;
         }
 

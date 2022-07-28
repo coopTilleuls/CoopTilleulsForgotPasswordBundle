@@ -1,9 +1,10 @@
-Usage
------
+# Usage
 
-CoopTilleulsForgotPasswordBundle provides 2 events allowing you to build your own business:
+This bundle provides 2 events allowing you to build your own business:
+
 - `coop_tilleuls_forgot_password.create_token`: dispatched when user requests a new password (`POST /forgot_password/`)
-- `coop_tilleuls_forgot_password.update_password`: dispatched when user has reset its password (`POST /forgot_password/{token}`)
+- `coop_tilleuls_forgot_password.update_password`: dispatched when user has reset its
+  password (`POST /forgot_password/{token}`)
 
 ## Send email on user request
 
@@ -23,16 +24,11 @@ use Twig\Environment;
 
 final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
 {
-    private $mailer;
-    private $twig;
-
-    public function __construct(MailerInterface $mailer, Environment $twig)
+    public function __construct(private readonly MailerInterface $mailer, private readonly Environment $twig)
     {
-        $this->mailer = $mailer;
-        $this->twig = $twig;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             // Symfony 4.3 and inferior, use 'coop_tilleuls_forgot_password.create_token' event name
@@ -40,7 +36,7 @@ final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onCreateToken(CreateTokenEvent $event)
+    public function onCreateToken(CreateTokenEvent $event): void
     {
         $passwordToken = $event->getPasswordToken();
         $user = $passwordToken->getUser();
@@ -52,7 +48,7 @@ final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
             ->html($this->twig->render(
                 'App:ResetPassword:mail.html.twig',
                 [
-                    'reset_password_url' => sprintf('http://www.example.com/forgot-password/%s', $passwordToken->getToken()),
+                    'reset_password_url' => sprintf('https://www.example.com/forgot-password/%s', $passwordToken->getToken()),
                 ]
             ));
         $this->mailer->send($message);
@@ -68,7 +64,7 @@ Your app is ready to receive a JSON request like:
 }
 ```
 
-## Update the password of the user
+## Update the user password
 
 On the second user story, user will send its new password, and you'll have to encode it and save it.
 
@@ -82,14 +78,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
 {
-    private $userManager;
-
-    public function __construct(UserManager $userManager)
+    public function __construct(private readonly UserManager $userManager)
     {
-        $this->userManager = $userManager;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             // Symfony 4.3 and inferior, use 'coop_tilleuls_forgot_password.update_password' event name
@@ -97,7 +90,7 @@ final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onUpdatePassword(UpdatePasswordEvent $event)
+    public function onUpdatePassword(UpdatePasswordEvent $event): void
     {
         $passwordToken = $event->getPasswordToken();
         $user = $passwordToken->getUser();

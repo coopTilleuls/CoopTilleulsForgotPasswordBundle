@@ -28,9 +28,6 @@ final class DoctrineManager implements ManagerInterface
         $this->registry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findOneBy($class, array $criteria)
     {
         return $this->registry->getManagerForClass($class)
@@ -38,9 +35,6 @@ final class DoctrineManager implements ManagerInterface
             ->findOneBy($criteria);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function persist($object): void
     {
         $manager = $this->registry->getManagerForClass(\get_class($object));
@@ -48,9 +42,6 @@ final class DoctrineManager implements ManagerInterface
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function remove($object): void
     {
         $manager = $this->registry->getManagerForClass(\get_class($object));
