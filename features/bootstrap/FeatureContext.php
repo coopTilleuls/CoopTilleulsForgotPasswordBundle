@@ -82,8 +82,8 @@ final class FeatureContext implements Context
     }
 
     /**
-     * @Then I reset my password
-     * @Then I reset my password with my :propertyName ":value"
+     * @When I reset my password
+     * @When I reset my password with my :propertyName ":value"
      *
      * @param string $propertyName
      * @param string $value
@@ -149,6 +149,7 @@ JSON
      */
     public function theResponseShouldBeEmpty(): void
     {
+        dump($this->client->getResponse()->getContent());
         Assert::assertTrue(
             $this->client->getResponse()->isEmpty(),
             sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
@@ -179,7 +180,7 @@ JSON
     }
 
     /**
-     * @Then I reset my password using invalid email address
+     * @When I reset my password using invalid email address
      */
     public function iResetMyPasswordUsingInvalidEmailAddress(): void
     {
@@ -198,7 +199,7 @@ JSON
     }
 
     /**
-     * @Then I reset my password using no parameter
+     * @When I reset my password using no parameter
      */
     public function iResetMyPasswordUsingNoParameter(): void
     {
@@ -206,7 +207,7 @@ JSON
     }
 
     /**
-     * @Then I update my password
+     * @When I update my password
      */
     public function iUpdateMyPassword(): void
     {
@@ -220,6 +221,7 @@ JSON
             ['CONTENT_TYPE' => 'application/json'],
             <<<'JSON'
 {
+    "ignoreMe": "bar",
     "password": "foo"
 }
 JSON
@@ -227,7 +229,18 @@ JSON
     }
 
     /**
-     * @Then I update my password using no password
+     * @Then the password should have been updated
+     */
+    public function thePasswordShouldHaveBeenUpdated(): void
+    {
+        $user = $this->doctrine->getManager()->getRepository(User::class)->findOneBy(['username' => 'JohnDoe']);
+
+        Assert::assertNotNull($user, 'Unable to retrieve User object.');
+        Assert::assertEquals('foo', $user->getPassword(), sprintf('User password hasn\'t be updated, expected "foo", got "%s".', $user->getPassword()));
+    }
+
+    /**
+     * @When I update my password using no password
      */
     public function iUpdateMyPasswordUsingNoPassword(): void
     {
@@ -237,7 +250,7 @@ JSON
     }
 
     /**
-     * @Then I update my password using an invalid token
+     * @When I update my password using an invalid token
      */
     public function iUpdateMyPasswordUsingAnInvalidToken(): void
     {
@@ -256,7 +269,7 @@ JSON
     }
 
     /**
-     * @Then I update my password using an expired token
+     * @When I update my password using an expired token
      */
     public function iUpdateMyPasswordUsingAnExpiredToken(): void
     {
@@ -277,7 +290,7 @@ JSON
     }
 
     /**
-     * @Then I get a password token
+     * @When I get a password token
      */
     public function iGetAPasswordToken(): void
     {
@@ -302,7 +315,7 @@ JSON
     }
 
     /**
-     * @Then I get a password token using an expired token
+     * @When I get a password token using an expired token
      */
     public function iGetAPasswordTokenUsingAnExpiredToken(): void
     {

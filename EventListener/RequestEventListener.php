@@ -72,18 +72,25 @@ final class RequestEventListener
         }
 
         if ('coop_tilleuls_forgot_password.reset' === $routeName) {
-            if (!\in_array($fieldName, $this->authorizedFields, true)) {
-                throw new UnauthorizedFieldException($fieldName);
-            }
-            $request->attributes->set('propertyName', $fieldName);
-            $request->attributes->set('value', $data[$fieldName]);
-        } else {
-            if ($this->userPasswordField !== $fieldName) {
-                throw new MissingFieldHttpException($this->userPasswordField);
+            foreach ($data as $fieldName => $value) {
+                if (\in_array($fieldName, $this->authorizedFields, true)) {
+                    $request->attributes->set('propertyName', $fieldName);
+                    $request->attributes->set('value', $value);
+
+                    return;
+                }
             }
 
-            $request->attributes->set($fieldName, $data[$fieldName]);
+            throw new UnauthorizedFieldException($fieldName);
         }
+
+        if (!empty($data[$this->userPasswordField])) {
+            $request->attributes->set($this->userPasswordField, $data[$this->userPasswordField]);
+
+            return;
+        }
+
+        throw new MissingFieldHttpException($this->userPasswordField);
     }
 
     public function getTokenFromRequest(KernelEvent $event): void

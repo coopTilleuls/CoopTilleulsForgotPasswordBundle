@@ -102,6 +102,7 @@ coop_tilleuls_forgot_password:
         class: 'App\Entity\User'          # User class fully qualified name (required)
         email_field: 'email'              # Email property in user class (optional, default value)
         password_field: 'password'        # Password property in user class (optional, default value)
+        authorized_fields: [ 'email' ]    # User properties authorized to reset the password (optional, default value)
     use_jms_serializer: false             # Switch between symfony's serializer component or JMS Serializer
 ```
 
