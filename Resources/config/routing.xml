@@ -8,11 +8,11 @@
         <default key="_controller">coop_tilleuls_forgot_password.controller.reset_password</default>
     </route>
 
-    <route id="coop_tilleuls_forgot_password.update" path="/{tokenValue}" methods="POST">
+    <route id="coop_tilleuls_forgot_password.update" path="/{token}" methods="POST">
         <default key="_controller">coop_tilleuls_forgot_password.controller.update_password</default>
     </route>
 
-    <route id="coop_tilleuls_forgot_password.get_token" path="/{tokenValue}" methods="GET">
+    <route id="coop_tilleuls_forgot_password.get_token" path="/{token}" methods="GET">
         <default key="_controller">coop_tilleuls_forgot_password.controller.get_token</default>
     </route>
 

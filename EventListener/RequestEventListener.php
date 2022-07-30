@@ -105,7 +105,7 @@ final class RequestEventListener
             return;
         }
 
-        $token = $this->passwordTokenManager->findOneByToken($request->attributes->get('tokenValue'));
+        $token = $this->passwordTokenManager->findOneByToken($request->attributes->get('token'));
         if (null === $token || $token->isExpired()) {
             throw new NotFoundHttpException('Invalid token.');
         }

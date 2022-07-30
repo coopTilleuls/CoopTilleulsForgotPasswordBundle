@@ -136,7 +136,7 @@ If you want, for instance, to return an empty response, you can easily override 
 # ...
 
 coop_tilleuls_forgot_password.get_token:
-    path: /forgot-password/{tokenValue}
+    path: /forgot-password/{token}
     methods: [ GET ]
     defaults:
         _controller: App\Controller\GetTokenController
