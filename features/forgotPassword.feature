@@ -54,3 +54,7 @@ Feature: I need to be able to reset my password
     Scenario: I can't get an expired password token
         When I get a password token using an expired token
         Then the page should not be found
+
+    Scenario: I can get the OpenApi documentation updated
+        When I get the OpenApi documentation
+        Then I should get an OpenApi documentation updated
