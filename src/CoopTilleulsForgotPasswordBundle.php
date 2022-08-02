@@ -31,8 +31,11 @@ final class CoopTilleulsForgotPasswordBundle extends Bundle
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new ApiPlatformCompilerPass());
-        $container->addCompilerPass(DoctrineOrmMappingsPass::createXmlMappingDriver([
-            realpath(__DIR__.'/../config/doctrine') => 'CoopTilleuls\ForgotPasswordBundle\Entity',
-        ]));
+
+        if (class_exists(DoctrineOrmMappingsPass::class)) {
+            $container->addCompilerPass(DoctrineOrmMappingsPass::createXmlMappingDriver([
+                realpath(__DIR__.'/../config/doctrine') => 'CoopTilleuls\ForgotPasswordBundle\Entity',
+            ]));
+        }
     }
 }
