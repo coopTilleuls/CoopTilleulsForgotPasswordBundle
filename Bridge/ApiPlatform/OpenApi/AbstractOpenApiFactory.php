@@ -125,7 +125,7 @@ abstract class AbstractOpenApiFactory
                 ->withSummary('Validates token')
                 ->withParameters([
                     [
-                        'name' => 'token',
+                        'name' => 'tokenValue',
                         'in' => 'path',
                         'required' => true,
                         'schema' => [
@@ -156,7 +156,7 @@ abstract class AbstractOpenApiFactory
                 ->withSummary('Validates token')
                 ->withParameters([
                     [
-                        'name' => 'token',
+                        'name' => 'tokenValue',
                         'in' => 'path',
                         'required' => true,
                         'schema' => [

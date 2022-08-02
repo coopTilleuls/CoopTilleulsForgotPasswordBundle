@@ -75,7 +75,7 @@ final class DocumentationNormalizerTest extends TestCase
         $this->routeCollectionMock->get('coop_tilleuls_forgot_password.reset')->willReturn($this->routeMock)->shouldBeCalledOnce();
         $this->routeCollectionMock->get('coop_tilleuls_forgot_password.get_token')->willReturn($this->routeMock)->shouldBeCalledOnce();
         $this->routeCollectionMock->get('coop_tilleuls_forgot_password.update')->willReturn($this->routeMock)->shouldBeCalledOnce();
-        $this->routeMock->getPath()->willReturn('/api/forgot-password/', '/api/forgot-password/{token}', '/api/forgot-password/{token}')->shouldBeCalledTimes(3);
+        $this->routeMock->getPath()->willReturn('/api/forgot-password/', '/api/forgot-password/{tokenValue}', '/api/forgot-password/{tokenValue}')->shouldBeCalledTimes(3);
 
         $this->normalizerMock->normalize(new \stdClass(), 'bar', [])->willReturn([
             'tags' => [['name' => 'Login']],
@@ -177,7 +177,7 @@ final class DocumentationNormalizerTest extends TestCase
                         ],
                     ],
                 ],
-                '/api/forgot-password/{token}' => [
+                '/api/forgot-password/{tokenValue}' => [
                     'get' => [
                         'tags' => ['Forgot password'],
                         'operationId' => 'getForgotPassword',
@@ -199,7 +199,7 @@ final class DocumentationNormalizerTest extends TestCase
                         ],
                         'parameters' => [
                             [
-                                'name' => 'token',
+                                'name' => 'tokenValue',
                                 'in' => 'path',
                                 'required' => true,
                                 'schema' => [
@@ -225,7 +225,7 @@ final class DocumentationNormalizerTest extends TestCase
                         ],
                         'parameters' => [
                             [
-                                'name' => 'token',
+                                'name' => 'tokenValue',
                                 'in' => 'path',
                                 'required' => true,
                                 'schema' => [

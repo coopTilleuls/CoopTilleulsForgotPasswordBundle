@@ -414,7 +414,7 @@ JSON
                     'description' => '',
                     'parameters' => [
                         [
-                            'name' => 'token',
+                            'name' => 'tokenValue',
                             'in' => 'path',
                             'required' => true,
                             'schema' => [
@@ -442,7 +442,7 @@ JSON
                     'description' => '',
                     'parameters' => [
                         [
-                            'name' => 'token',
+                            'name' => 'tokenValue',
                             'in' => 'path',
                             'required' => true,
                             'schema' => [
