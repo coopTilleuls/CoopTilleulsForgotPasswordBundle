@@ -60,6 +60,8 @@ jobs:
           - api-platform: '^3.0@rc'
             symfony: '6.0.*'
       fail-fast: false
+    env:
+      SYMFONY_REQUIRE: ${{ matrix.symfony }}
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -78,14 +80,16 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Configure Symfony
-        run: composer config extra.symfony.require "${{ matrix.symfony }}"
+        run: |
+          composer global config --no-plugins allow-plugins.symfony/flex true
+          composer global require --no-progress --no-scripts --no-plugins symfony/flex
       - name: Configure API Platform
-        run: composer require api-platform/core:${{ matrix.api-platform }} --dev --no-install --no-update
+        run: composer require api-platform/core:${{ matrix.api-platform }} --dev --no-install --no-update --no-progress --no-scripts
       - name: Configure Laminas
         if: matrix.laminas
-        run: composer require laminas/laminas-code:${{ matrix.laminas }} --dev --no-install --no-update
+        run: composer require laminas/laminas-code:${{ matrix.laminas }} --dev --no-install --no-update --no-progress --no-scripts
       - name: Update project dependencies
-        run: composer update --no-progress --ansi --prefer-stable
+        run: composer update --no-progress --ansi --prefer-stable --prefer-dist
       - name: Bundle is bootable
         if: ${{ matrix.bootable && github.event_name == 'push' && github.ref_name == 'main' }}
         run: |

@@ -3,7 +3,7 @@
 /*
  * This file is part of the CoopTilleulsForgotPasswordBundle package.
  *
- * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ * (c) Vincent CHALAMON <vincent@les-tilleuls.coop>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,18 +11,18 @@
 
 declare(strict_types=1);
 
-namespace Tests\ForgotPasswordBundle\Controller;
+namespace CoopTilleuls\ForgotPasswordBundle\Tests\Controller;
 
 use CoopTilleuls\ForgotPasswordBundle\Controller\GetToken;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
+use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Tests\ForgotPasswordBundle\ProphecyTrait;
 
 /**
- * @author Vincent Chalamon <vincentchalamon@gmail.com>
+ * @author Vincent CHALAMON <vincentchalamon@gmail.com>
  */
 final class GetTokenTest extends TestCase
 {

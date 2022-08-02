@@ -3,7 +3,7 @@
 /*
  * This file is part of the CoopTilleulsForgotPasswordBundle package.
  *
- * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ * (c) Vincent CHALAMON <vincent@les-tilleuls.coop>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,9 +11,9 @@
 
 declare(strict_types=1);
 
+use App\Entity\User;
 use Behat\Behat\Context\Context;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
-use CoopTilleuls\ForgotPasswordBundle\Tests\TestBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -29,7 +29,7 @@ use Symfony\Component\Mailer\DataCollector\MessageDataCollector;
 use Symfony\Component\Mime\RawMessage;
 
 /**
- * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ * @author Vincent CHALAMON <vincent@les-tilleuls.coop>
  */
 final class FeatureContext implements Context
 {

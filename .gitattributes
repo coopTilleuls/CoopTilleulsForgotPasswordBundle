@@ -1,0 +1,10 @@
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/behat.yml.dist export-ignore
+/docs export-ignore
+/features export-ignore
+/phpunit.xml.dist export-ignore
+/tests export-ignore

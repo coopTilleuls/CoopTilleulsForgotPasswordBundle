@@ -3,7 +3,7 @@
 /*
  * This file is part of the CoopTilleulsForgotPasswordBundle package.
  *
- * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ * (c) Vincent CHALAMON <vincent@les-tilleuls.coop>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\ForgotPasswordBundle;
+namespace CoopTilleuls\ForgotPasswordBundle\Tests;
 
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;

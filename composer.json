@@ -8,26 +8,26 @@
         "API"
     ],
     "license": "MIT",
-    "homepage": "https://les-tilleuls.coop",
+    "homepage": "https://github.com/coopTilleuls/CoopTilleulsForgotPasswordBundle",
     "authors": [
         {
-            "name": "Vincent Chalamon",
+            "name": "Vincent CHALAMON",
             "email": "vincent@les-tilleuls.coop"
         }
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.4",
         "ircmaxell/random-lib": "^1.2",
-        "symfony/config": "^3.4 || ^4.4 || ^5.1 || ^6.0",
-        "symfony/dependency-injection": "^3.4.26 || ^4.4 || ^5.1 || ^6.0",
-        "symfony/event-dispatcher": "^3.4 || ^4.4 || ^5.1 || ^6.0",
-        "symfony/http-foundation": "^3.4.35 || ^4.4.7 || ^5.1 || ^6.0",
-        "symfony/http-kernel": "^3.4.35 || ^4.4.13 || ^5.1.5 || ^6.0",
-        "symfony/serializer": "^3.4 || ^4.4 || ^5.1 || ^6.0"
+        "symfony/config": "^4.4 || ^5.1 || ^6.0",
+        "symfony/dependency-injection": "^4.4 || ^5.1 || ^6.0",
+        "symfony/event-dispatcher": "^4.4 || ^5.1 || ^6.0",
+        "symfony/http-foundation": "^4.4.7 || ^5.1 || ^6.0",
+        "symfony/http-kernel": "^4.4.13 || ^5.1.5 || ^6.0",
+        "symfony/serializer": "^4.4 || ^5.1 || ^6.0"
     },
     "require-dev": {
         "ext-json": "*",
-        "api-platform/core": "^2.3 || ^3.0@rc",
+        "api-platform/core": "^2.6 || ^3.0@rc",
         "behat/behat": "^3.1",
         "dg/bypass-finals": "^1.1",
         "doctrine/data-fixtures": "^1.2",
@@ -40,32 +40,32 @@
         "ocramius/proxy-manager": "^2.0.4",
         "phpspec/prophecy": "^1.10",
         "sebastian/comparator": "^3.0",
-        "symfony/asset": "^3.4 || ^4.4 || ^5.1 || ^6.0",
-        "symfony/browser-kit": "^3.4 || ^4.4 || ^5.1 || ^6.0",
-        "symfony/framework-bundle": "^3.4.26 || ^4.4 || ^5.1 || ^6.0",
+        "symfony/asset": "^4.4 || ^5.1 || ^6.0",
+        "symfony/browser-kit": "^4.4 || ^5.1 || ^6.0",
+        "symfony/framework-bundle": "^4.4 || ^5.1 || ^6.0",
         "symfony/mailer": "^4.4 || ^5.1 || ^6.0",
         "symfony/phpunit-bridge": "^5.1 || ^6.0",
-        "symfony/property-access": "^3.4 || ^4.4 || ^5.1 || ^6.0",
-        "symfony/security-bundle": "^3.4.11 || ^4.4 || ^5.1 || ^6.0",
-        "symfony/stopwatch": "^3.4 || ^4.4 || ^5.1 || ^6.0",
-        "symfony/templating": "^3.4 || ^4.4 || ^5.1 || ^6.0",
-        "symfony/twig-bundle": "^3.4 || ^4.4 || ^5.1 || ^6.0",
-        "symfony/var-dumper": "^3.4 || ^4.4 || ^5.1 || ^6.0"
+        "symfony/property-access": "^4.4 || ^5.1 || ^6.0",
+        "symfony/security-bundle": "^4.4 || ^5.1 || ^6.0",
+        "symfony/stopwatch": "^4.4 || ^5.1 || ^6.0",
+        "symfony/templating": "^4.4 || ^5.1 || ^6.0",
+        "symfony/twig-bundle": "^4.4 || ^5.1 || ^6.0",
+        "symfony/var-dumper": "^4.4 || ^5.1 || ^6.0"
     },
     "suggest": {
         "doctrine/doctrine-bundle": "To connect with Doctrine in Symfony project",
-        "doctrine/orm": "To connect with Doctrine"
+        "doctrine/orm": "To connect with Doctrine",
+        "api-platform/core": "To connect with API Platform"
     },
     "autoload": {
         "psr-4": {
-            "CoopTilleuls\\ForgotPasswordBundle\\": ""
-        },
-        "exclude-from-classmap": ["features/", "tests/"]
+            "CoopTilleuls\\ForgotPasswordBundle\\": "src/"
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "CoopTilleuls\\ForgotPasswordBundle\\Tests\\": "features/app",
-            "Tests\\ForgotPasswordBundle\\": "tests",
+            "CoopTilleuls\\ForgotPasswordBundle\\Tests\\": "tests",
+            "App\\": "features/app/src",
             "PHPUnit\\": "vendor/bin/.phpunit/phpunit/src"
         }
     },
@@ -79,7 +79,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "1.4.x-dev"
+            "dev-main": "1.5.x-dev"
         }
     },
     "config": {

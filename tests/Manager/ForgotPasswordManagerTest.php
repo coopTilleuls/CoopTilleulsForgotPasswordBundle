@@ -3,7 +3,7 @@
 /*
  * This file is part of the CoopTilleulsForgotPasswordBundle package.
  *
- * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ * (c) Vincent CHALAMON <vincent@les-tilleuls.coop>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\ForgotPasswordBundle\Manager;
+namespace CoopTilleuls\ForgotPasswordBundle\Tests\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
@@ -20,15 +20,15 @@ use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
+use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
-use Tests\ForgotPasswordBundle\ProphecyTrait;
 
 /**
- * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ * @author Vincent CHALAMON <vincent@les-tilleuls.coop>
  */
 final class ForgotPasswordManagerTest extends TestCase
 {
@@ -121,8 +121,7 @@ final class ForgotPasswordManagerTest extends TestCase
         $tokenMock
             ->isExpired()
             ->willReturn(false)
-            ->shouldBeCalledOnce()
-        ;
+            ->shouldBeCalledOnce();
 
         $token = $tokenMock->reveal();
 

@@ -3,7 +3,7 @@
 /*
  * This file is part of the CoopTilleulsForgotPasswordBundle package.
  *
- * (c) Vincent Chalamon <vincent@les-tilleuls.coop>
+ * (c) Vincent CHALAMON <vincent@les-tilleuls.coop>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,18 +11,18 @@
 
 declare(strict_types=1);
 
-namespace Tests\ForgotPasswordBundle\Manager;
+namespace CoopTilleuls\ForgotPasswordBundle\Tests\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
+use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Tests\ForgotPasswordBundle\ProphecyTrait;
 
 /**
- * @author Vincent Chalamon <vincent@les-tilleuls.coop>
+ * @author Vincent CHALAMON <vincent@les-tilleuls.coop>
  */
 final class PasswordTokenManagerTest extends TestCase
 {
@@ -56,8 +56,7 @@ final class PasswordTokenManagerTest extends TestCase
             return $object instanceof AbstractPasswordToken
                    && '2016-10-11 10:00:00' === $object->getExpiresAt()->format('Y-m-d H:i:s')
                    && preg_match('/^[A-z\d]{50}$/', $object->getToken())
-                   && $this->userMock->reveal() === $object->getUser()
-            ;
+                   && $this->userMock->reveal() === $object->getUser();
         }))->shouldBeCalledOnce();
 
         $this->manager->createPasswordToken($this->userMock->reveal(), new \DateTime('2016-10-11 10:00:00'));
