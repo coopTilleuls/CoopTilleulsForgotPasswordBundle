@@ -71,7 +71,7 @@ final class DocumentationNormalizer implements NormalizerInterface
             ],
         ];
 
-        // Add GET /forgot-password/{token} path
+        // Add GET /forgot-password/{tokenValue} path
         $docs['paths'][$routes->get('coop_tilleuls_forgot_password.get_token')->getPath()]['get'] = [
             'tags' => ['Forgot password'],
             'operationId' => 'getForgotPassword',
@@ -93,7 +93,7 @@ final class DocumentationNormalizer implements NormalizerInterface
             ],
             'parameters' => [
                 [
-                    'name' => 'token',
+                    'name' => 'tokenValue',
                     'in' => 'path',
                     'required' => true,
                     'schema' => [
@@ -107,7 +107,7 @@ final class DocumentationNormalizer implements NormalizerInterface
             'description' => '',
         ];
 
-        // Add POST /forgot-password/{token} path
+        // Add POST /forgot-password/{tokenValue} path
         $docs['paths'][$routes->get('coop_tilleuls_forgot_password.update')->getPath()]['post'] = [
             'tags' => ['Forgot password'],
             'operationId' => 'postForgotPasswordToken',
@@ -125,7 +125,7 @@ final class DocumentationNormalizer implements NormalizerInterface
             ],
             'parameters' => [
                 [
-                    'name' => 'token',
+                    'name' => 'tokenValue',
                     'in' => 'path',
                     'required' => true,
                     'schema' => [
