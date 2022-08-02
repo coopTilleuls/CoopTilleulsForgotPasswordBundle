@@ -2,9 +2,9 @@
 
 This bundle provides 2 events allowing you to build your own business:
 
-- `coop_tilleuls_forgot_password.create_token`: dispatched when user requests a new password (`POST /forgot_password/`)
+- `coop_tilleuls_forgot_password.create_token`: dispatched when user requests a new password (`POST /forgot-password/`)
 - `coop_tilleuls_forgot_password.update_password`: dispatched when user has reset its
-  password (`POST /forgot_password/{tokenValue}`)
+  password (`POST /forgot-password/{tokenValue}`)
 
 ## Send email on user request
 
