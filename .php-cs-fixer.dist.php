@@ -1,17 +1,19 @@
 <?php
 
-$header = <<<'EOF'
+declare(strict_types=1);
+
+$header = <<<'HEADER'
 This file is part of the CoopTilleulsForgotPasswordBundle package.
 
-(c) Vincent Chalamon <vincent@les-tilleuls.coop>
+(c) Vincent CHALAMON <vincent@les-tilleuls.coop>
 
 For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
-EOF;
+HEADER;
 
-$finder = (new PhpCsFixer\Finder())
+$finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
-    ->exclude(['vendor', 'flex', 'var', 'features/app/cache']);
+    ->exclude(['vendor', 'flex', 'features/app/var']);
 
 return (new PhpCsFixer\Config())
     ->setFinder($finder)
@@ -24,7 +26,7 @@ return (new PhpCsFixer\Config())
         '@Symfony' => true,
         '@Symfony:risky' => true,
         'align_multiline_comment' => [
-            'comment_type' => 'phpdocs_only',
+            'comment_type' => 'phpdocs_like',
         ],
         'array_indentation' => true,
         'array_syntax' => [
@@ -41,6 +43,18 @@ return (new PhpCsFixer\Config())
             'after_array_assignments_equals' => false,
             'before_array_assignments_equals' => false,
         ],
+        'explicit_indirect_variable' => true,
+        'fully_qualified_strict_types' => true,
+        'header_comment' => [
+            'header' => $header,
+            'location' => 'after_open',
+        ],
+        'logical_operators' => true,
+        'multiline_comment_opening_closing' => true,
+        'multiline_whitespace_before_semicolons' => [
+            'strategy' => 'no_multi_line',
+        ],
+        'no_alternative_syntax' => true,
         'no_extra_blank_lines' => [
             'tokens' => [
                 'break',
@@ -54,7 +68,10 @@ return (new PhpCsFixer\Config())
                 'use',
             ],
         ],
+        'no_superfluous_elseif' => true,
         'no_superfluous_phpdoc_tags' => true,
+        'no_unset_cast' => true,
+        'no_unset_on_property' => true,
         'no_useless_else' => true,
         'no_useless_return' => true,
         'ordered_imports' => [
@@ -68,14 +85,27 @@ return (new PhpCsFixer\Config())
         'php_unit_method_casing' => [
             'case' => 'camel_case',
         ],
+        'php_unit_set_up_tear_down_visibility' => true,
+        'php_unit_test_annotation' => [
+            'style' => 'prefix',
+        ],
+        'phpdoc_add_missing_param_annotation' => [
+            'only_untyped' => true,
+        ],
+        'phpdoc_no_alias_tag' => true,
         'phpdoc_order' => true,
         'phpdoc_trim_consecutive_blank_line_separation' => true,
+        'phpdoc_var_annotation_correct_order' => true,
+        'return_assignment' => true,
         'strict_comparison' => true,
         'strict_param' => true,
-        'void_return' => true,
-        'header_comment' => [
-            'header' => $header,
-            'location' => 'after_open',
+        'visibility_required' => [
+            'elements' => [
+                'const',
+                'method',
+                'property',
+            ],
         ],
+        'void_return' => true,
     ])
 ;

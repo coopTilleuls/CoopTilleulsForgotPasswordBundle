@@ -1,10 +1,11 @@
 vendor
-features/app/cache
-features/app/logs
+features/app/var
+!features/app/var/cache/.gitkeep
+!features/app/var/logs/.gitkeep
 composer.phar
 composer.lock
-.php_cs.cache
+.php-cs-fixer.cache
 phpunit.xml
+.phpunit.result.cache
 clover.xml
-var
 openapi.json

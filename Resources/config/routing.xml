@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!-- BC layer -->
+<!-- todo Remove in 2.0 -->
 <routes xmlns="http://symfony.com/schema/routing"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://symfony.com/schema/routing
         http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="coop_tilleuls_forgot_password.reset" path="/" methods="POST">
-        <default key="_controller">coop_tilleuls_forgot_password.controller.reset_password</default>
-    </route>
-
-    <route id="coop_tilleuls_forgot_password.update" path="/{tokenValue}" methods="POST">
-        <default key="_controller">coop_tilleuls_forgot_password.controller.update_password</default>
-    </route>
-
-    <route id="coop_tilleuls_forgot_password.get_token" path="/{tokenValue}" methods="GET">
-        <default key="_controller">coop_tilleuls_forgot_password.controller.get_token</default>
-    </route>
-
+    <import resource="." type="coop_tilleuls_forgot_password" />
 </routes>
