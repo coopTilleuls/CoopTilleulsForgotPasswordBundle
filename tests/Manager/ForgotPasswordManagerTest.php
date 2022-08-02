@@ -15,7 +15,6 @@ namespace CoopTilleuls\ForgotPasswordBundle\Tests\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
-use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
@@ -23,9 +22,8 @@ use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @author Vincent CHALAMON <vincent@les-tilleuls.coop>
@@ -77,15 +75,9 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->managerMock->findOneBy('App\Entity\User', ['email' => 'foo@example.com'])->willReturn($this->userMock->reveal())->shouldBeCalledOnce();
         $this->passwordManagerMock->findOneByUser($this->userMock->reveal())->willReturn(null)->shouldBeCalledOnce();
         $this->passwordManagerMock->createPasswordToken($this->userMock->reveal())->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
-        if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
-            $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($tokenMock) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $tokenMock->reveal() === $event->getPasswordToken();
-            }))->shouldBeCalledOnce();
-        } else {
-            $this->eventDispatcherMock->dispatch(ForgotPasswordEvent::CREATE_TOKEN, Argument::that(function ($event) use ($tokenMock) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $tokenMock->reveal() === $event->getPasswordToken();
-            }))->shouldBeCalledOnce();
-        }
+        $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($tokenMock) {
+            return $event instanceof CreateTokenEvent && null === $event->getPassword() && $tokenMock->reveal() === $event->getPasswordToken();
+        }))->shouldBeCalledOnce();
 
         $this->manager->resetPassword('email', 'foo@example.com');
     }
@@ -98,15 +90,9 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->passwordManagerMock->findOneByUser($this->userMock->reveal())->willReturn($this->tokenMock->reveal())->shouldBeCalledOnce();
         $this->tokenMock->isExpired()->willReturn(true)->shouldBeCalledOnce();
         $this->passwordManagerMock->createPasswordToken($this->userMock->reveal())->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
-        if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
-            $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($tokenMock) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $tokenMock->reveal() === $event->getPasswordToken();
-            }))->shouldBeCalledOnce();
-        } else {
-            $this->eventDispatcherMock->dispatch(ForgotPasswordEvent::CREATE_TOKEN, Argument::that(function ($event) use ($tokenMock) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $tokenMock->reveal() === $event->getPasswordToken();
-            }))->shouldBeCalledOnce();
-        }
+        $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($tokenMock) {
+            return $event instanceof CreateTokenEvent && null === $event->getPassword() && $tokenMock->reveal() === $event->getPasswordToken();
+        }))->shouldBeCalledOnce();
 
         $this->manager->resetPassword('email', 'foo@example.com');
     }
@@ -128,15 +114,9 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->managerMock->findOneBy('App\Entity\User', ['email' => 'foo@example.com'])->willReturn($this->userMock->reveal())->shouldBeCalledOnce();
         $this->passwordManagerMock->findOneByUser($this->userMock->reveal())->willReturn($token)->shouldBeCalledOnce();
 
-        if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
-            $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($token) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $token === $event->getPasswordToken();
-            }))->shouldBeCalledOnce();
-        } else {
-            $this->eventDispatcherMock->dispatch(ForgotPasswordEvent::CREATE_TOKEN, Argument::that(function ($event) use ($token) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $token === $event->getPasswordToken();
-            }))->shouldBeCalledOnce();
-        }
+        $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($token) {
+            return $event instanceof CreateTokenEvent && null === $event->getPassword() && $token === $event->getPasswordToken();
+        }))->shouldBeCalledOnce();
 
         $this->manager->resetPassword('email', 'foo@example.com');
     }
@@ -145,15 +125,9 @@ final class ForgotPasswordManagerTest extends TestCase
     {
         $token = $this->tokenMock->reveal();
 
-        if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
-            $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($token) {
-                return $event instanceof UpdatePasswordEvent && 'bar' === $event->getPassword() && $token === $event->getPasswordToken();
-            }))->shouldBeCalledOnce();
-        } else {
-            $this->eventDispatcherMock->dispatch(ForgotPasswordEvent::UPDATE_PASSWORD, Argument::that(function ($event) use ($token) {
-                return $event instanceof UpdatePasswordEvent && 'bar' === $event->getPassword() && $token === $event->getPasswordToken();
-            }))->shouldBeCalledOnce();
-        }
+        $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($token) {
+            return $event instanceof UpdatePasswordEvent && 'bar' === $event->getPassword() && $token === $event->getPasswordToken();
+        }))->shouldBeCalledOnce();
         $this->managerMock->remove($token)->shouldBeCalledOnce();
 
         $this->manager->updatePassword($token, 'bar');

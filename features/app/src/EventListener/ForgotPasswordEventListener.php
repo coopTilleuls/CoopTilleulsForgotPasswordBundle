@@ -15,7 +15,6 @@ namespace App\EventListener;
 
 use App\Entity\User;
 use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
-use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
@@ -57,9 +56,6 @@ final class ForgotPasswordEventListener implements EventSubscriberInterface
         return [
             CreateTokenEvent::class => 'onCreateToken',
             UpdatePasswordEvent::class => 'onUpdatePassword',
-            // Symfony 4.3 and inferior
-            ForgotPasswordEvent::CREATE_TOKEN => 'onCreateToken',
-            ForgotPasswordEvent::UPDATE_PASSWORD => 'onUpdatePassword',
         ];
     }
 
