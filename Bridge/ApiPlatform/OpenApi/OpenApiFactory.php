@@ -120,7 +120,7 @@ final class OpenApiFactory implements OpenApiFactoryInterface
                 ->withSummary('Validates token')
                 ->withParameters([
                     [
-                        'name' => 'token',
+                        'name' => 'tokenValue',
                         'in' => 'path',
                         'required' => true,
                         'schema' => [
@@ -151,7 +151,7 @@ final class OpenApiFactory implements OpenApiFactoryInterface
                 ->withSummary('Validates token')
                 ->withParameters([
                     [
-                        'name' => 'token',
+                        'name' => 'tokenValue',
                         'in' => 'path',
                         'required' => true,
                         'schema' => [
