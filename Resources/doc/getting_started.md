@@ -38,9 +38,9 @@ coop_tilleuls_forgot_password:
 It provides the following routes:
 
 - `POST /forgot-password/`: receives user email (or custom field configured through `email_field`)
-- `GET /forgot-password/{token}`: validates the token and returns it (
-  cf. [Overriding the GET /forgot-password/{token} response](#overriding-the-get-forgot-passwordtoken-response))
-- `POST /forgot-password/{token}`: update user password (or custom field configured through `password_field`)
+- `GET /forgot-password/{tokenValue}`: validates the token and returns it (
+  cf. [Overriding the GET /forgot-password/{tokenValue} response](#overriding-the-get-forgot-passwordtoken-response))
+- `POST /forgot-password/{tokenValue}`: update user password (or custom field configured through `password_field`)
 
 ### Create your entity
 
@@ -97,7 +97,7 @@ coop_tilleuls_forgot_password:
         class: 'App\Entity\PasswordToken' # Token class fully qualified name (required)
         expires_in: '1 day'               # Token duration (optional, default value)
         user_field: 'user'                # User property in token class (optional, default value)
-        serialization_groups: [ ]         # Serialization groups used in GET /forgot-password/{token} (optional, default value)
+        serialization_groups: [ ]         # Serialization groups used in GET /forgot-password/{tokenValue} (optional, default value)
     user:
         class: 'App\Entity\User'          # User class fully qualified name (required)
         email_field: 'email'              # Email property in user class (optional, default value)
@@ -123,9 +123,9 @@ security:
         # ...
 ```
 
-## Overriding the GET /forgot-password/{token} response
+## Overriding the GET /forgot-password/{tokenValue} response
 
-By default, when you send a GET /forgot-password/{token} request, it serializes the token object in JSON, including the
+By default, when you send a GET /forgot-password/{tokenValue} request, it serializes the token object in JSON, including the
 User object through the relationship, using the `coop_tilleuls_forgot_password.password_token.serialization_groups`
 configuration option.
 
@@ -171,7 +171,7 @@ This bundle provides 2 events allowing you to build your own business:
 - `coop_tilleuls_forgot_password.create_token`: dispatched when a user requests a new
   password (`POST /forgot_password/`)
 - `coop_tilleuls_forgot_password.update_password`: dispatched when a user has reset its
-  password (`POST /forgot_password/{token}`)
+  password (`POST /forgot_password/{tokenValue}`)
 
 Read full documentation about [usage](usage.md).
 
