@@ -14,17 +14,15 @@ declare(strict_types=1);
 namespace CoopTilleuls\ForgotPasswordBundle\Event;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Vincent CHALAMON <vincent@les-tilleuls.coop>
  *
  * @deprecated Use CreateTokenEvent and UpdatePasswordEvent instead
  */
-class ForgotPasswordEvent extends PolyfillEvent
+class ForgotPasswordEvent extends Event
 {
-    public const CREATE_TOKEN = 'coop_tilleuls_forgot_password.create_token';
-    public const UPDATE_PASSWORD = 'coop_tilleuls_forgot_password.update_password';
-
     protected $passwordToken;
     protected $password;
 
