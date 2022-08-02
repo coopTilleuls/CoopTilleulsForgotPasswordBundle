@@ -7,4 +7,3 @@ composer.lock
 phpunit.xml
 clover.xml
 var
-/.idea
