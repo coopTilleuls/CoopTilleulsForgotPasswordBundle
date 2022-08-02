@@ -106,8 +106,8 @@ final class RequestEventListener
         }
 
         // BC
-        if (!$request->attributes->has('token')) {
-            $request->attributes->set('token', $request->attributes->get('tokenValue'));
+        if (!$request->attributes->has('tokenValue')) {
+            $request->attributes->set('tokenValue', $request->attributes->get('token'));
         }
         $token = $this->passwordTokenManager->findOneByToken($request->attributes->get('token'));
         if (null === $token || $token->isExpired()) {
