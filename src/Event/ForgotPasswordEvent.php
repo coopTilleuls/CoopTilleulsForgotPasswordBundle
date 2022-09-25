@@ -28,9 +28,6 @@ class ForgotPasswordEvent extends PolyfillEvent
     protected $passwordToken;
     protected $password;
 
-    /**
-     * @param string $password
-     */
     public function __construct(AbstractPasswordToken $passwordToken, $password = null)
     {
         $this->passwordToken = $passwordToken;

@@ -30,8 +30,6 @@ final class UpdatePassword
     }
 
     /**
-     * @param string $password
-     *
      * @return Response
      */
     public function __invoke(AbstractPasswordToken $token, $password)

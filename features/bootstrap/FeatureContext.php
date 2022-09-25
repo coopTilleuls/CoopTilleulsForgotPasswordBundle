@@ -11,6 +11,7 @@
 
 declare(strict_types=1);
 
+use App\Entity\Admin;
 use App\Entity\User;
 use Behat\Behat\Context\Context;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
@@ -87,7 +88,7 @@ final class FeatureContext implements Context
      */
     public function iHaveAValidToken(): void
     {
-        $this->passwordTokenManager->createPasswordToken($this->createUser());
+        $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('+1 day'));
     }
 
     /**
@@ -100,14 +101,29 @@ final class FeatureContext implements Context
 
     /**
      * @When I reset my password
+     * @When I reset my password with my :propertyName ":value" on provider ":provider"
      * @When I reset my password with my :propertyName ":value"
      *
-     * @param string $propertyName
-     * @param string $value
+     * @param mixed|null $provider
      */
-    public function IResetMyPassword($propertyName = 'email', $value = 'john.doe@example.com'): void
+    public function IResetMyPassword(string $propertyName = 'email', string $value = 'john.doe@example.com', $provider = null): void
     {
         $this->createUser();
+        $this->createAdmin();
+        $defaultJson = <<<JSON
+        {
+            "%s": "%s"
+        }
+        JSON;
+
+        $providerJson = <<<JSON
+            {
+                "%s": "%s",
+                "provider": "%s"
+            }
+        JSON;
+
+        $content = $provider ? sprintf($providerJson, $propertyName, $value, $provider) : sprintf($defaultJson, $propertyName, $value);
 
         $this->client->enableProfiler();
         $this->client->request(
@@ -116,19 +132,14 @@ final class FeatureContext implements Context
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
-            sprintf(<<<'JSON'
-{
-    "%s": "%s"
-}
-JSON
-                , $propertyName, $value)
+            $content
         );
     }
 
     /**
-     * @Then I should receive an email
+     * @Then I should receive an email for ":value"
      */
-    public function iShouldReceiveAnEmail(): void
+    public function iShouldReceiveAnEmail($value = 'john.doe@example.com'): void
     {
         Assert::assertTrue(
             $this->client->getResponse()->isSuccessful(),
@@ -146,7 +157,7 @@ JSON
         Assert::assertInstanceOf(RawMessage::class, $message);
         Assert::assertEquals('Réinitialisation de votre mot de passe', $message->getSubject());
         Assert::assertEquals('no-reply@example.com', $message->getFrom()[0]->getAddress());
-        Assert::assertEquals('john.doe@example.com', $message->getTo()[0]->getAddress());
+        Assert::assertEquals($value, $message->getTo()[0]->getAddress());
         Assert::assertMatchesRegularExpression('/http:\/\/www\.example\.com\/api\/forgot-password\/(.*)/', $message->getHtmlBody());
     }
 
@@ -227,7 +238,7 @@ JSON
      */
     public function iUpdateMyPassword(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('+1 day'));
 
         $this->client->request(
             'POST',
@@ -260,7 +271,7 @@ JSON
      */
     public function iUpdateMyPasswordUsingNoPassword(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('+1 day'));
 
         $this->client->request('POST', sprintf('/api/forgot-password/%s', $token->getToken()));
     }
@@ -279,6 +290,50 @@ JSON
             <<<'JSON'
 {
     "password": "foo"
+}
+JSON
+        );
+    }
+
+    /**
+     * @When I update my password using wrong provider
+     */
+    public function iUpdateMyPasswordUsingWrongProvider(): void
+    {
+        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), 'admin');
+
+        $this->client->request(
+            'POST',
+            sprintf('/api/forgot-password/%s', $token->getToken()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            <<<'JSON'
+{
+    "adminPassword": "foo",
+    "provider": "wrong"
+}
+JSON
+        );
+    }
+
+    /**
+     * @When I update my password using right provider and wrong passwordField
+     */
+    public function iUpdateMyPasswordUsingRightProviderAndWrongPasswordField(): void
+    {
+        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), 'admin');
+
+        $this->client->request(
+            'POST',
+            sprintf('/api/forgot-password/%s', $token->getToken()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            <<<'JSON'
+{
+    "password": "foo",
+    "provider": "admin"
 }
 JSON
         );
@@ -310,7 +365,7 @@ JSON
      */
     public function iGetAPasswordToken(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('+1 day'));
         $token->setToken('d7xtQlJVyN61TzWtrY6xy37zOxB66BqMSDXEbXBbo2Mw4Jjt9C');
         $this->doctrine->getManager()->persist($token);
         $this->doctrine->getManager()->flush();
@@ -368,6 +423,10 @@ JSON
                         'password' => [
                             'type' => 'string',
                         ],
+                        'provider' => [
+                            'type' => 'string',
+                            'required' => false
+                        ],
                     ],
                 ],
                 'ForgotPassword:validate' => [
@@ -383,6 +442,9 @@ JSON
                                 ['type' => 'integer'],
                             ],
                         ],
+                        'provider' => [
+                            'type' => 'string',
+                        ]
                     ],
                 ],
             ],
@@ -471,6 +533,14 @@ JSON
                                 'type' => 'string',
                             ],
                         ],
+                        [
+                            'name' => 'X-provider',
+                            'in' => 'header',
+                            'required' => false,
+                            'schema' => [
+                                'type' => 'string',
+                            ],
+                        ],
                     ],
                 ],
                 'post' => [
@@ -526,5 +596,20 @@ JSON
         }
 
         return $paths;
+    }
+
+    /**
+     * @return Admin
+     */
+    private function createAdmin()
+    {
+        $admin = new Admin();
+        $admin->setEmail('admin@example.com');
+        $admin->setUsername('admin@example.com');
+        $admin->setPassword('password');
+        $this->doctrine->getManager()->persist($admin);
+        $this->doctrine->getManager()->flush();
+
+        return $admin;
     }
 }

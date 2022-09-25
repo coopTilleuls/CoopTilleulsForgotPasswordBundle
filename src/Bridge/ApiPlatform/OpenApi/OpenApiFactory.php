@@ -17,14 +17,15 @@ use ApiPlatform\Core\OpenApi\Factory\OpenApiFactoryInterface as LegacyOpenApiFac
 use ApiPlatform\Core\OpenApi\OpenApi as LegacyOpenApi;
 use ApiPlatform\OpenApi\Factory\OpenApiFactoryInterface;
 use ApiPlatform\OpenApi\OpenApi;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactory;
 use Symfony\Component\Routing\RouterInterface;
 
 if (interface_exists(OpenApiFactoryInterface::class)) {
     final class OpenApiFactory extends AbstractOpenApiFactory implements OpenApiFactoryInterface
     {
-        public function __construct(OpenApiFactoryInterface $decorated, RouterInterface $router, array $authorizedFields, string $passwordField)
+        public function __construct(OpenApiFactoryInterface $decorated, RouterInterface $router, ProviderFactory $providerFactory)
         {
-            parent::__construct($decorated, $router, $authorizedFields, $passwordField);
+            parent::__construct($decorated, $router, $providerFactory);
         }
 
         public function __invoke(array $context = []): OpenApi
@@ -35,9 +36,9 @@ if (interface_exists(OpenApiFactoryInterface::class)) {
 } else {
     final class OpenApiFactory extends AbstractOpenApiFactory implements LegacyOpenApiFactoryInterface
     {
-        public function __construct(LegacyOpenApiFactoryInterface $decorated, RouterInterface $router, array $authorizedFields, string $passwordField)
+        public function __construct(LegacyOpenApiFactoryInterface $decorated, RouterInterface $router, ProviderFactory $providerFactory)
         {
-            parent::__construct($decorated, $router, $authorizedFields, $passwordField);
+            parent::__construct($decorated, $router, $providerFactory);
         }
 
         public function __invoke(array $context = []): LegacyOpenApi

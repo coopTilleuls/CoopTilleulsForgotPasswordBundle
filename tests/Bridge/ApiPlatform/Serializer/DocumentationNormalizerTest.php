@@ -206,6 +206,14 @@ final class DocumentationNormalizerTest extends TestCase
                                     'type' => 'string',
                                 ],
                             ],
+                            [
+                                'name' => 'X-provider',
+                                'in' => 'headers',
+                                'required' => false,
+                                'schema' => [
+                                    'type' => 'string',
+                                ],
+                            ],
                         ],
                     ],
                     'post' => [
@@ -267,6 +275,9 @@ final class DocumentationNormalizerTest extends TestCase
                         'required' => ['email'],
                         'properties' => [
                             'email' => [
+                                'type' => 'string',
+                            ],
+                            'provider' => [
                                 'type' => 'string',
                             ],
                         ],

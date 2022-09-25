@@ -29,14 +29,11 @@ final class ResetPassword
     }
 
     /**
-     * @param string $propertyName
-     * @param string $value
-     *
      * @return Response
      */
-    public function __invoke($propertyName, $value)
+    public function __invoke($propertyName, $value, ?string $providerName = null)
     {
-        $this->forgotPasswordManager->resetPassword($propertyName, $value);
+        $this->forgotPasswordManager->resetPassword($propertyName, $value, $providerName);
 
         return new Response('', 204);
     }

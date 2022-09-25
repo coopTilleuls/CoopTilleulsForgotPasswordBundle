@@ -18,6 +18,7 @@ use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactory;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -28,21 +29,15 @@ final class RequestEventListener
 {
     use MainRequestTrait;
 
-    private $authorizedFields;
-    private $userPasswordField;
     private $passwordTokenManager;
+    private ProviderFactory $providerFactory;
 
-    /**
-     * @param string $userPasswordField
-     */
     public function __construct(
-        array $authorizedFields,
-        $userPasswordField,
-        PasswordTokenManager $passwordTokenManager
+        PasswordTokenManager $passwordTokenManager,
+        ProviderFactory $providerFactory
     ) {
-        $this->authorizedFields = $authorizedFields;
-        $this->userPasswordField = $userPasswordField;
         $this->passwordTokenManager = $passwordTokenManager;
+        $this->providerFactory = $providerFactory;
     }
 
     public function decodeRequest(KernelEvent $event): void
@@ -59,6 +54,7 @@ final class RequestEventListener
 
         $content = $request->getContent();
         $data = json_decode($content, true);
+
         if (!empty($content) && \JSON_ERROR_NONE !== json_last_error()) {
             throw new InvalidJsonHttpException();
         }
@@ -71,9 +67,15 @@ final class RequestEventListener
             throw new MissingFieldHttpException($fieldName);
         }
 
+        $provider = isset($data['provider']) ? $this->providerFactory->get($data['provider']) : $this->providerFactory->getDefault();
+
         if ('coop_tilleuls_forgot_password.reset' === $routeName) {
+            $request->attributes->set('providerName', $data['provider'] ?? null);
+
+            unset($data['provider']);
+
             foreach ($data as $fieldName => $value) {
-                if (\in_array($fieldName, $this->authorizedFields, true)) {
+                if (\in_array($fieldName, $provider->getUserAuthorizedFields(), true)) {
                     $request->attributes->set('propertyName', $fieldName);
                     $request->attributes->set('value', $value);
 
@@ -84,13 +86,12 @@ final class RequestEventListener
             throw new UnauthorizedFieldException($fieldName);
         }
 
-        if (!empty($data[$this->userPasswordField])) {
-            $request->attributes->set($this->userPasswordField, $data[$this->userPasswordField]);
-
-            return;
+        // if $routeName is 'coop_tilleuls_forgot_password.update'
+        if (!\array_key_exists($userPasswordField = $provider->getUserPasswordField(), $data)) {
+            throw new MissingFieldHttpException($userPasswordField);
         }
 
-        throw new MissingFieldHttpException($this->userPasswordField);
+        $request->attributes->set('password', $data[$userPasswordField]);
     }
 
     public function getTokenFromRequest(KernelEvent $event): void
@@ -105,10 +106,22 @@ final class RequestEventListener
             return;
         }
 
-        $token = $this->passwordTokenManager->findOneByToken($request->attributes->get('tokenValue'));
+        if ('coop_tilleuls_forgot_password.get_token' === $routeName) {
+            $provider = ($queryProvider = $request->headers->get('X-provider')) ? $this->providerFactory->get($queryProvider) : $this->providerFactory->getDefault();
+        } else {
+            $data = json_decode($request->getContent(), true, 512, \JSON_THROW_ON_ERROR);
+            $provider = isset($data['provider']) ? $this->providerFactory->get($data['provider']) : $this->providerFactory->getDefault();
+        }
+
+        $token = $this->passwordTokenManager->findOneByToken($provider->getPasswordTokenClass(), $request->attributes->get('tokenValue'));
+
         if (null === $token || $token->isExpired()) {
             throw new NotFoundHttpException('Invalid token.');
         }
+
         $request->attributes->set('token', $token);
+        if ('coop_tilleuls_forgot_password.get_token' === $routeName) {
+            $request->attributes->set('provider', $provider);
+        }
     }
 }

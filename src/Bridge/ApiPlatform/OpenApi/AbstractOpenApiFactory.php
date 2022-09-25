@@ -21,6 +21,7 @@ use ApiPlatform\OpenApi\Factory\OpenApiFactoryInterface;
 use ApiPlatform\OpenApi\Model\Operation;
 use ApiPlatform\OpenApi\Model\PathItem;
 use ApiPlatform\OpenApi\Model\RequestBody;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactory;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -32,20 +33,24 @@ abstract class AbstractOpenApiFactory
     protected $router;
     protected $authorizedFields;
     protected $passwordField;
+    protected $providerFactory;
 
     /**
      * @param LegacyOpenApiFactoryInterface|OpenApiFactoryInterface $decorated
      */
-    public function __construct($decorated, RouterInterface $router, array $authorizedFields, string $passwordField)
+    public function __construct($decorated, RouterInterface $router, ProviderFactory $providerFactory)
     {
+        $this->providerFactory = $providerFactory;
         $this->decorated = $decorated;
         $this->router = $router;
-        $this->authorizedFields = $authorizedFields;
-        $this->passwordField = $passwordField;
     }
 
     public function __invoke(array $context = [])
     {
+        $defaultProvider = $this->providerFactory->getDefault();
+        $this->authorizedFields = $defaultProvider->getUserAuthorizedFields();
+        $this->passwordField = $defaultProvider->getUserPasswordField();
+
         $routes = $this->router->getRouteCollection();
         $openApi = ($this->decorated)($context);
         $schemas = $openApi->getComponents()->getSchemas();
@@ -57,6 +62,10 @@ abstract class AbstractOpenApiFactory
             'properties' => [
                 $this->passwordField => [
                     'type' => 'string',
+                ],
+                'provider' => [
+                    'type' => 'string',
+                    'required' => false,
                 ],
             ],
         ]);
@@ -74,6 +83,9 @@ abstract class AbstractOpenApiFactory
                         ['type' => 'string'],
                         ['type' => 'integer'],
                     ],
+                ],
+                'provider' => [
+                    'type' => 'string',
                 ],
             ],
         ]);
@@ -139,7 +151,16 @@ abstract class AbstractOpenApiFactory
                             'type' => 'string',
                         ],
                     ],
-                ])
+                    [
+                        'name' => 'X-provider',
+                        'in' => 'header',
+                        'required' => false,
+                        'schema' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                ],
+                )
             )
         );
 

@@ -16,7 +16,6 @@
 
         <service id="coop_tilleuls_forgot_password.controller.get_token" class="CoopTilleuls\ForgotPasswordBundle\Controller\GetToken" public="true">
             <argument type="service" id="coop_tilleuls_forgot_password.normalizer" />
-            <argument>%coop_tilleuls_forgot_password.password_token_serialization_groups%</argument>
         </service>
 
         <service id="coop_tilleuls_forgot_password.controller.update_password" class="CoopTilleuls\ForgotPasswordBundle\Controller\UpdatePassword" public="true">
@@ -27,14 +26,12 @@
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="coop_tilleuls_forgot_password.manager" />
-            <argument>%coop_tilleuls_forgot_password.user_class%</argument>
+            <argument type="service" id="coop_tilleuls_forgot_password.provider.provider_factory"/>
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager" public="true">
             <argument type="service" id="coop_tilleuls_forgot_password.manager" />
-            <argument>%coop_tilleuls_forgot_password.password_token_class%</argument>
-            <argument>%coop_tilleuls_forgot_password.password_token_expires_in%</argument>
-            <argument>%coop_tilleuls_forgot_password.password_token_user_field%</argument>
+            <argument type="service" id="coop_tilleuls_forgot_password.provider.provider_factory"/>
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.doctrine" class="CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\DoctrineManager" public="false">
@@ -42,9 +39,8 @@
         </service>
 
         <service id="coop_tilleuls_forgot_password.event_listener.request" class="CoopTilleuls\ForgotPasswordBundle\EventListener\RequestEventListener">
-            <argument>%coop_tilleuls_forgot_password.user_authorized_fields%</argument>
-            <argument>%coop_tilleuls_forgot_password.user_password_field%</argument>
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
+            <argument type="service" id="coop_tilleuls_forgot_password.provider.provider_factory"/>
             <tag name="kernel.event_listener" event="kernel.request" method="decodeRequest" />
             <tag name="kernel.event_listener" event="kernel.request" method="getTokenFromRequest" />
         </service>
@@ -55,6 +51,10 @@
 
         <service id="coop_tilleuls_forgot_password.route_loader" class="CoopTilleuls\ForgotPasswordBundle\Routing\RouteLoader" public="false">
             <tag name="routing.loader"/>
+        </service>
+
+        <service id="coop_tilleuls_forgot_password.provider.provider_factory" class="CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactory" public="false">
+            <argument type="tagged_iterator" tag="coop_tilleuls_forgot_password.provider" index-by="key"/>
         </service>
     </services>
 </container>

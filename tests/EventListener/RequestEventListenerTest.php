@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace CoopTilleuls\ForgotPasswordBundle\Tests\EventListener;
 
+use App\Entity\Admin;
+use App\Entity\PasswordAdminToken;
+use App\Entity\PasswordToken;
+use App\Entity\User;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\EventListener\RequestEventListener;
 use CoopTilleuls\ForgotPasswordBundle\Exception\InvalidJsonHttpException;
@@ -20,8 +24,11 @@ use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
+use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactory;
 use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
@@ -42,6 +49,9 @@ final class RequestEventListenerTest extends TestCase
     private $eventMock;
     private $requestMock;
     private $parameterBagMock;
+    private $inputBagMock;
+    private $providerFactoryMock;
+    private $providers;
 
     protected function setUp(): void
     {
@@ -49,15 +59,20 @@ final class RequestEventListenerTest extends TestCase
         $this->eventMock = $this->prophesize(KernelEvent::class);
         $this->requestMock = $this->prophesize(Request::class);
         $this->parameterBagMock = $this->prophesize(ParameterBag::class);
+        $this->providerFactoryMock = $this->prophesize(ProviderFactory::class);
+
+        $this->inputBagMock = $this->prophesize(InputBag::class);
 
         $this->eventMock->getRequest()->willReturn($this->requestMock->reveal())->shouldBeCalledOnce();
         $this->requestMock->attributes = $this->parameterBagMock->reveal();
+        $this->requestMock->query = $this->inputBagMock->reveal();
 
         $this->listener = new RequestEventListener(
-            ['email', 'username'],
-            'password',
-            $this->managerMock->reveal()
+            $this->managerMock->reveal(),
+            $this->providerFactoryMock->reveal()
         );
+
+        $this->providers = self::getProviders();
     }
 
     public function testDecodeRequestInvalidRoute(): void
@@ -124,10 +139,14 @@ final class RequestEventListenerTest extends TestCase
 
     public function testDecodeRequestUnauthorizedException(): void
     {
+        $this->providerFactoryMock->getDefault()->shouldBeCalledOnce()->willReturn($this->providers['customer']);
         $this->expectException(UnauthorizedFieldException::class);
         $this->expectExceptionMessage('The parameter "name" is not authorized in your configuration.');
-
+        $expiredAt = new \DateTime('+1 day');
+        $expiredAt->setTime((int) $expiredAt->format('H'), (int) $expiredAt->format('m'), (int) $expiredAt->format('s'), 0);
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.reset')->shouldBeCalledOnce();
+        $this->parameterBagMock->set('providerName', null)->shouldBeCalledOnce();
+
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
             $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
@@ -140,7 +159,10 @@ final class RequestEventListenerTest extends TestCase
 
     public function testDecodeRequest(): void
     {
+        $this->providerFactoryMock->getDefault()->shouldBeCalledOnce()->willReturn($this->providers['customer']);
+
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
+
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
             $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
@@ -169,14 +191,18 @@ final class RequestEventListenerTest extends TestCase
     {
         $this->expectException(NotFoundHttpException::class);
 
+        $this->requestMock->getContent()->willReturn(json_encode(['provider' => 'admin']))->shouldBeCalledOnce();
+        $this->providerFactoryMock->get('admin')->shouldBeCalledOnce()->willReturn($this->providers['admin']);
+
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
+
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
             $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
             $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
         $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledOnce();
-        $this->managerMock->findOneByToken('foo')->shouldBeCalledOnce();
+        $this->managerMock->findOneByToken(PasswordAdminToken::class, 'foo')->shouldBeCalledOnce();
 
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
     }
@@ -187,14 +213,18 @@ final class RequestEventListenerTest extends TestCase
 
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
+        $this->requestMock->getContent()->willReturn(json_encode(['provider' => 'admin']))->shouldBeCalledOnce();
+        $this->providerFactoryMock->get('admin')->shouldBeCalledOnce()->willReturn($this->providers['admin']);
+
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
+
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
             $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
             $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
         $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledOnce();
-        $this->managerMock->findOneByToken('foo')->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
+        $this->managerMock->findOneByToken(PasswordAdminToken::class, 'foo')->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
         $tokenMock->isExpired()->willReturn(true)->shouldBeCalledOnce();
 
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
@@ -204,17 +234,47 @@ final class RequestEventListenerTest extends TestCase
     {
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
+        $this->requestMock->getContent()->willReturn(json_encode([]))->shouldBeCalledOnce();
+        $this->providerFactoryMock->getDefault()->shouldBeCalledOnce()->willReturn($this->providers['customer']);
+
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
+
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
             $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
         } else {
             $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
         $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledOnce();
-        $this->managerMock->findOneByToken('foo')->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
+        $this->managerMock->findOneByToken(PasswordToken::class, 'foo')->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
         $tokenMock->isExpired()->willReturn(false)->shouldBeCalledOnce();
         $this->parameterBagMock->set('token', $tokenMock->reveal())->shouldBeCalledOnce();
 
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
+    }
+
+    private static function getProviders(): array
+    {
+        return [
+            'customer' => new Provider(
+                PasswordToken::class,
+                '+1 day',
+                'user',
+                User::class,
+                [],
+                'email',
+                'password',
+                ['email', 'password'],
+                true
+            ),
+            'admin' => new Provider(
+                PasswordAdminToken::class,
+                '+1 hour',
+                'admin',
+                Admin::class,
+                [],
+                'username',
+                'encryptPassword',
+                ['email', 'password'],
+            )];
     }
 }

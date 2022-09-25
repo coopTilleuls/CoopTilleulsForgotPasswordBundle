@@ -11,6 +11,8 @@
 
 declare(strict_types=1);
 
+use App\Entity\Admin;
+use App\Entity\PasswordAdminToken;
 use App\Entity\PasswordToken;
 use App\Entity\User;
 use App\EventListener\ForgotPasswordEventListener;
@@ -124,10 +126,36 @@ final class AppKernel extends Kernel
         $method = $container instanceof ContainerConfigurator ? 'extension' : 'loadFromExtension';
 
         $container->{$method}('coop_tilleuls_forgot_password', [
-            'password_token_class' => PasswordToken::class,
-            'user_class' => User::class,
-            'user' => [
-                'authorized_fields' => ['email', 'username'],
+            'providers' => [
+                'user' => [
+                    'default' => true,
+                    'password_token' => [
+                        'class' => PasswordToken::class,
+                        'expires_in' => '+1 day',
+                        'user_field' => 'user',
+                        'serialization_groups' => [],
+                    ],
+                    'user' => [
+                        'class' => User::class,
+                        'email_field' => 'email',
+                        'password_field' => 'password',
+                        'authorized_fields' => ['email', 'password'],
+                    ],
+                ],
+                'admin' => [
+                    'password_token' => [
+                        'class' => PasswordAdminToken::class,
+                        'expires_in' => '+4 hours',
+                        'user_field' => 'admin',
+                        'serialization_groups' => [],
+                    ],
+                    'user' => [
+                        'class' => Admin::class,
+                        'email_field' => 'username',
+                        'password_field' => 'adminPassword',
+                        'authorized_fields' => ['username', 'password'],
+                    ],
+                ],
             ],
             'use_jms_serializer' => 'jmsserializer' === $this->getEnvironment(),
         ]);
@@ -193,6 +221,13 @@ final class AppKernel extends Kernel
                         ],
                     ],
                 ],
+                'in_memory_admin' => [
+                    'memory' => [
+                        'users' => [
+                            'admin@example.com' => ['password' => 'P4$$w0rd'],
+                        ],
+                    ],
+                ],
             ],
             'firewalls' => [
                 'docs' => [
@@ -201,6 +236,13 @@ final class AppKernel extends Kernel
                 ],
                 'main' => [
                     'pattern' => '^/',
+                    'provider' => 'in_memory',
+                    'stateless' => true,
+                    'http_basic' => null,
+                ] + $firewallExtra,
+                'admin' => [
+                    'pattern' => '^/admin',
+                    'provider' => 'in_memory_admin',
                     'stateless' => true,
                     'http_basic' => null,
                 ] + $firewallExtra,

@@ -68,6 +68,9 @@ final class DocumentationNormalizer implements NormalizerInterface
                 'email' => [
                     'type' => 'string',
                 ],
+                'provider' => [
+                    'type' => 'string',
+                ],
             ],
         ];
 
@@ -96,6 +99,14 @@ final class DocumentationNormalizer implements NormalizerInterface
                     'name' => 'tokenValue',
                     'in' => 'path',
                     'required' => true,
+                    'schema' => [
+                        'type' => 'string',
+                    ],
+                ],
+                [
+                    'name' => 'X-provider',
+                    'in' => 'headers',
+                    'required' => false,
                     'schema' => [
                         'type' => 'string',
                     ],
