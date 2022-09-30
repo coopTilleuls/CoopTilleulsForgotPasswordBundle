@@ -30,8 +30,8 @@ jobs:
         api-platform:
           # Only API Platform supported versions
           - '^2.6'
-          - '^2.7@rc'
-          - '^3.0@rc'
+          - '^2.7'
+          - '^3.0'
         include:
           - php: '8.1'
             symfony: '5.4.*'
@@ -49,15 +49,15 @@ jobs:
           - symfony: '6.1.*'
             php: '8.0'
           # API Platform 3.0 requires PHP >= 8.1 and Symfony >= 6.1.*
-          - api-platform: '^3.0@rc'
+          - api-platform: '^3.0'
             php: '7.4'
-          - api-platform: '^3.0@rc'
+          - api-platform: '^3.0'
             php: '8.0'
-          - api-platform: '^3.0@rc'
+          - api-platform: '^3.0'
             symfony: '4.4.*'
-          - api-platform: '^3.0@rc'
+          - api-platform: '^3.0'
             symfony: '5.4.*'
-          - api-platform: '^3.0@rc'
+          - api-platform: '^3.0'
             symfony: '6.0.*'
       fail-fast: false
     env:

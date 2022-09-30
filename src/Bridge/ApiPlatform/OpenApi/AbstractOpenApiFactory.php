@@ -30,14 +30,18 @@ abstract class AbstractOpenApiFactory
 {
     protected $decorated;
     protected $router;
+    protected $authorizedFields;
+    protected $passwordField;
 
     /**
      * @param LegacyOpenApiFactoryInterface|OpenApiFactoryInterface $decorated
      */
-    public function __construct($decorated, RouterInterface $router)
+    public function __construct($decorated, RouterInterface $router, array $authorizedFields, string $passwordField)
     {
         $this->decorated = $decorated;
         $this->router = $router;
+        $this->authorizedFields = $authorizedFields;
+        $this->passwordField = $passwordField;
     }
 
     public function __invoke(array $context = [])
@@ -49,9 +53,9 @@ abstract class AbstractOpenApiFactory
 
         $schemas['ForgotPassword:reset'] = new \ArrayObject([
             'type' => 'object',
-            'required' => ['password'],
+            'required' => [$this->passwordField],
             'properties' => [
-                'password' => [
+                $this->passwordField => [
                     'type' => 'string',
                 ],
             ],
@@ -63,10 +67,13 @@ abstract class AbstractOpenApiFactory
 
         $schemas['ForgotPassword:request'] = new \ArrayObject([
             'type' => 'object',
-            'required' => ['email'],
+            'required' => [$this->authorizedFields[0]], // get the first authorized field for reference
             'properties' => [
-                'email' => [
-                    'type' => 'string',
+                $this->authorizedFields[0] => [
+                    'oneOf' => [
+                        ['type' => 'string'],
+                        ['type' => 'integer'],
+                    ],
                 ],
             ],
         ]);
