@@ -16,6 +16,8 @@
                  class="CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\OpenApi\OpenApiFactory">
             <argument type="service" id="coop_tilleuls_forgot_password.openapi.factory.inner"/>
             <argument type="service" id="router"/>
+            <argument>%coop_tilleuls_forgot_password.user_authorized_fields%</argument>
+            <argument>%coop_tilleuls_forgot_password.user_password_field%</argument>
         </service>
     </services>
 </container>

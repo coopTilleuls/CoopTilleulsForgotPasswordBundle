@@ -485,7 +485,10 @@ JSON
                     'required' => ['email'],
                     'properties' => [
                         'email' => [
-                            'type' => 'string',
+                            'oneOf' => [
+                                ['type' => 'string'],
+                                ['type' => 'integer'],
+                            ],
                         ],
                     ],
                 ],
