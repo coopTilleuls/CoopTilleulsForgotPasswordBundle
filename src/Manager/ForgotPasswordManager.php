@@ -46,10 +46,6 @@ class ForgotPasswordManager
         $this->userClass = $userClass;
     }
 
-    /**
-     * @param $propertyName
-     * @param $value
-     */
     public function resetPassword($propertyName, $value): void
     {
         $user = $this->manager->findOneBy($this->userClass, [$propertyName => $value]);
