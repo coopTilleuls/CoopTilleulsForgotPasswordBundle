@@ -1,10 +1,11 @@
 # Usage
 
-This bundle provides 2 events allowing you to build your own business:
+This bundle provides 3 events allowing you to build your own business:
 
 - `coop_tilleuls_forgot_password.create_token`: dispatched when user requests a new password (`POST /forgot-password/`)
 - `coop_tilleuls_forgot_password.update_password`: dispatched when user has reset its
   password (`POST /forgot-password/{tokenValue}`)
+- `coop_tilleuls_forgot_password.user_not_found`: dispatched when a user was not found (`POST /forgot-password/`)
 
 ## Send email on user request
 
@@ -105,5 +106,39 @@ Your app is ready to receive a request like:
 ```json
 {
     "password": "P4$$w0rd"
+}
+```
+
+## Use your own business rules when the user is not found
+
+On the third user story, user was not found, you'll can listen to this event and use your own rules.
+
+```php
+// src/EventSubscriber/ForgotPasswordEventSubscriber.php
+namespace App\EventSubscriber;
+
+// ...
+use CoopTilleuls\ForgotPasswordBundle\Event\UserNotFoundEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+final class ForgotPasswordEventSubscriber implements EventSubscriberInterface
+{
+    public function __construct(private readonly UserManager $userManager)
+    {
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            // Symfony 4.3 and inferior, use 'coop_tilleuls_forgot_password.user_not_found' event name
+            UserNotFoundEvent::class => 'onUserNotFound',
+        ];
+    }
+
+    public function onUserNotFound(UserNotFoundEvent $event): void
+    {
+         $context = $event->getContext();
+         // ...
+    }
 }
 ```

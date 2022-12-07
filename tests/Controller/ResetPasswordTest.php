@@ -14,9 +14,7 @@ declare(strict_types=1);
 namespace CoopTilleuls\ForgotPasswordBundle\Tests\Controller;
 
 use CoopTilleuls\ForgotPasswordBundle\Controller\ResetPassword;
-use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
-use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -34,21 +32,9 @@ final class ResetPasswordTest extends TestCase
      */
     private $managerMock;
 
-    /**
-     * @var NormalizerInterface|ObjectProphecy
-     */
-    private $normalizerMock;
-
-    /**
-     * @var AbstractPasswordToken|ObjectProphecy
-     */
-    private $tokenMock;
-
     protected function setUp(): void
     {
         $this->managerMock = $this->prophesize(ForgotPasswordManager::class);
-        $this->normalizerMock = $this->prophesize(NormalizerInterface::class);
-        $this->tokenMock = $this->prophesize(AbstractPasswordToken::class);
     }
 
     public function testResetPasswordAction(): void
@@ -58,6 +44,6 @@ final class ResetPasswordTest extends TestCase
         $response = $controller('email', 'foo@example.com');
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals('', $response->getContent());
-        $this->assertEquals(204, $response->getStatusCode());
+        $this->assertEquals(202, $response->getStatusCode());
     }
 }

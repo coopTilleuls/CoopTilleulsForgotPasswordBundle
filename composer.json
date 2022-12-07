@@ -35,6 +35,7 @@
         "doctrine/orm": "^2.6.3",
         "egulias/email-validator": "^2.1.10",
         "friends-of-behat/symfony-extension": "^2.0.11 || ^2.1.0",
+        "friendsofphp/php-cs-fixer": "^3.9",
         "jms/serializer-bundle": "^1.4 || ^2.3 || ^3.0 || ^4.0",
         "laminas/laminas-code": "^3.4 || ^4.0",
         "ocramius/proxy-manager": "^2.0.4",

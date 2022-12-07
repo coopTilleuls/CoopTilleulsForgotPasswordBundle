@@ -167,12 +167,13 @@ Read full documentation about [how to ensure user is not authenticated](user_not
 
 ## Usage
 
-This bundle provides 2 events allowing you to build your own business:
+This bundle provides 3 events allowing you to build your own business:
 
 - `coop_tilleuls_forgot_password.create_token`: dispatched when a user requests a new
   password (`POST /forgot-password/`)
 - `coop_tilleuls_forgot_password.update_password`: dispatched when a user has reset its
   password (`POST /forgot-password/{tokenValue}`)
+- `coop_tilleuls_forgot_password.user_not_found`: dispatched when a user was not found (`POST /forgot-password/`)
 
 Read full documentation about [usage](usage.md).
 
