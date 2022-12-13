@@ -34,8 +34,9 @@ jobs:
           - '^2.7'
           - '^3.0'
         include:
-          - php: '8.2'
-            symfony: '5.4.*'
+          # Waiting for php-cs-fixer to support PHP 8.2
+          - php: '8.1'
+            symfony: '6.2.*'
             bootable: true
             quality: true
         exclude:
