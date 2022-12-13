@@ -18,7 +18,6 @@ jobs:
       matrix:
         php:
           # Only PHP supported versions: https://www.php.net/supported-versions.php
-          - '7.4'
           - '8.0'
           - '8.1'
           - '8.2'
@@ -39,25 +38,14 @@ jobs:
             symfony: '5.4.*'
             bootable: true
             quality: true
-          - php: '7.4'
-            laminas: '^3.4'
         exclude:
-          # Symfony 6.0.* requires PHP >= 8.0
-          - symfony: '6.0.*'
-            php: '7.4'
           # Symfony 6.1.* requires PHP >= 8.1
-          - symfony: '6.1.*'
-            php: '7.4'
           - symfony: '6.1.*'
             php: '8.0'
           # Symfony 6.2.* requires PHP >= 8.1
           - symfony: '6.2.*'
-            php: '7.4'
-          - symfony: '6.2.*'
             php: '8.0'
           # API Platform 3.0 requires PHP >= 8.1 and Symfony >= 6.1.*
-          - api-platform: '^3.0'
-            php: '7.4'
           - api-platform: '^3.0'
             php: '8.0'
           - api-platform: '^3.0'
@@ -92,9 +80,6 @@ jobs:
           composer global require --no-progress --no-scripts --no-plugins symfony/flex
       - name: Configure API Platform
         run: composer require api-platform/core:${{ matrix.api-platform }} --dev --no-install --no-update --no-progress --no-scripts
-      - name: Configure Laminas
-        if: matrix.laminas
-        run: composer require laminas/laminas-code:${{ matrix.laminas }} --dev --no-install --no-update --no-progress --no-scripts
       - name: Update project dependencies
         run: composer update --no-progress --ansi --prefer-stable --prefer-dist
       - name: Bundle is bootable
