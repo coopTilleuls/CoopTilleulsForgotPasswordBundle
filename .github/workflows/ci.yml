@@ -18,39 +18,35 @@ jobs:
       matrix:
         php:
           # Only PHP supported versions: https://www.php.net/supported-versions.php
-          - '7.4'
           - '8.0'
           - '8.1'
+          - '8.2'
         symfony:
           # Only Symfony supported versions: https://symfony.com/releases
           - '4.4.*'
           - '5.4.*'
           - '6.0.*'
           - '6.1.*'
+          - '6.2.*'
         api-platform:
           # Only API Platform supported versions
           - '^2.6'
           - '^2.7'
           - '^3.0'
         include:
+          # Waiting for php-cs-fixer to support PHP 8.2
           - php: '8.1'
-            symfony: '5.4.*'
+            symfony: '6.2.*'
             bootable: true
             quality: true
-          - php: '7.4'
-            laminas: '^3.4'
         exclude:
-          # Symfony 6.0.* requires PHP >= 8.0
-          - symfony: '6.0.*'
-            php: '7.4'
           # Symfony 6.1.* requires PHP >= 8.1
           - symfony: '6.1.*'
-            php: '7.4'
-          - symfony: '6.1.*'
+            php: '8.0'
+          # Symfony 6.2.* requires PHP >= 8.1
+          - symfony: '6.2.*'
             php: '8.0'
           # API Platform 3.0 requires PHP >= 8.1 and Symfony >= 6.1.*
-          - api-platform: '^3.0'
-            php: '7.4'
           - api-platform: '^3.0'
             php: '8.0'
           - api-platform: '^3.0'
@@ -64,7 +60,7 @@ jobs:
       SYMFONY_REQUIRE: ${{ matrix.symfony }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -72,9 +68,9 @@ jobs:
           tools: composer:v2, flex, php-cs-fixer
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
       - name: Cache dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
@@ -85,9 +81,6 @@ jobs:
           composer global require --no-progress --no-scripts --no-plugins symfony/flex
       - name: Configure API Platform
         run: composer require api-platform/core:${{ matrix.api-platform }} --dev --no-install --no-update --no-progress --no-scripts
-      - name: Configure Laminas
-        if: matrix.laminas
-        run: composer require laminas/laminas-code:${{ matrix.laminas }} --dev --no-install --no-update --no-progress --no-scripts
       - name: Update project dependencies
         run: composer update --no-progress --ansi --prefer-stable --prefer-dist
       - name: Bundle is bootable
