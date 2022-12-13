@@ -17,6 +17,7 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
+use CoopTilleuls\ForgotPasswordBundle\Event\UserNotFoundEvent;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
@@ -48,8 +49,16 @@ class ForgotPasswordManager
 
     public function resetPassword($propertyName, $value): void
     {
-        $user = $this->manager->findOneBy($this->userClass, [$propertyName => $value]);
+        $context = [$propertyName => $value];
+
+        $user = $this->manager->findOneBy($this->userClass, $context);
         if (null === $user) {
+            if ($this->dispatcher instanceof ContractsEventDispatcherInterface) {
+                $this->dispatcher->dispatch(new UserNotFoundEvent($context));
+            } else {
+                $this->dispatcher->dispatch(UserNotFoundEvent::USER_NOT_FOUND, new UserNotFoundEvent($context));
+            }
+
             return;
         }
 

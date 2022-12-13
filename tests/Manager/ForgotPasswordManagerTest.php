@@ -17,6 +17,7 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
+use CoopTilleuls\ForgotPasswordBundle\Event\UserNotFoundEvent;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
@@ -65,6 +66,15 @@ final class ForgotPasswordManagerTest extends TestCase
     public function testResetPasswordNotUser(): void
     {
         $this->managerMock->findOneBy('App\Entity\User', ['email' => 'foo@example.com'])->shouldBeCalledOnce();
+        if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
+            $this->eventDispatcherMock->dispatch(Argument::that(function ($event) {
+                return $event instanceof UserNotFoundEvent && ['email' => 'foo@example.com'] === $event->getContext();
+            }))->shouldBeCalledOnce();
+        } else {
+            $this->eventDispatcherMock->dispatch(UserNotFoundEvent::USER_NOT_FOUND, Argument::that(function ($event) {
+                return $event instanceof UserNotFoundEvent && ['email' => 'foo@example.com'] === $event->getContext();
+            }))->shouldBeCalledOnce();
+        }
         $this->passwordManagerMock->findOneByUser(Argument::any())->shouldNotBeCalled();
 
         $this->manager->resetPassword('email', 'foo@example.com');
