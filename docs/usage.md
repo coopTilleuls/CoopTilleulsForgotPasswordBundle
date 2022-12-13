@@ -111,7 +111,7 @@ Your app is ready to receive a request like:
 
 ## Use your own business rules when the user is not found
 
-On the third user story, user was not found, you'll can listen to this event and use your own rules.
+On the third user story, user was not found, you can listen to this event and use your own rules.
 
 ```php
 // src/EventSubscriber/ForgotPasswordEventSubscriber.php
