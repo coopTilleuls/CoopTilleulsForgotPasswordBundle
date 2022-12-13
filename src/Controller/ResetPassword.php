@@ -38,6 +38,6 @@ final class ResetPassword
     {
         $this->forgotPasswordManager->resetPassword($propertyName, $value);
 
-        return new Response('', 202);
+        return new Response('', 204);
     }
 }

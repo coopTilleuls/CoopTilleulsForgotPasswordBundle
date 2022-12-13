@@ -44,6 +44,6 @@ final class ResetPasswordTest extends TestCase
         $response = $controller('email', 'foo@example.com');
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals('', $response->getContent());
-        $this->assertEquals(202, $response->getStatusCode());
+        $this->assertEquals(204, $response->getStatusCode());
     }
 }
