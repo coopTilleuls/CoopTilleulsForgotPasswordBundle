@@ -40,7 +40,7 @@ It provides the following routes:
 
 - `POST /forgot-password/`: receives user email (or custom field configured through `email_field`)
 - `GET /forgot-password/{tokenValue}`: validates the token and returns it (
-  cf. [Overriding the GET /forgot-password/{tokenValue} response](#overriding-the-get-forgot-passwordtoken-response))
+  cf. [Overriding the GET /forgot-password/{tokenValue} response](#overriding-the-get-forgot-passwordtokenvalue-response))
 - `POST /forgot-password/{tokenValue}`: update user password (or custom field configured through `password_field`)
 
 ### Create your entity
