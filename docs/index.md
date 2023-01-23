@@ -77,7 +77,10 @@ class PasswordToken extends AbstractPasswordToken
         return $this->user;
     }
 
-    public function setUser(User $user): self
+    /**
+     * @param User $user
+     */
+    public function setUser($user): self
     {
         $this->user = $user;
 
