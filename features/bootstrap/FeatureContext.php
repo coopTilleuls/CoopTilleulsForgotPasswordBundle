@@ -358,114 +358,7 @@ JSON
         Assert::assertJson($output);
 
         $openApi = json_decode($output, true);
-        Assert::assertEquals([
-            '/api/forgot-password/' => [
-                'ref' => 'ForgotPassword',
-                'post' => [
-                    'operationId' => 'postForgotPassword',
-                    'tags' => ['Forgot password'],
-                    'responses' => [
-                        204 => [
-                            'description' => 'Valid email address, no matter if user exists or not',
-                        ],
-                        400 => [
-                            'description' => 'Missing email parameter or invalid format',
-                        ],
-                    ],
-                    'summary' => 'Generates a token and send email',
-                    'description' => '',
-                    'parameters' => [],
-                    'requestBody' => [
-                        'description' => 'Request a new password',
-                        'content' => [
-                            'application/json' => [
-                                'schema' => [
-                                    '$ref' => '#/components/schemas/ForgotPassword:request',
-                                ],
-                            ],
-                        ],
-                        'required' => true,
-                    ],
-                    'deprecated' => false,
-                ],
-                'parameters' => [],
-            ],
-            '/api/forgot-password/{tokenValue}' => [
-                'ref' => 'ForgotPassword',
-                'get' => [
-                    'operationId' => 'getForgotPassword',
-                    'tags' => ['Forgot password'],
-                    'responses' => [
-                        200 => [
-                            'description' => 'Authenticated user',
-                            'content' => [
-                                'application/json' => [
-                                    'schema' => [
-                                        '$ref' => '#/components/schemas/ForgotPassword:validate',
-                                    ],
-                                ],
-                            ],
-                        ],
-                        404 => [
-                            'description' => 'Token not found or expired',
-                        ],
-                    ],
-                    'summary' => 'Validates token',
-                    'description' => '',
-                    'parameters' => [
-                        [
-                            'name' => 'tokenValue',
-                            'in' => 'path',
-                            'required' => true,
-                            'schema' => [
-                                'type' => 'string',
-                            ],
-                        ],
-                    ],
-                    'deprecated' => false,
-                ],
-                'post' => [
-                    'operationId' => 'postForgotPasswordToken',
-                    'tags' => ['Forgot password'],
-                    'responses' => [
-                        204 => [
-                            'description' => 'Email address format valid, no matter if user exists or not',
-                        ],
-                        400 => [
-                            'description' => 'Missing password parameter',
-                        ],
-                        404 => [
-                            'description' => 'Token not found',
-                        ],
-                    ],
-                    'summary' => 'Validates token',
-                    'description' => '',
-                    'parameters' => [
-                        [
-                            'name' => 'tokenValue',
-                            'in' => 'path',
-                            'required' => true,
-                            'schema' => [
-                                'type' => 'string',
-                            ],
-                        ],
-                    ],
-                    'requestBody' => [
-                        'description' => 'Reset password',
-                        'content' => [
-                            'application/json' => [
-                                'schema' => [
-                                    '$ref' => '#/components/schemas/ForgotPassword:reset',
-                                ],
-                            ],
-                        ],
-                        'required' => true,
-                    ],
-                    'deprecated' => false,
-                ],
-                'parameters' => [],
-            ],
-        ], $openApi['paths']);
+        Assert::assertEquals($this->getOpenApiPaths(), $openApi['paths']);
         Assert::assertEquals([
             'schemas' => [
                 'ForgotPassword:reset' => [
@@ -515,5 +408,123 @@ JSON
         $this->doctrine->getManager()->flush();
 
         return $user;
+    }
+
+    private function getOpenApiPaths(): array
+    {
+        $paths = [
+            '/api/forgot-password/' => [
+                'ref' => 'ForgotPassword',
+                'post' => [
+                    'operationId' => 'postForgotPassword',
+                    'tags' => ['Forgot password'],
+                    'responses' => [
+                        204 => [
+                            'description' => 'Valid email address, no matter if user exists or not',
+                        ],
+                        400 => [
+                            'description' => 'Missing email parameter or invalid format',
+                        ],
+                    ],
+                    'summary' => 'Generates a token and send email',
+                    'requestBody' => [
+                        'description' => 'Request a new password',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/ForgotPassword:request',
+                                ],
+                            ],
+                        ],
+                        'required' => true,
+                    ],
+                ],
+                'parameters' => [],
+            ],
+            '/api/forgot-password/{tokenValue}' => [
+                'ref' => 'ForgotPassword',
+                'get' => [
+                    'operationId' => 'getForgotPassword',
+                    'tags' => ['Forgot password'],
+                    'responses' => [
+                        200 => [
+                            'description' => 'Authenticated user',
+                            'content' => [
+                                'application/json' => [
+                                    'schema' => [
+                                        '$ref' => '#/components/schemas/ForgotPassword:validate',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        404 => [
+                            'description' => 'Token not found or expired',
+                        ],
+                    ],
+                    'summary' => 'Validates token',
+                    'parameters' => [
+                        [
+                            'name' => 'tokenValue',
+                            'in' => 'path',
+                            'required' => true,
+                            'schema' => [
+                                'type' => 'string',
+                            ],
+                        ],
+                    ],
+                ],
+                'post' => [
+                    'operationId' => 'postForgotPasswordToken',
+                    'tags' => ['Forgot password'],
+                    'responses' => [
+                        204 => [
+                            'description' => 'Email address format valid, no matter if user exists or not',
+                        ],
+                        400 => [
+                            'description' => 'Missing password parameter',
+                        ],
+                        404 => [
+                            'description' => 'Token not found',
+                        ],
+                    ],
+                    'summary' => 'Validates token',
+                    'parameters' => [
+                        [
+                            'name' => 'tokenValue',
+                            'in' => 'path',
+                            'required' => true,
+                            'schema' => [
+                                'type' => 'string',
+                            ],
+                        ],
+                    ],
+                    'requestBody' => [
+                        'description' => 'Reset password',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    '$ref' => '#/components/schemas/ForgotPassword:reset',
+                                ],
+                            ],
+                        ],
+                        'required' => true,
+                    ],
+                ],
+                'parameters' => [],
+            ],
+        ];
+
+        // BC api-platform/core:^2.7
+        if (class_exists(ApiPlatform\Core\Bridge\Symfony\Bundle\ApiPlatformBundle::class)) {
+            $paths['/api/forgot-password/']['post']['description'] = '';
+            $paths['/api/forgot-password/']['post']['parameters'] = [];
+            $paths['/api/forgot-password/']['post']['deprecated'] = false;
+            $paths['/api/forgot-password/{tokenValue}']['get']['description'] = '';
+            $paths['/api/forgot-password/{tokenValue}']['get']['deprecated'] = false;
+            $paths['/api/forgot-password/{tokenValue}']['post']['description'] = '';
+            $paths['/api/forgot-password/{tokenValue}']['post']['deprecated'] = false;
+        }
+
+        return $paths;
     }
 }

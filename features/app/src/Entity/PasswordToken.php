@@ -27,7 +27,9 @@ final class PasswordToken extends AbstractPasswordToken
      * @var int
      *
      * @ORM\Id
+     *
      * @ORM\Column(type="integer")
+     *
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
@@ -36,6 +38,7 @@ final class PasswordToken extends AbstractPasswordToken
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="User")
+     *
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
