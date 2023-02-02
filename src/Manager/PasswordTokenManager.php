@@ -16,7 +16,7 @@ namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
-use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactory;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
 use RandomLib\Factory;
 use SecurityLib\Strength;
 
@@ -30,7 +30,7 @@ class PasswordTokenManager
 
     public function __construct(
         ManagerInterface $manager,
-        ProviderFactory $providerFactory
+        ProviderFactoryInterface $providerFactory
     ) {
         $this->manager = $manager;
         $this->providerFactory = $providerFactory;
@@ -44,11 +44,7 @@ class PasswordTokenManager
     public function createPasswordToken($user, \DateTime $expiresAt = null, $providerName = null)
     {
         /* @var Provider $provider */
-        if (null !== $providerName) {
-            $provider = $this->providerFactory->get($providerName);
-        } else {
-            $provider = $this->providerFactory->getDefault();
-        }
+        $provider = $this->providerFactory->get($providerName);
 
         if (!$expiresAt) {
             $expiredAt = new \DateTime($provider->getPasswordTokenExpiredIn());

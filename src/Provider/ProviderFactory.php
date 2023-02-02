@@ -15,7 +15,7 @@ namespace CoopTilleuls\ForgotPasswordBundle\Provider;
 
 use CoopTilleuls\ForgotPasswordBundle\Exception\UndefinedProviderException;
 
-class ProviderFactory
+final class ProviderFactory implements ProviderFactoryInterface
 {
     private array $providers;
 
@@ -24,16 +24,20 @@ class ProviderFactory
         $this->providers = iterator_to_array($providers);
     }
 
-    public function get(string $name): ProviderInterface
+    public function get(?string $name = null): ProviderInterface
     {
+        if (null === $name) {
+            return $this->getDefault();
+        }
+
         if (!isset($this->providers[$name])) {
-            throw new UndefinedProviderException($name);
+            throw new UndefinedProviderException("This provider $name is not defined.");
         }
 
         return $this->providers[$name];
     }
 
-    public function getDefault(): ProviderInterface
+    private function getDefault(): ProviderInterface
     {
         foreach ($this->providers as $provider) {
             if (true === $provider->isDefault()) {
@@ -41,6 +45,6 @@ class ProviderFactory
             }
         }
 
-        throw new UndefinedProviderException('default provider');
+        throw new UndefinedProviderException();
     }
 }

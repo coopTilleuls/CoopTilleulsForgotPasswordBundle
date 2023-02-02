@@ -18,7 +18,7 @@ use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
-use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactory;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -30,11 +30,11 @@ final class RequestEventListener
     use MainRequestTrait;
 
     private $passwordTokenManager;
-    private ProviderFactory $providerFactory;
+    private ProviderFactoryInterface $providerFactory;
 
     public function __construct(
         PasswordTokenManager $passwordTokenManager,
-        ProviderFactory $providerFactory
+        ProviderFactoryInterface $providerFactory
     ) {
         $this->passwordTokenManager = $passwordTokenManager;
         $this->providerFactory = $providerFactory;
@@ -67,7 +67,7 @@ final class RequestEventListener
             throw new MissingFieldHttpException($fieldName);
         }
 
-        $provider = isset($data['provider']) ? $this->providerFactory->get($data['provider']) : $this->providerFactory->getDefault();
+        $provider = $this->providerFactory->get($data['provider'] ?? null);
 
         if ('coop_tilleuls_forgot_password.reset' === $routeName) {
             $request->attributes->set('providerName', $data['provider'] ?? null);
@@ -107,10 +107,10 @@ final class RequestEventListener
         }
 
         if ('coop_tilleuls_forgot_password.get_token' === $routeName) {
-            $provider = ($queryProvider = $request->headers->get('X-provider')) ? $this->providerFactory->get($queryProvider) : $this->providerFactory->getDefault();
+            $provider = $this->providerFactory->get($request->headers->get('X-provider') ?: null);
         } else {
             $data = json_decode($request->getContent(), true, 512, \JSON_THROW_ON_ERROR);
-            $provider = isset($data['provider']) ? $this->providerFactory->get($data['provider']) : $this->providerFactory->getDefault();
+            $provider = $this->providerFactory->get($data['provider'] ?? null);
         }
 
         $token = $this->passwordTokenManager->findOneByToken($provider->getPasswordTokenClass(), $request->attributes->get('tokenValue'));

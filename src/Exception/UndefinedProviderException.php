@@ -17,8 +17,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class UndefinedProviderException extends HttpException implements JsonHttpExceptionInterface
 {
-    public function __construct($propertyName)
+    public function __construct(string $message = 'This provider is not defined.')
     {
-        parent::__construct(400, sprintf('The provider "%s" is not defined.', $propertyName));
+        parent::__construct(400, $message);
     }
 }

@@ -20,7 +20,7 @@ use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\UserNotFoundEvent;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
-use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactory;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 
@@ -38,7 +38,7 @@ class ForgotPasswordManager
         PasswordTokenManager $passwordTokenManager,
         EventDispatcherInterface $dispatcher,
         ManagerInterface $manager,
-        ProviderFactory $providerFactory
+        ProviderFactoryInterface $providerFactory
     ) {
         $this->passwordTokenManager = $passwordTokenManager;
         $this->dispatcher = $dispatcher;
@@ -49,11 +49,7 @@ class ForgotPasswordManager
     public function resetPassword($propertyName, $value, $providerName = null): void
     {
         /* @var Provider $provider */
-        if (null !== $providerName) {
-            $provider = $this->providerFactory->get($providerName);
-        } else {
-            $provider = $this->providerFactory->getDefault();
-        }
+        $provider = $this->providerFactory->get($providerName);
 
         $context = [$propertyName => $value];
 

@@ -21,7 +21,7 @@ use ApiPlatform\OpenApi\Factory\OpenApiFactoryInterface;
 use ApiPlatform\OpenApi\Model\Operation;
 use ApiPlatform\OpenApi\Model\PathItem;
 use ApiPlatform\OpenApi\Model\RequestBody;
-use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactory;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -38,7 +38,7 @@ abstract class AbstractOpenApiFactory
     /**
      * @param LegacyOpenApiFactoryInterface|OpenApiFactoryInterface $decorated
      */
-    public function __construct($decorated, RouterInterface $router, ProviderFactory $providerFactory)
+    public function __construct($decorated, RouterInterface $router, ProviderFactoryInterface $providerFactory)
     {
         $this->providerFactory = $providerFactory;
         $this->decorated = $decorated;
@@ -47,7 +47,7 @@ abstract class AbstractOpenApiFactory
 
     public function __invoke(array $context = [])
     {
-        $defaultProvider = $this->providerFactory->getDefault();
+        $defaultProvider = $this->providerFactory->get();
         $this->authorizedFields = $defaultProvider->getUserAuthorizedFields();
         $this->passwordField = $defaultProvider->getUserPasswordField();
 

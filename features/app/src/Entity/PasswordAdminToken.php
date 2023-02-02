@@ -25,7 +25,9 @@ final class PasswordAdminToken extends AbstractPasswordToken
      * @var int
      *
      * @ORM\Id
+     *
      * @ORM\Column(type="integer")
+     *
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
@@ -34,6 +36,7 @@ final class PasswordAdminToken extends AbstractPasswordToken
      * @var Admin
      *
      * @ORM\ManyToOne(targetEntity=Admin::class)
+     *
      * @ORM\JoinColumn(nullable=false, name="user_id")
      */
     private $user;

@@ -137,7 +137,7 @@ final class FeatureContext implements Context
     }
 
     /**
-     * @Then I should receive an email for ":value"
+     * @Then I should receive an email at ":value"
      */
     public function iShouldReceiveAnEmail($value = 'john.doe@example.com'): void
     {
@@ -318,9 +318,9 @@ JSON
     }
 
     /**
-     * @When I update my password using right provider and wrong passwordField
+     * @When I update my password using a valid provider but an invalid password field
      */
-    public function iUpdateMyPasswordUsingRightProviderAndWrongPasswordField(): void
+    public function iUpdateMyPasswordUsingAValidProviderButAnInvalidPasswordField(): void
     {
         $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), 'admin');
 
@@ -425,7 +425,7 @@ JSON
                         ],
                         'provider' => [
                             'type' => 'string',
-                            'required' => false
+                            'required' => false,
                         ],
                     ],
                 ],
@@ -444,7 +444,7 @@ JSON
                         ],
                         'provider' => [
                             'type' => 'string',
-                        ]
+                        ],
                     ],
                 ],
             ],

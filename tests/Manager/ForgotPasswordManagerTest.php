@@ -73,7 +73,7 @@ final class ForgotPasswordManagerTest extends TestCase
 
     public function testResetPasswordNotUser(): void
     {
-        $this->providerFactoryMock->getDefault()->willReturn(self::providerDataProvider()['customer'])->shouldBeCalledOnce();
+        $this->providerFactoryMock->get(null)->willReturn(self::providerDataProvider()['customer'])->shouldBeCalledOnce();
 
         $this->managerMock->findOneBy(User::class, ['email' => 'foo@example.com'])->shouldBeCalledOnce();
         if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
@@ -160,7 +160,7 @@ final class ForgotPasswordManagerTest extends TestCase
             ->shouldBeCalledOnce();
 
         $token = $tokenMock->reveal();
-        $this->providerFactoryMock->getDefault()->willReturn(self::providerDataProvider()['customer'])->shouldBeCalledOnce();
+        $this->providerFactoryMock->get(null)->willReturn(self::providerDataProvider()['customer'])->shouldBeCalledOnce();
         $this->managerMock->findOneBy(User::class, ['email' => 'foo@example.com'])->willReturn($this->userMock->reveal())->shouldBeCalledOnce();
         $this->passwordManagerMock->findOneByUser(PasswordToken::class, $this->userMock->reveal())->willReturn($token)->shouldBeCalledOnce();
 

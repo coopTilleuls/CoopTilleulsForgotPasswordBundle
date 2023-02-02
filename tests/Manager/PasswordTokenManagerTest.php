@@ -64,7 +64,7 @@ final class PasswordTokenManagerTest extends TestCase
                    && $this->userMock->reveal() === $object->getUser();
         }))->shouldBeCalledOnce();
 
-        $this->providerFactoryMock->getDefault()->willReturn(self::providerDataProvider()['customer'])->shouldBeCalledOnce();
+        $this->providerFactoryMock->get(null)->willReturn(self::providerDataProvider()['customer'])->shouldBeCalledOnce();
         $this->manager->createPasswordToken($this->userMock->reveal(), new \DateTime('2016-10-11 10:00:00'));
     }
 

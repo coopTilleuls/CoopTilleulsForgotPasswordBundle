@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace CoopTilleuls\ForgotPasswordBundle\Provider;
 
-class Provider implements ProviderInterface
+final class Provider implements ProviderInterface
 {
     private string $passwordTokenClass;
     private string $passwordTokenExpiredIn;

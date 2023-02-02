@@ -56,38 +56,20 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
 
     private function buildProvider(array $config, ContainerBuilder $container): void
     {
-        if (!empty($config['providers'])) {
-            foreach ($config['providers'] as $key => $value) {
-                $container->setDefinition($key, new Definition(Provider::class,
-                    [
-                        $value['password_token']['class'],
-                        $value['password_token']['expires_in'],
-                        $value['password_token']['user_field'],
-                        $value['user']['class'],
-                        $value['password_token']['serialization_groups'],
-                        $value['user']['email_field'],
-                        $value['user']['password_field'],
-                        array_unique(array_merge($value['user']['authorized_fields'], [$value['user']['email_field']])),
-                        $value['default'],
-                    ]))->setPublic(false)
-                    ->addTag('coop_tilleuls_forgot_password.provider');
-            }
-
-            return;
+        foreach ($config['providers'] as $key => $value) {
+            $container->setDefinition($key, new Definition(Provider::class,
+                [
+                    $value['password_token']['class'],
+                    $value['password_token']['expires_in'],
+                    $value['password_token']['user_field'],
+                    $value['user']['class'],
+                    $value['password_token']['serialization_groups'],
+                    $value['user']['email_field'],
+                    $value['user']['password_field'],
+                    array_unique(array_merge($value['user']['authorized_fields'], [$value['user']['email_field']])),
+                    $value['default'],
+                ]))->setPublic(false)
+                ->addTag('coop_tilleuls_forgot_password.provider');
         }
-
-        $container->setDefinition('default', new Definition(Provider::class,
-            [
-                $config['password_token']['class'],
-                $config['password_token']['expires_in'],
-                $config['password_token']['user_field'],
-                $config['user']['class'],
-                $config['password_token']['serialization_groups'],
-                $config['user']['email_field'],
-                $config['user']['password_field'],
-                array_unique(array_merge($config['user']['authorized_fields'], [$config['user']['email_field']])),
-                true,
-            ]))->setPublic(false)
-            ->addTag('coop_tilleuls_forgot_password.provider');
     }
 }

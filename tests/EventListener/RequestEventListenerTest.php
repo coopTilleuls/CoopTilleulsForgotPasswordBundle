@@ -139,7 +139,7 @@ final class RequestEventListenerTest extends TestCase
 
     public function testDecodeRequestUnauthorizedException(): void
     {
-        $this->providerFactoryMock->getDefault()->shouldBeCalledOnce()->willReturn($this->providers['customer']);
+        $this->providerFactoryMock->get(null)->shouldBeCalledOnce()->willReturn($this->providers['customer']);
         $this->expectException(UnauthorizedFieldException::class);
         $this->expectExceptionMessage('The parameter "name" is not authorized in your configuration.');
         $expiredAt = new \DateTime('+1 day');
@@ -159,7 +159,7 @@ final class RequestEventListenerTest extends TestCase
 
     public function testDecodeRequest(): void
     {
-        $this->providerFactoryMock->getDefault()->shouldBeCalledOnce()->willReturn($this->providers['customer']);
+        $this->providerFactoryMock->get(null)->shouldBeCalledOnce()->willReturn($this->providers['customer']);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
 
@@ -235,7 +235,7 @@ final class RequestEventListenerTest extends TestCase
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
         $this->requestMock->getContent()->willReturn(json_encode([]))->shouldBeCalledOnce();
-        $this->providerFactoryMock->getDefault()->shouldBeCalledOnce()->willReturn($this->providers['customer']);
+        $this->providerFactoryMock->get(null)->shouldBeCalledOnce()->willReturn($this->providers['customer']);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
 
@@ -275,6 +275,6 @@ final class RequestEventListenerTest extends TestCase
                 'username',
                 'encryptPassword',
                 ['email', 'password'],
-            )];
+            ), ];
     }
 }
