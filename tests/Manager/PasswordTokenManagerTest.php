@@ -72,19 +72,22 @@ final class PasswordTokenManagerTest extends TestCase
     {
         $this->managerMock->findOneBy(PasswordToken::class, ['token' => 'foo'])->willReturn('bar')->shouldBeCalledOnce();
 
-        $this->assertEquals('bar', $this->manager->findOneByToken(PasswordToken::class, 'foo'));
+        $this->assertEquals('bar', $this->manager->findOneByToken('foo', PasswordToken::class));
     }
 
     public function testFindOneByUser(): void
     {
+        $this->providerFactoryMock->get(null)->willReturn(self::providerDataProvider()['customer'])->shouldBeCalledOnce();
+
         $this->managerMock->findOneBy(PasswordToken::class, ['user' => $this->userMock->reveal()])->willReturn('bar')->shouldBeCalledOnce();
-        $this->assertEquals('bar', $this->manager->findOneByUser(PasswordToken::class, $this->userMock->reveal()));
+        $this->assertEquals('bar', $this->manager->findOneByUser($this->userMock->reveal(), PasswordToken::class));
     }
 
     private static function providerDataProvider(): array
     {
         return [
             'customer' => new Provider(
+                'customer',
                 PasswordToken::class,
                 '+1 day',
                 'user',
@@ -96,6 +99,7 @@ final class PasswordTokenManagerTest extends TestCase
                 true
             ),
             'admin' => new Provider(
+                'admin',
                 PasswordAdminToken::class,
                 '+1 hour',
                 'admin',

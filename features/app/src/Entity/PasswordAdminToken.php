@@ -39,7 +39,7 @@ final class PasswordAdminToken extends AbstractPasswordToken
      *
      * @ORM\JoinColumn(nullable=false, name="user_id")
      */
-    private $user;
+    private $admin;
 
     /**
      * @return int
@@ -54,11 +54,11 @@ final class PasswordAdminToken extends AbstractPasswordToken
      */
     public function getUser()
     {
-        return $this->user;
+        return $this->admin;
     }
 
-    public function setUser($user): void
+    public function setUser($admin): void
     {
-        $this->user = $user;
+        $this->admin = $admin;
     }
 }

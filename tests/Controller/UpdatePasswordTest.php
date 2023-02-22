@@ -67,6 +67,7 @@ final class UpdatePasswordTest extends TestCase
     {
         return [
             'customer' => new Provider(
+                'customer',
                 PasswordToken::class,
                 '+1 day',
                 'user',
@@ -78,6 +79,7 @@ final class UpdatePasswordTest extends TestCase
                 true
             ),
             'admin' => new Provider(
+                'admin',
                 PasswordAdminToken::class,
                 '+1 hour',
                 'admin',
@@ -86,6 +88,6 @@ final class UpdatePasswordTest extends TestCase
                 'username',
                 'encryptPassword',
                 ['email', 'password'],
-            )];
+            ), ];
     }
 }

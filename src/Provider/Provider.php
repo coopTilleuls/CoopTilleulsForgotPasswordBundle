@@ -24,18 +24,21 @@ final class Provider implements ProviderInterface
     private ?string $userPasswordField;
     private ?array $userAuthorizedFields;
     private ?bool $isDefault;
+    private string $name;
 
     public function __construct(
+        string $name,
         string $passwordTokenClass,
         string $passwordTokenExpiredIn,
         string $passwordTokenUserField,
         string $userClass,
-        ?array $passwordTokenSerializationGroups = [],
-        ?string $userEmailField = 'email',
-        ?string $userPasswordField = 'password',
-        ?array $userAuthorizedFields = [],
-        ?bool $isDefault = false
+        array $passwordTokenSerializationGroups = [],
+        string $userEmailField = 'email',
+        string $userPasswordField = 'password',
+        array $userAuthorizedFields = [],
+        bool $isDefault = false
     ) {
+        $this->name = $name;
         $this->passwordTokenClass = $passwordTokenClass;
         $this->passwordTokenExpiredIn = $passwordTokenExpiredIn;
         $this->passwordTokenUserField = $passwordTokenUserField;
@@ -90,5 +93,10 @@ final class Provider implements ProviderInterface
     public function isDefault(): bool
     {
         return $this->isDefault;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 }

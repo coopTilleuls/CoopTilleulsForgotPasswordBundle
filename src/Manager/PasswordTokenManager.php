@@ -75,20 +75,38 @@ class PasswordTokenManager
     }
 
     /**
-     * @param string $token
+     * @param string     $token
+     * @param mixed|null $passwordTokenClass
      *
      * @return AbstractPasswordToken
      */
-    public function findOneByToken($passwordTokenClass, $token)
+    public function findOneByToken($token, $passwordTokenClass = null)
     {
+        if (!$passwordTokenClass) {
+            $passwordTokenClass = $this->providerFactory->get()->getPasswordTokenClass();
+        }
+
         return $this->manager->findOneBy($passwordTokenClass, ['token' => $token]);
     }
 
     /**
+     * @param mixed|null $passwordTokenClass
+     * @param mixed|null $passwordTokenUserField
+     *
      * @return AbstractPasswordToken
      */
-    public function findOneByUser($passwordTokenClass, $user)
+    public function findOneByUser($user, $passwordTokenClass = null, $passwordTokenUserField = null)
     {
-        return $this->manager->findOneBy($passwordTokenClass, ['user' => $user]);
+        $provider = $this->providerFactory->get();
+
+        if (!$passwordTokenClass) {
+            $passwordTokenClass = $provider->getPasswordTokenClass();
+        }
+
+        if (!$passwordTokenUserField) {
+            $passwordTokenUserField = $provider->getPasswordTokenUserField();
+        }
+
+        return $this->manager->findOneBy($passwordTokenClass, [$passwordTokenUserField => $user]);
     }
 }

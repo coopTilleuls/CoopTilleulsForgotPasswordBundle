@@ -16,6 +16,7 @@ namespace CoopTilleuls\ForgotPasswordBundle\DependencyInjection;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\JMSNormalizer;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\SymfonyNormalizer;
 use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -35,6 +36,27 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+
+        if (!$defaultProvider = $this->getDefaultProvider($config)) {
+            throw new InvalidConfigurationException('The child config "default" must be set true under one of providers.');
+        }
+
+        // Build parameters
+        $container->setParameter('coop_tilleuls_forgot_password.password_token_class', $defaultProvider['password_token']['class']);
+        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "coop_tilleuls_forgot_password.password_token_class" is deprecated since 1.5 and will be removed without replacement in 2.0.');
+        $container->setParameter('coop_tilleuls_forgot_password.password_token_expires_in', $defaultProvider['password_token']['expires_in']);
+        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "coop_tilleuls_forgot_password.password_token_expires_in" is deprecated since 1.5 and will be removed without replacement in 2.0.');
+        $container->setParameter('coop_tilleuls_forgot_password.password_token_user_field', $defaultProvider['password_token']['user_field']);
+        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "coop_tilleuls_forgot_password.password_token_user_field" is deprecated since 1.5 and will be removed without replacement in 2.0.');
+        $container->setParameter('coop_tilleuls_forgot_password.password_token_serialization_groups', $defaultProvider['password_token']['serialization_groups']);
+        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "coop_tilleuls_forgot_password.password_token_serialization_groups" is deprecated since 1.5 and will be removed without replacement in 2.0.');
+        $container->setParameter('coop_tilleuls_forgot_password.user_class', $defaultProvider['user']['class']);
+        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "coop_tilleuls_forgot_password.user_class" is deprecated since 1.5 and will be removed without replacement in 2.0.');
+        $authorizedFields = array_unique(array_merge($defaultProvider['user']['authorized_fields'], [$defaultProvider['user']['email_field']]));
+        $container->setParameter('coop_tilleuls_forgot_password.user_authorized_fields', $authorizedFields);
+        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "coop_tilleuls_forgot_password.user_authorized_fields" is deprecated since 1.5 and will be removed without replacement in 2.0.');
+        $container->setParameter('coop_tilleuls_forgot_password.user_password_field', $defaultProvider['user']['password_field']);
+        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "coop_tilleuls_forgot_password.user_password_field" is deprecated since 1.5 and will be removed without replacement in 2.0.');
 
         $this->buildProvider($config, $container);
 
@@ -58,7 +80,7 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
     {
         foreach ($config['providers'] as $key => $value) {
             $container->setDefinition($key, new Definition(Provider::class,
-                [
+                [$key,
                     $value['password_token']['class'],
                     $value['password_token']['expires_in'],
                     $value['password_token']['user_field'],
@@ -71,5 +93,16 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
                 ]))->setPublic(false)
                 ->addTag('coop_tilleuls_forgot_password.provider');
         }
+    }
+
+    private function getDefaultProvider(array $config): ?array
+    {
+        foreach ($config['providers'] as $value) {
+            if (true === $value['default']) {
+                return $value;
+            }
+        }
+
+        return null;
     }
 }

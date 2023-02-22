@@ -62,4 +62,6 @@ interface ProviderInterface
      * If provider is Default no need to mention it in queries.
      */
     public function isDefault(): bool;
+
+    public function getName(): string;
 }

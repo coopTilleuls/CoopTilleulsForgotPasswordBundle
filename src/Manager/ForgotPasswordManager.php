@@ -21,6 +21,7 @@ use CoopTilleuls\ForgotPasswordBundle\Event\UserNotFoundEvent;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 
@@ -46,10 +47,12 @@ class ForgotPasswordManager
         $this->providerFactory = $providerFactory;
     }
 
-    public function resetPassword($propertyName, $value, $providerName = null): void
+    public function resetPassword($propertyName, $value, ?ProviderInterface $provider = null): void
     {
-        /* @var Provider $provider */
-        $provider = $this->providerFactory->get($providerName);
+        /* @var null|Provider $provider */
+        if (!$provider) {
+            $provider = $this->providerFactory->get();
+        }
 
         $context = [$propertyName => $value];
 
@@ -65,14 +68,14 @@ class ForgotPasswordManager
             return;
         }
 
-        $token = $this->passwordTokenManager->findOneByUser($provider->getPasswordTokenClass(), $user);
+        $token = $this->passwordTokenManager->findOneByUser($user, $provider->getPasswordTokenClass(), $provider->getPasswordTokenUserField());
 
         // A token already exists and has not expired
         if (null === $token || $token->isExpired()) {
             $expiredAt = new \DateTime($provider->getPasswordTokenExpiredIn());
             $expiredAt->setTime((int) $expiredAt->format('H'), (int) $expiredAt->format('m'), (int) $expiredAt->format('s'), 0);
 
-            $token = $this->passwordTokenManager->createPasswordToken($user, $expiredAt, $providerName);
+            $token = $this->passwordTokenManager->createPasswordToken($user, $expiredAt, $provider->getName());
         }
 
         // Generate password token

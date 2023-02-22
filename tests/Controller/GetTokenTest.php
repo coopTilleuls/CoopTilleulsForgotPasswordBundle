@@ -50,6 +50,7 @@ final class GetTokenTest extends TestCase
     public function testGetTokenAction(): void
     {
         $provider = new Provider(
+            'user',
             PasswordToken::class,
             '+1 day',
             'user',

@@ -123,8 +123,8 @@ class PasswordToken extends AbstractPasswordToken
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false, name: 'user_id')]
-    private $user;
+    #[ORM\JoinColumn(nullable: false, name: 'admin_id')]
+    private $admin;
 
     public function getId(): ?int
     {
@@ -133,12 +133,12 @@ class PasswordToken extends AbstractPasswordToken
 
     public function getUser()
     {
-        return $this->user;
+        return $this->admin;
     }
 
-    public function setUser($user): void
+    public function setUser($admin): void
     {
-        $this->user = $user;
+        $this->admin = $admin;
     }
 }
 ```

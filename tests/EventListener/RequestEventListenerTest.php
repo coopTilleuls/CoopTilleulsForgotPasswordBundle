@@ -145,7 +145,7 @@ final class RequestEventListenerTest extends TestCase
         $expiredAt = new \DateTime('+1 day');
         $expiredAt->setTime((int) $expiredAt->format('H'), (int) $expiredAt->format('m'), (int) $expiredAt->format('s'), 0);
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.reset')->shouldBeCalledOnce();
-        $this->parameterBagMock->set('providerName', null)->shouldBeCalledOnce();
+        $this->parameterBagMock->set('provider', $this->providers['customer'])->shouldBeCalledOnce();
 
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
             $this->eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
@@ -202,7 +202,7 @@ final class RequestEventListenerTest extends TestCase
             $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
         $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledOnce();
-        $this->managerMock->findOneByToken(PasswordAdminToken::class, 'foo')->shouldBeCalledOnce();
+        $this->managerMock->findOneByToken('foo', PasswordAdminToken::class)->shouldBeCalledOnce();
 
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
     }
@@ -224,7 +224,7 @@ final class RequestEventListenerTest extends TestCase
             $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
         $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledOnce();
-        $this->managerMock->findOneByToken(PasswordAdminToken::class, 'foo')->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
+        $this->managerMock->findOneByToken('foo', PasswordAdminToken::class)->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
         $tokenMock->isExpired()->willReturn(true)->shouldBeCalledOnce();
 
         $this->listener->getTokenFromRequest($this->eventMock->reveal());
@@ -245,7 +245,7 @@ final class RequestEventListenerTest extends TestCase
             $this->eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
         }
         $this->parameterBagMock->get('tokenValue')->willReturn('foo')->shouldBeCalledOnce();
-        $this->managerMock->findOneByToken(PasswordToken::class, 'foo')->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
+        $this->managerMock->findOneByToken('foo', PasswordToken::class)->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
         $tokenMock->isExpired()->willReturn(false)->shouldBeCalledOnce();
         $this->parameterBagMock->set('token', $tokenMock->reveal())->shouldBeCalledOnce();
 
@@ -256,6 +256,7 @@ final class RequestEventListenerTest extends TestCase
     {
         return [
             'customer' => new Provider(
+                'customer',
                 PasswordToken::class,
                 '+1 day',
                 'user',
@@ -267,6 +268,7 @@ final class RequestEventListenerTest extends TestCase
                 true
             ),
             'admin' => new Provider(
+                'admin',
                 PasswordAdminToken::class,
                 '+1 hour',
                 'admin',

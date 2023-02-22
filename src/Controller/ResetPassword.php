@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace CoopTilleuls\ForgotPasswordBundle\Controller;
 
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -31,9 +32,9 @@ final class ResetPassword
     /**
      * @return Response
      */
-    public function __invoke($propertyName, $value, ?string $providerName = null)
+    public function __invoke($propertyName, $value, ?ProviderInterface $provider = null)
     {
-        $this->forgotPasswordManager->resetPassword($propertyName, $value, $providerName);
+        $this->forgotPasswordManager->resetPassword($propertyName, $value, $provider);
 
         return new Response('', 204);
     }
