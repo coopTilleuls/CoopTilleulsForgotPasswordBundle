@@ -15,7 +15,7 @@ namespace CoopTilleuls\ForgotPasswordBundle\Controller;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
-use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -33,7 +33,7 @@ final class GetToken
     /**
      * @return JsonResponse
      */
-    public function __invoke(AbstractPasswordToken $token, Provider $provider)
+    public function __invoke(AbstractPasswordToken $token, ProviderInterface $provider)
     {
         $groups = $provider->getPasswordTokenSerializationGroups();
 

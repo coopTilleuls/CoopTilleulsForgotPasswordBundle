@@ -17,6 +17,7 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use RandomLib\Factory;
 use SecurityLib\Strength;
 
@@ -37,14 +38,15 @@ class PasswordTokenManager
     }
 
     /**
-     * @param mixed|null $providerName
-     *
      * @return AbstractPasswordToken
      */
-    public function createPasswordToken($user, \DateTime $expiresAt = null, $providerName = null)
+    public function createPasswordToken($user, \DateTime $expiresAt = null, ?ProviderInterface $provider = null)
     {
         /* @var Provider $provider */
-        $provider = $this->providerFactory->get($providerName);
+        if (!$provider) {
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "$provider" is recommended since 1.5 and will be mandatory in 2.0.');
+            $provider = $this->providerFactory->get();
+        }
 
         if (!$expiresAt) {
             $expiredAt = new \DateTime($provider->getPasswordTokenExpiredIn());
@@ -83,6 +85,7 @@ class PasswordTokenManager
     public function findOneByToken($token, $passwordTokenClass = null)
     {
         if (!$passwordTokenClass) {
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "$passwordTokenClass" is recommended since 1.5 and will be mandatory in 2.0.');
             $passwordTokenClass = $this->providerFactory->get()->getPasswordTokenClass();
         }
 
@@ -100,10 +103,12 @@ class PasswordTokenManager
         $provider = $this->providerFactory->get();
 
         if (!$passwordTokenClass) {
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "$passwordTokenClass" is recommended since 1.5 and will be mandatory in 2.0.');
             $passwordTokenClass = $provider->getPasswordTokenClass();
         }
 
         if (!$passwordTokenUserField) {
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "$passwordTokenUserField" is recommended since 1.5 and will be mandatory in 2.0.');
             $passwordTokenUserField = $provider->getPasswordTokenUserField();
         }
 

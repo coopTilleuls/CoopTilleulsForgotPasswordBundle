@@ -17,6 +17,9 @@ use CoopTilleuls\ForgotPasswordBundle\Exception\UndefinedProviderException;
 
 final class ProviderFactory implements ProviderFactoryInterface
 {
+    /**
+     * @var array<string, ProviderInterface>
+     */
     private array $providers;
 
     public function __construct(iterable $providers)
@@ -24,6 +27,11 @@ final class ProviderFactory implements ProviderFactoryInterface
         $this->providers = iterator_to_array($providers);
     }
 
+    /**
+     * @return ProviderInterface
+     *
+     * This method return a provider by its name, without name the default provider is returned
+     */
     public function get(?string $name = null): ProviderInterface
     {
         if (null === $name) {

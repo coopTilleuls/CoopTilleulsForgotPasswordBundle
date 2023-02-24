@@ -51,6 +51,7 @@ class ForgotPasswordManager
     {
         /* @var null|Provider $provider */
         if (!$provider) {
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "$provider" is recommended since 1.5 and will be mandatory in 2.0.');
             $provider = $this->providerFactory->get();
         }
 
@@ -75,7 +76,7 @@ class ForgotPasswordManager
             $expiredAt = new \DateTime($provider->getPasswordTokenExpiredIn());
             $expiredAt->setTime((int) $expiredAt->format('H'), (int) $expiredAt->format('m'), (int) $expiredAt->format('s'), 0);
 
-            $token = $this->passwordTokenManager->createPasswordToken($user, $expiredAt, $provider->getName());
+            $token = $this->passwordTokenManager->createPasswordToken($user, $expiredAt, $provider);
         }
 
         // Generate password token

@@ -73,7 +73,9 @@ final class ForgotPasswordManagerTest extends TestCase
 
     public function testResetPasswordNotUser(): void
     {
-        $this->providerFactoryMock->get(null)->willReturn(self::providerDataProvider()['customer'])->shouldBeCalledOnce();
+        $provider = self::providerDataProvider()['customer'];
+
+        $this->providerFactoryMock->get(null)->willReturn($provider)->shouldBeCalledOnce();
 
         $this->managerMock->findOneBy(User::class, ['email' => 'foo@example.com'])->shouldBeCalledOnce();
         if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
@@ -88,7 +90,7 @@ final class ForgotPasswordManagerTest extends TestCase
 
         $this->passwordManagerMock->findOneByUser(Argument::any())->shouldNotBeCalled();
 
-        $expiredAt = new \DateTime(self::providerDataProvider()['customer']->getPasswordTokenExpiredIn());
+        $expiredAt = new \DateTime($provider->getPasswordTokenExpiredIn());
         $expiredAt->setTime((int) $expiredAt->format('H'), (int) $expiredAt->format('m'), (int) $expiredAt->format('s'), 0);
 
         $this->manager->resetPassword('email', 'foo@example.com');
@@ -97,13 +99,14 @@ final class ForgotPasswordManagerTest extends TestCase
     public function testResetPasswordWithNoPreviousToken(): void
     {
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
+        $provider = self::providerDataProvider()['customer'];
 
-        $expiredAt = new \DateTime(self::providerDataProvider()['customer']->getPasswordTokenExpiredIn());
+        $expiredAt = new \DateTime($provider->getPasswordTokenExpiredIn());
         $expiredAt->setTime((int) $expiredAt->format('H'), (int) $expiredAt->format('m'), (int) $expiredAt->format('s'), 0);
 
         $this->managerMock->findOneBy(User::class, ['email' => 'foo@example.com'])->willReturn($this->userMock->reveal())->shouldBeCalledOnce();
         $this->passwordManagerMock->findOneByUser($this->userMock->reveal(), PasswordToken::class, 'user')->willReturn(null)->shouldBeCalledOnce();
-        $this->passwordManagerMock->createPasswordToken($this->userMock->reveal(), $expiredAt, 'customer')->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
+        $this->passwordManagerMock->createPasswordToken($this->userMock->reveal(), $expiredAt, $provider)->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
 
         if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
             $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($tokenMock) {
@@ -115,20 +118,22 @@ final class ForgotPasswordManagerTest extends TestCase
             }))->shouldBeCalledOnce();
         }
 
-        $this->manager->resetPassword('email', 'foo@example.com', self::providerDataProvider()['customer']);
+        $this->manager->resetPassword('email', 'foo@example.com', $provider);
     }
 
     public function testResetPasswordWithExpiredPreviousToken(): void
     {
+        $provider = self::providerDataProvider()['customer'];
+
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
         $this->tokenMock->isExpired()->willReturn(true)->shouldBeCalledOnce();
 
-        $expiredAt = new \DateTime(self::providerDataProvider()['customer']->getPasswordTokenExpiredIn());
+        $expiredAt = new \DateTime($provider->getPasswordTokenExpiredIn());
         $expiredAt->setTime((int) $expiredAt->format('H'), (int) $expiredAt->format('m'), (int) $expiredAt->format('s'), 0);
 
         $this->managerMock->findOneBy(User::class, ['email' => 'foo@example.com'])->willReturn($this->userMock->reveal())->shouldBeCalledOnce();
         $this->passwordManagerMock->findOneByUser($this->userMock->reveal(), PasswordToken::class, 'user')->willReturn($this->tokenMock->reveal())->shouldBeCalledOnce();
-        $this->passwordManagerMock->createPasswordToken($this->userMock->reveal(), $expiredAt, 'customer')->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
+        $this->passwordManagerMock->createPasswordToken($this->userMock->reveal(), $expiredAt, $provider)->willReturn($tokenMock->reveal())->shouldBeCalledOnce();
 
         if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {
             $this->eventDispatcherMock->dispatch(Argument::that(function ($event) use ($tokenMock) {
@@ -140,7 +145,7 @@ final class ForgotPasswordManagerTest extends TestCase
             }))->shouldBeCalledOnce();
         }
 
-        $this->manager->resetPassword('email', 'foo@example.com', self::providerDataProvider()['customer']);
+        $this->manager->resetPassword('email', 'foo@example.com', $provider);
     }
 
     /**
@@ -148,6 +153,7 @@ final class ForgotPasswordManagerTest extends TestCase
      */
     public function testResetPasswordWithUnexpiredTokenHttp(): void
     {
+        $provider = self::providerDataProvider()['customer'];
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
         $tokenMock
@@ -156,7 +162,7 @@ final class ForgotPasswordManagerTest extends TestCase
             ->shouldBeCalledOnce();
 
         $token = $tokenMock->reveal();
-        $this->providerFactoryMock->get(null)->willReturn(self::providerDataProvider()['customer'])->shouldBeCalledOnce();
+        $this->providerFactoryMock->get(null)->willReturn($provider)->shouldBeCalledOnce();
         $this->managerMock->findOneBy(User::class, ['email' => 'foo@example.com'])->willReturn($this->userMock->reveal())->shouldBeCalledOnce();
         $this->passwordManagerMock->findOneByUser($this->userMock->reveal(), PasswordToken::class, 'user')->willReturn($token)->shouldBeCalledOnce();
 

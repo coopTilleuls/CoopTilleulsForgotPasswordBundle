@@ -18,12 +18,12 @@ final class Provider implements ProviderInterface
     private string $passwordTokenClass;
     private string $passwordTokenExpiredIn;
     private string $passwordTokenUserField;
-    private ?array $passwordTokenSerializationGroups;
+    private array $passwordTokenSerializationGroups;
     private string $userClass;
-    private ?string $userEmailField;
-    private ?string $userPasswordField;
-    private ?array $userAuthorizedFields;
-    private ?bool $isDefault;
+    private string $userEmailField;
+    private string $userPasswordField;
+    private array $userAuthorizedFields;
+    private bool $isDefault;
     private string $name;
 
     public function __construct(

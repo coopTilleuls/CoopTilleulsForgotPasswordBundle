@@ -32,7 +32,7 @@ final class ResetPassword
     /**
      * @return Response
      */
-    public function __invoke($propertyName, $value, ?ProviderInterface $provider = null)
+    public function __invoke($propertyName, $value, ProviderInterface $provider)
     {
         $this->forgotPasswordManager->resetPassword($propertyName, $value, $provider);
 

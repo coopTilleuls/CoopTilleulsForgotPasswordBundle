@@ -70,7 +70,7 @@ final class RequestEventListener
         $provider = $this->providerFactory->get($data['provider'] ?? null);
 
         if ('coop_tilleuls_forgot_password.reset' === $routeName) {
-            $request->attributes->set('provider', $provider ?? null);
+            $request->attributes->set('provider', $provider);
 
             unset($data['provider']);
 

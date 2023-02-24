@@ -12,9 +12,12 @@
 declare(strict_types=1);
 
 use App\Entity\Admin;
+use App\Entity\PasswordAdminToken;
+use App\Entity\PasswordToken;
 use App\Entity\User;
 use Behat\Behat\Context\Context;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
+use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -300,7 +303,7 @@ JSON
      */
     public function iUpdateMyPasswordUsingWrongProvider(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), 'admin');
+        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), self::getProviders()['admin']);
 
         $this->client->request(
             'POST',
@@ -322,7 +325,7 @@ JSON
      */
     public function iUpdateMyPasswordUsingAValidProviderButAnInvalidPasswordField(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), 'admin');
+        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), self::getProviders()['admin']);
 
         $this->client->request(
             'POST',
@@ -611,5 +614,33 @@ JSON
         $this->doctrine->getManager()->flush();
 
         return $admin;
+    }
+
+    private static function getProviders(): array
+    {
+        return [
+            'customer' => new Provider(
+                'customer',
+                PasswordToken::class,
+                '+1 day',
+                'user',
+                User::class,
+                [],
+                'email',
+                'password',
+                ['email', 'password'],
+                true
+            ),
+            'admin' => new Provider(
+                'admin',
+                PasswordAdminToken::class,
+                '+1 hour',
+                'admin',
+                Admin::class,
+                [],
+                'username',
+                'encryptPassword',
+                ['email', 'password'],
+            ), ];
     }
 }

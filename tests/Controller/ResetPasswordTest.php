@@ -13,8 +13,11 @@ declare(strict_types=1);
 
 namespace CoopTilleuls\ForgotPasswordBundle\Tests\Controller;
 
+use App\Entity\PasswordToken;
+use App\Entity\User;
 use CoopTilleuls\ForgotPasswordBundle\Controller\ResetPassword;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
+use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
 use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -39,9 +42,21 @@ final class ResetPasswordTest extends TestCase
 
     public function testResetPasswordAction(): void
     {
-        $this->managerMock->resetPassword('email', 'foo@example.com', null)->shouldBeCalledOnce();
+        $provider = new Provider(
+            'user',
+            PasswordToken::class,
+            '+1 day',
+            'user',
+            User::class,
+            [],
+            'email',
+            'password',
+            ['email', 'password'],
+            true
+        );
+        $this->managerMock->resetPassword('email', 'foo@example.com', $provider)->shouldBeCalledOnce();
         $controller = new ResetPassword($this->managerMock->reveal());
-        $response = $controller('email', 'foo@example.com');
+        $response = $controller('email', 'foo@example.com', $provider);
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals('', $response->getContent());
         $this->assertEquals(204, $response->getStatusCode());
