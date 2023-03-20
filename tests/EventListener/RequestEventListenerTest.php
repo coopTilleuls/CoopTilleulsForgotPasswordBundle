@@ -28,6 +28,7 @@ use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactory;
 use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,6 +50,7 @@ final class RequestEventListenerTest extends TestCase
     private $eventMock;
     private $requestMock;
     private $parameterBagMock;
+    private $headerBagMock;
     private $inputBagMock;
     private $providerFactoryMock;
     private $providers;
@@ -59,6 +61,7 @@ final class RequestEventListenerTest extends TestCase
         $this->eventMock = $this->prophesize(KernelEvent::class);
         $this->requestMock = $this->prophesize(Request::class);
         $this->parameterBagMock = $this->prophesize(ParameterBag::class);
+        $this->headerBagMock = $this->prophesize(HeaderBag::class);
         $this->providerFactoryMock = $this->prophesize(ProviderFactory::class);
 
         $this->inputBagMock = $this->prophesize(InputBag::class);
@@ -66,6 +69,7 @@ final class RequestEventListenerTest extends TestCase
         $this->eventMock->getRequest()->willReturn($this->requestMock->reveal())->shouldBeCalledOnce();
         $this->requestMock->attributes = $this->parameterBagMock->reveal();
         $this->requestMock->query = $this->inputBagMock->reveal();
+        $this->requestMock->headers = $this->headerBagMock->reveal();
 
         $this->listener = new RequestEventListener(
             $this->managerMock->reveal(),
@@ -139,6 +143,7 @@ final class RequestEventListenerTest extends TestCase
 
     public function testDecodeRequestUnauthorizedException(): void
     {
+        $this->headerBagMock->get('X-provider')->shouldBeCalledOnce()->willReturn(null);
         $this->providerFactoryMock->get(null)->shouldBeCalledOnce()->willReturn($this->providers['customer']);
         $this->expectException(UnauthorizedFieldException::class);
         $this->expectExceptionMessage('The parameter "name" is not authorized in your configuration.');
@@ -159,6 +164,7 @@ final class RequestEventListenerTest extends TestCase
 
     public function testDecodeRequest(): void
     {
+        $this->headerBagMock->get('X-provider')->shouldBeCalledOnce()->willReturn(null);
         $this->providerFactoryMock->get(null)->shouldBeCalledOnce()->willReturn($this->providers['customer']);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
@@ -191,7 +197,8 @@ final class RequestEventListenerTest extends TestCase
     {
         $this->expectException(NotFoundHttpException::class);
 
-        $this->requestMock->getContent()->willReturn(json_encode(['provider' => 'admin']))->shouldBeCalledOnce();
+        $this->headerBagMock->get('X-provider')->shouldBeCalledOnce()->willReturn('admin');
+
         $this->providerFactoryMock->get('admin')->shouldBeCalledOnce()->willReturn($this->providers['admin']);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
@@ -213,7 +220,7 @@ final class RequestEventListenerTest extends TestCase
 
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
-        $this->requestMock->getContent()->willReturn(json_encode(['provider' => 'admin']))->shouldBeCalledOnce();
+        $this->headerBagMock->get('X-provider')->shouldBeCalledOnce()->willReturn('admin');
         $this->providerFactoryMock->get('admin')->shouldBeCalledOnce()->willReturn($this->providers['admin']);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
@@ -233,8 +240,8 @@ final class RequestEventListenerTest extends TestCase
     public function testGetTokenFromRequest(): void
     {
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
+        $this->headerBagMock->get('X-provider')->shouldBeCalledOnce()->willReturn(null);
 
-        $this->requestMock->getContent()->willReturn(json_encode([]))->shouldBeCalledOnce();
         $this->providerFactoryMock->get(null)->shouldBeCalledOnce()->willReturn($this->providers['customer']);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();

@@ -113,20 +113,7 @@ final class FeatureContext implements Context
     {
         $this->createUser();
         $this->createAdmin();
-        $defaultJson = <<<JSON
-        {
-            "%s": "%s"
-        }
-        JSON;
-
-        $providerJson = <<<JSON
-            {
-                "%s": "%s",
-                "provider": "%s"
-            }
-        JSON;
-
-        $content = $provider ? sprintf($providerJson, $propertyName, $value, $provider) : sprintf($defaultJson, $propertyName, $value);
+        $headers = $provider ? ['HTTP_X-provider' => $provider] : [];
 
         $this->client->enableProfiler();
         $this->client->request(
@@ -134,8 +121,13 @@ final class FeatureContext implements Context
             '/api/forgot-password/',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
-            $content
+            array_merge(['CONTENT_TYPE' => 'application/ld-json'], $headers),
+            sprintf(<<<'JSON'
+{
+  "%s": "%s"
+}
+JSON,
+                $propertyName, $value)
         );
     }
 
@@ -310,11 +302,10 @@ JSON
             sprintf('/api/forgot-password/%s', $token->getToken()),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_X-provider' => 'wrong'],
             <<<'JSON'
 {
-    "adminPassword": "foo",
-    "provider": "wrong"
+    "adminPassword": "foo"
 }
 JSON
         );
@@ -332,11 +323,10 @@ JSON
             sprintf('/api/forgot-password/%s', $token->getToken()),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_X-provider' => 'admin'],
             <<<'JSON'
 {
-    "password": "foo",
-    "provider": "admin"
+    "password": "foo"
 }
 JSON
         );
@@ -414,7 +404,6 @@ JSON
     {
         $output = $this->output->fetch();
         Assert::assertJson($output);
-
         $openApi = json_decode($output, true);
         Assert::assertEquals($this->getOpenApiPaths(), $openApi['paths']);
         Assert::assertEquals([
@@ -425,10 +414,6 @@ JSON
                     'properties' => [
                         'password' => [
                             'type' => 'string',
-                        ],
-                        'provider' => [
-                            'type' => 'string',
-                            'required' => false,
                         ],
                     ],
                 ],
@@ -444,9 +429,6 @@ JSON
                                 ['type' => 'string'],
                                 ['type' => 'integer'],
                             ],
-                        ],
-                        'provider' => [
-                            'type' => 'string',
                         ],
                     ],
                 ],
@@ -492,6 +474,16 @@ JSON
                         ],
                     ],
                     'summary' => 'Generates a token and send email',
+                    'parameters' => [
+                        [
+                            'name' => 'X-provider',
+                            'in' => 'header',
+                            'required' => false,
+                            'schema' => [
+                                'type' => 'string',
+                            ],
+                        ],
+                    ],
                     'requestBody' => [
                         'description' => 'Request a new password',
                         'content' => [
@@ -570,6 +562,14 @@ JSON
                                 'type' => 'string',
                             ],
                         ],
+                        [
+                            'name' => 'X-provider',
+                            'in' => 'header',
+                            'required' => false,
+                            'schema' => [
+                                'type' => 'string',
+                            ],
+                        ],
                     ],
                     'requestBody' => [
                         'description' => 'Reset password',
@@ -590,7 +590,6 @@ JSON
         // BC api-platform/core:^2.7
         if (class_exists(ApiPlatform\Core\Bridge\Symfony\Bundle\ApiPlatformBundle::class)) {
             $paths['/api/forgot-password/']['post']['description'] = '';
-            $paths['/api/forgot-password/']['post']['parameters'] = [];
             $paths['/api/forgot-password/']['post']['deprecated'] = false;
             $paths['/api/forgot-password/{tokenValue}']['get']['description'] = '';
             $paths['/api/forgot-password/{tokenValue}']['get']['deprecated'] = false;

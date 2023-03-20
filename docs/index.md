@@ -45,20 +45,10 @@ It provides the following routes:
 
 **For versions >= 1.5.0**   
 You can manage multi providers
-- `POST /forgot-password/`: add in payload to choose specific provider, for default provider no need to add it
-```json
-  {
-    "provider" : "name" 
-  } 
-```
-- `GET /forgot-password/{tokenValue}`: choose specific provider with header parameter `X-provider => {provider}`
-- `POST /forgot-password/{tokenValue}`:
-  add in payload to choose specific provider, for default provider no need to add it
-```json
-  {
-    "provider" : "name" 
-  } 
-```
+If you want to choose a specific provider, you should set header parameter `X-provider => {provider}` for these endpoint.
+- `POST /forgot-password/`
+- `GET /forgot-password/{tokenValue}`
+- `POST /forgot-password/{tokenValue}`
 ### Create your entity
 
 This bundle provides an abstract _mapped superclass_, you'll have to create your own `PasswordToken` entity for your
@@ -301,20 +291,19 @@ This bundle provides 3 events allowing you to build your own business:
 
 **For version >= 1.5.0 :**
 
-- `coop_tilleuls_forgot_password.create_token`: Optional provider parameter can be added to payload
+If you want to choose a specific provider, you should set header parameter `X-provider => {provider}` for these events.
+- `coop_tilleuls_forgot_password.create_token`: 
   password (`POST /forgot-password/`)
 ```
 {
    "email_field": "email/username",  #example in configuration "email"
-   "provider": "customer" #optional
 }
 ```
-- `coop_tilleuls_forgot_password.update_password`: Optional provider parameter can be added to payload
+- `coop_tilleuls_forgot_password.update_password`: 
   password (`POST /forgot-password/{tokenValue}`)
 ```
 {
    "password_field": "encryptedPasswrod",  #example in configuration "email"
-   "provider": "customer" #optional
 }
 ```
 

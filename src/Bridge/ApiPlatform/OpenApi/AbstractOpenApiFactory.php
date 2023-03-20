@@ -63,10 +63,6 @@ abstract class AbstractOpenApiFactory
                 $this->passwordField => [
                     'type' => 'string',
                 ],
-                'provider' => [
-                    'type' => 'string',
-                    'required' => false,
-                ],
             ],
         ]);
 
@@ -83,9 +79,6 @@ abstract class AbstractOpenApiFactory
                         ['type' => 'string'],
                         ['type' => 'integer'],
                     ],
-                ],
-                'provider' => [
-                    'type' => 'string',
                 ],
             ],
         ]);
@@ -105,6 +98,16 @@ abstract class AbstractOpenApiFactory
                     ],
                 ])
                 ->withSummary('Generates a token and send email')
+                ->withParameters([
+                    [
+                        'name' => 'X-provider',
+                        'in' => 'header',
+                        'required' => false,
+                        'schema' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                ])
                 ->withRequestBody((class_exists(RequestBody::class) ? new RequestBody() : new LegacyRequestBody())
                     ->withDescription('Request a new password')
                     ->withRequired(true)
@@ -187,6 +190,14 @@ abstract class AbstractOpenApiFactory
                         'name' => 'tokenValue',
                         'in' => 'path',
                         'required' => true,
+                        'schema' => [
+                            'type' => 'string',
+                        ],
+                    ],
+                    [
+                        'name' => 'X-provider',
+                        'in' => 'header',
+                        'required' => false,
                         'schema' => [
                             'type' => 'string',
                         ],
