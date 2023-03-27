@@ -143,7 +143,7 @@ final class RequestEventListenerTest extends TestCase
 
     public function testDecodeRequestUnauthorizedException(): void
     {
-        $this->headerBagMock->get('X-provider')->shouldBeCalledOnce()->willReturn(null);
+        $this->headerBagMock->get('FP-provider')->shouldBeCalledOnce()->willReturn(null);
         $this->providerFactoryMock->get(null)->shouldBeCalledOnce()->willReturn($this->providers['customer']);
         $this->expectException(UnauthorizedFieldException::class);
         $this->expectExceptionMessage('The parameter "name" is not authorized in your configuration.');
@@ -164,7 +164,7 @@ final class RequestEventListenerTest extends TestCase
 
     public function testDecodeRequest(): void
     {
-        $this->headerBagMock->get('X-provider')->shouldBeCalledOnce()->willReturn(null);
+        $this->headerBagMock->get('FP-provider')->shouldBeCalledOnce()->willReturn(null);
         $this->providerFactoryMock->get(null)->shouldBeCalledOnce()->willReturn($this->providers['customer']);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
@@ -197,7 +197,7 @@ final class RequestEventListenerTest extends TestCase
     {
         $this->expectException(NotFoundHttpException::class);
 
-        $this->headerBagMock->get('X-provider')->shouldBeCalledOnce()->willReturn('admin');
+        $this->headerBagMock->get('FP-provider')->shouldBeCalledOnce()->willReturn('admin');
 
         $this->providerFactoryMock->get('admin')->shouldBeCalledOnce()->willReturn($this->providers['admin']);
 
@@ -220,7 +220,7 @@ final class RequestEventListenerTest extends TestCase
 
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
 
-        $this->headerBagMock->get('X-provider')->shouldBeCalledOnce()->willReturn('admin');
+        $this->headerBagMock->get('FP-provider')->shouldBeCalledOnce()->willReturn('admin');
         $this->providerFactoryMock->get('admin')->shouldBeCalledOnce()->willReturn($this->providers['admin']);
 
         $this->parameterBagMock->get('_route')->willReturn('coop_tilleuls_forgot_password.update')->shouldBeCalledOnce();
@@ -240,7 +240,7 @@ final class RequestEventListenerTest extends TestCase
     public function testGetTokenFromRequest(): void
     {
         $tokenMock = $this->prophesize(AbstractPasswordToken::class);
-        $this->headerBagMock->get('X-provider')->shouldBeCalledOnce()->willReturn(null);
+        $this->headerBagMock->get('FP-provider')->shouldBeCalledOnce()->willReturn(null);
 
         $this->providerFactoryMock->get(null)->shouldBeCalledOnce()->willReturn($this->providers['customer']);
 

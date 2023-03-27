@@ -100,7 +100,7 @@ abstract class AbstractOpenApiFactory
                 ->withSummary('Generates a token and send email')
                 ->withParameters([
                     [
-                        'name' => 'X-provider',
+                        'name' => 'FP-provider',
                         'in' => 'header',
                         'required' => false,
                         'schema' => [
@@ -155,7 +155,7 @@ abstract class AbstractOpenApiFactory
                         ],
                     ],
                     [
-                        'name' => 'X-provider',
+                        'name' => 'FP-provider',
                         'in' => 'header',
                         'required' => false,
                         'schema' => [
@@ -195,7 +195,7 @@ abstract class AbstractOpenApiFactory
                         ],
                     ],
                     [
-                        'name' => 'X-provider',
+                        'name' => 'FP-provider',
                         'in' => 'header',
                         'required' => false,
                         'schema' => [

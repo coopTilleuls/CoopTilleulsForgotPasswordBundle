@@ -104,7 +104,7 @@ final class DocumentationNormalizer implements NormalizerInterface
                     ],
                 ],
                 [
-                    'name' => 'X-provider',
+                    'name' => 'FP-provider',
                     'in' => 'headers',
                     'required' => false,
                     'schema' => [

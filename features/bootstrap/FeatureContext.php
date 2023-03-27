@@ -113,7 +113,7 @@ final class FeatureContext implements Context
     {
         $this->createUser();
         $this->createAdmin();
-        $headers = $provider ? ['HTTP_X-provider' => $provider] : [];
+        $headers = $provider ? ['HTTP_FP-provider' => $provider] : [];
 
         $this->client->enableProfiler();
         $this->client->request(
@@ -121,7 +121,7 @@ final class FeatureContext implements Context
             '/api/forgot-password/',
             [],
             [],
-            array_merge(['CONTENT_TYPE' => 'application/ld-json'], $headers),
+            array_merge(['CONTENT_TYPE' => 'application/json'], $headers),
             sprintf(<<<'JSON'
 {
   "%s": "%s"
@@ -302,7 +302,7 @@ JSON
             sprintf('/api/forgot-password/%s', $token->getToken()),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_X-provider' => 'wrong'],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_FP-provider' => 'wrong'],
             <<<'JSON'
 {
     "adminPassword": "foo"
@@ -323,7 +323,7 @@ JSON
             sprintf('/api/forgot-password/%s', $token->getToken()),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json', 'HTTP_X-provider' => 'admin'],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_FP-provider' => 'admin'],
             <<<'JSON'
 {
     "password": "foo"
@@ -476,7 +476,7 @@ JSON
                     'summary' => 'Generates a token and send email',
                     'parameters' => [
                         [
-                            'name' => 'X-provider',
+                            'name' => 'FP-provider',
                             'in' => 'header',
                             'required' => false,
                             'schema' => [
@@ -529,7 +529,7 @@ JSON
                             ],
                         ],
                         [
-                            'name' => 'X-provider',
+                            'name' => 'FP-provider',
                             'in' => 'header',
                             'required' => false,
                             'schema' => [
@@ -563,7 +563,7 @@ JSON
                             ],
                         ],
                         [
-                            'name' => 'X-provider',
+                            'name' => 'FP-provider',
                             'in' => 'header',
                             'required' => false,
                             'schema' => [

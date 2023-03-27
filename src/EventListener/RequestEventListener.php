@@ -67,7 +67,7 @@ final class RequestEventListener
             throw new MissingFieldHttpException($fieldName);
         }
 
-        $provider = $this->providerFactory->get($request->headers->get('X-provider') ?: null);
+        $provider = $this->providerFactory->get($request->headers->get('FP-provider'));
 
         if ('coop_tilleuls_forgot_password.reset' === $routeName) {
             $request->attributes->set('provider', $provider);
@@ -106,7 +106,7 @@ final class RequestEventListener
             return;
         }
 
-        $provider = $this->providerFactory->get($request->headers->get('X-provider') ?: null);
+        $provider = $this->providerFactory->get($request->headers->get('FP-provider') ?: null);
 
         $token = $this->passwordTokenManager->findOneByToken($request->attributes->get('tokenValue'), $provider->getPasswordTokenClass());
 
