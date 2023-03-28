@@ -277,9 +277,6 @@ final class DocumentationNormalizerTest extends TestCase
                             'email' => [
                                 'type' => 'string',
                             ],
-                            'provider' => [
-                                'type' => 'string',
-                            ],
                         ],
                     ],
                     'ForgotPassword:validate' => [

@@ -15,7 +15,7 @@ namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
-use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use RandomLib\Factory;
 use SecurityLib\Strength;
@@ -25,11 +25,11 @@ use SecurityLib\Strength;
  */
 class PasswordTokenManager
 {
-    private $providerFactory;
+    private $providerChain;
 
-    public function __construct(ProviderFactoryInterface $providerFactory)
+    public function __construct(ProviderChainInterface $providerChain)
     {
-        $this->providerFactory = $providerFactory;
+        $this->providerChain = $providerChain;
     }
 
     /**
@@ -40,7 +40,7 @@ class PasswordTokenManager
         /* @var Provider $provider */
         if (!$provider) {
             trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
-            $provider = $this->providerFactory->get();
+            $provider = $this->providerChain->get();
         }
 
         if (!$expiresAt) {
@@ -81,7 +81,7 @@ class PasswordTokenManager
         /* @var null|Provider $provider */
         if (!$provider) {
             trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
-            $provider = $this->providerFactory->get();
+            $provider = $this->providerChain->get();
         }
 
         return $provider->getManager()->findOneBy($provider->getPasswordTokenClass(), ['token' => $token]);
@@ -95,7 +95,7 @@ class PasswordTokenManager
         /* @var null|Provider $provider */
         if (!$provider) {
             trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
-            $provider = $this->providerFactory->get();
+            $provider = $this->providerChain->get();
         }
 
         return $provider->getManager()->findOneBy($provider->getPasswordTokenClass(), [$provider->getPasswordTokenUserField() => $user]);

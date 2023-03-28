@@ -22,7 +22,7 @@ use CoopTilleuls\ForgotPasswordBundle\Event\UserNotFoundEvent;
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
-use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
@@ -48,7 +48,7 @@ final class ForgotPasswordManagerTest extends TestCase
     private $userMock;
     private $tokenMock;
     private $countableMock;
-    private $providerFactoryMock;
+    private $providerChainMock;
     private $providerMock;
 
     protected function setUp(): void
@@ -59,19 +59,19 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->userMock = $this->prophesize(UserInterface::class);
         $this->tokenMock = $this->prophesize(AbstractPasswordToken::class);
         $this->countableMock = $this->prophesize(\Countable::class);
-        $this->providerFactoryMock = $this->prophesize(ProviderFactoryInterface::class);
+        $this->providerChainMock = $this->prophesize(ProviderChainInterface::class);
         $this->providerMock = $this->prophesize(ProviderInterface::class);
 
         $this->manager = new ForgotPasswordManager(
             $this->passwordManagerMock->reveal(),
             $this->eventDispatcherMock->reveal(),
-            $this->providerFactoryMock->reveal()
+            $this->providerChainMock->reveal()
         );
     }
 
     public function testResetPasswordNotUser(): void
     {
-        $this->providerFactoryMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
+        $this->providerChainMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
         $this->providerMock->getManager()->willReturn($this->managerMock)->shouldBeCalledOnce();
         $this->providerMock->getUserClass()->willReturn(User::class)->shouldBeCalledOnce();
         $this->managerMock->findOneBy(User::class, ['email' => 'foo@example.com'])->shouldBeCalledOnce();
@@ -92,7 +92,7 @@ final class ForgotPasswordManagerTest extends TestCase
 
     public function testResetPasswordWithNoPreviousToken(): void
     {
-        $this->providerFactoryMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
+        $this->providerChainMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
         $this->providerMock->getManager()->willReturn($this->managerMock)->shouldBeCalledOnce();
         $this->providerMock->getUserClass()->willReturn(User::class)->shouldBeCalledOnce();
         $this->providerMock->getPasswordTokenExpiredIn()->willReturn('+1 day')->shouldBeCalledOnce();
@@ -115,7 +115,7 @@ final class ForgotPasswordManagerTest extends TestCase
 
     public function testResetPasswordWithExpiredPreviousToken(): void
     {
-        $this->providerFactoryMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
+        $this->providerChainMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
         $this->providerMock->getManager()->willReturn($this->managerMock)->shouldBeCalledOnce();
         $this->providerMock->getUserClass()->willReturn(User::class)->shouldBeCalledOnce();
         $this->providerMock->getPasswordTokenExpiredIn()->willReturn('+1 day')->shouldBeCalledOnce();
@@ -142,11 +142,11 @@ final class ForgotPasswordManagerTest extends TestCase
      */
     public function testResetPasswordWithUnexpiredTokenHttp(): void
     {
-        $this->providerFactoryMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
+        $this->providerChainMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
         $this->providerMock->getManager()->willReturn($this->managerMock)->shouldBeCalledOnce();
         $this->providerMock->getUserClass()->willReturn(User::class)->shouldBeCalledOnce();
         $this->tokenMock->isExpired()->willReturn(false)->shouldBeCalledOnce();
-        $this->providerFactoryMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
+        $this->providerChainMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
         $this->managerMock->findOneBy(User::class, ['email' => 'foo@example.com'])->willReturn($this->userMock->reveal())->shouldBeCalledOnce();
         $this->passwordManagerMock->findOneByUser($this->userMock->reveal(), $this->providerMock)->willReturn($this->tokenMock->reveal())->shouldBeCalledOnce();
 
@@ -165,7 +165,7 @@ final class ForgotPasswordManagerTest extends TestCase
 
     public function testUpdatePassword(): void
     {
-        $this->providerFactoryMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
+        $this->providerChainMock->get()->willReturn($this->providerMock)->shouldBeCalledOnce();
         $this->providerMock->getManager()->willReturn($this->managerMock)->shouldBeCalledOnce();
 
         if ($this->eventDispatcherMock->reveal() instanceof ContractsEventDispatcherInterface) {

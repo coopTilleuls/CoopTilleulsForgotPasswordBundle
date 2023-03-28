@@ -19,7 +19,7 @@ use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\UserNotFoundEvent;
 use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
-use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
@@ -31,16 +31,16 @@ class ForgotPasswordManager
 {
     private $passwordTokenManager;
     private $dispatcher;
-    private $providerFactory;
+    private $providerChain;
 
     public function __construct(
         PasswordTokenManager $passwordTokenManager,
         EventDispatcherInterface $dispatcher,
-        ProviderFactoryInterface $providerFactory
+        ProviderChainInterface $providerChain
     ) {
         $this->passwordTokenManager = $passwordTokenManager;
         $this->dispatcher = $dispatcher;
-        $this->providerFactory = $providerFactory;
+        $this->providerChain = $providerChain;
     }
 
     public function resetPassword($propertyName, $value, ?ProviderInterface $provider = null): void
@@ -48,7 +48,7 @@ class ForgotPasswordManager
         /* @var null|Provider $provider */
         if (!$provider) {
             trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
-            $provider = $this->providerFactory->get();
+            $provider = $this->providerChain->get();
         }
 
         $context = [$propertyName => $value];
@@ -93,7 +93,7 @@ class ForgotPasswordManager
         /* @var null|Provider $provider */
         if (!$provider) {
             trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
-            $provider = $this->providerFactory->get();
+            $provider = $this->providerChain->get();
         }
 
         // Update user password

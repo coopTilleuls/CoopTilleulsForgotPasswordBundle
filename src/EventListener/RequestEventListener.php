@@ -18,7 +18,7 @@ use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\NoParameterException;
 use CoopTilleuls\ForgotPasswordBundle\Exception\UnauthorizedFieldException;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
-use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -30,14 +30,14 @@ final class RequestEventListener
     use MainRequestTrait;
 
     private $passwordTokenManager;
-    private ProviderFactoryInterface $providerFactory;
+    private ProviderChainInterface $providerChain;
 
     public function __construct(
         PasswordTokenManager $passwordTokenManager,
-        ProviderFactoryInterface $providerFactory
+        ProviderChainInterface $providerChain
     ) {
         $this->passwordTokenManager = $passwordTokenManager;
-        $this->providerFactory = $providerFactory;
+        $this->providerChain = $providerChain;
     }
 
     public function decodeRequest(KernelEvent $event): void
@@ -67,7 +67,7 @@ final class RequestEventListener
             throw new MissingFieldHttpException($fieldName);
         }
 
-        $provider = $this->providerFactory->get($request->headers->get('FP-provider'));
+        $provider = $this->providerChain->get($request->headers->get('FP-provider'));
         $request->attributes->set('provider', $provider);
 
         if ('coop_tilleuls_forgot_password.reset' === $routeName) {
@@ -103,7 +103,7 @@ final class RequestEventListener
             return;
         }
 
-        $provider = $this->providerFactory->get($request->headers->get('FP-provider'));
+        $provider = $this->providerChain->get($request->headers->get('FP-provider'));
         $token = $this->passwordTokenManager->findOneByToken($request->attributes->get('tokenValue'), $provider);
 
         if (null === $token || $token->isExpired()) {

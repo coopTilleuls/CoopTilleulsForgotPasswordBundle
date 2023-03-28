@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace CoopTilleuls\ForgotPasswordBundle\Provider;
 
-interface ProviderFactoryInterface
+interface ProviderChainInterface
 {
     public function get(?string $name = null): ProviderInterface;
 }

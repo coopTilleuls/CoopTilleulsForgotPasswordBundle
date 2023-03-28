@@ -25,11 +25,11 @@
         <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager" public="true">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <argument type="service" id="event_dispatcher" />
-            <argument type="service" id="coop_tilleuls_forgot_password.provider.provider_factory"/>
+            <argument type="service" id="coop_tilleuls_forgot_password.provider_chain"/>
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager" public="true">
-            <argument type="service" id="coop_tilleuls_forgot_password.provider.provider_factory"/>
+            <argument type="service" id="coop_tilleuls_forgot_password.provider_chain"/>
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.doctrine" class="CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\DoctrineManager" public="false">
@@ -38,7 +38,7 @@
 
         <service id="coop_tilleuls_forgot_password.event_listener.request" class="CoopTilleuls\ForgotPasswordBundle\EventListener\RequestEventListener">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
-            <argument type="service" id="coop_tilleuls_forgot_password.provider.provider_factory"/>
+            <argument type="service" id="coop_tilleuls_forgot_password.provider_chain"/>
             <tag name="kernel.event_listener" event="kernel.request" method="decodeRequest" />
             <tag name="kernel.event_listener" event="kernel.request" method="getTokenFromRequest" />
         </service>
@@ -51,7 +51,7 @@
             <tag name="routing.loader"/>
         </service>
 
-        <service id="coop_tilleuls_forgot_password.provider.provider_factory" class="CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactory" public="false">
+        <service id="coop_tilleuls_forgot_password.provider_chain" class="CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChain" public="false">
             <argument type="tagged_iterator" tag="coop_tilleuls_forgot_password.provider" index-by="key"/>
         </service>
     </services>

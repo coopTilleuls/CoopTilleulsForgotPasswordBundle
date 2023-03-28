@@ -15,7 +15,7 @@ namespace CoopTilleuls\ForgotPasswordBundle\Provider;
 
 use CoopTilleuls\ForgotPasswordBundle\Exception\UndefinedProviderException;
 
-final class ProviderFactory implements ProviderFactoryInterface
+final class ProviderChain implements ProviderChainInterface
 {
     /**
      * @var array<string, ProviderInterface>
