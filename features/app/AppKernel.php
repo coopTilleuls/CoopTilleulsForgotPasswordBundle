@@ -107,6 +107,7 @@ final class AppKernel extends Kernel
                 new Reference('test.client'),
                 new Reference('doctrine'),
                 new Reference('coop_tilleuls_forgot_password.manager.password_token'),
+                new Reference('coop_tilleuls_forgot_password.provider.provider_factory'),
                 new Reference('kernel'),
             ])->public();
         } else {

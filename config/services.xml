@@ -25,12 +25,10 @@
         <service id="coop_tilleuls_forgot_password.manager.forgot_password" class="CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager" public="true">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />
             <argument type="service" id="event_dispatcher" />
-            <argument type="service" id="coop_tilleuls_forgot_password.manager" />
             <argument type="service" id="coop_tilleuls_forgot_password.provider.provider_factory"/>
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager" public="true">
-            <argument type="service" id="coop_tilleuls_forgot_password.manager" />
             <argument type="service" id="coop_tilleuls_forgot_password.provider.provider_factory"/>
         </service>
 

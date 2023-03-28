@@ -15,6 +15,7 @@ namespace CoopTilleuls\ForgotPasswordBundle\Controller;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -34,9 +35,9 @@ final class UpdatePassword
      *
      * @return Response
      */
-    public function __invoke(AbstractPasswordToken $token, $password)
+    public function __invoke(AbstractPasswordToken $token, $password, ProviderInterface $provider)
     {
-        $this->forgotPasswordManager->updatePassword($token, $password);
+        $this->forgotPasswordManager->updatePassword($token, $password, $provider);
 
         return new Response('', 204);
     }

@@ -68,9 +68,6 @@ final class DocumentationNormalizer implements NormalizerInterface
                 'email' => [
                     'type' => 'string',
                 ],
-                'provider' => [
-                    'type' => 'string',
-                ],
             ],
         ];
 

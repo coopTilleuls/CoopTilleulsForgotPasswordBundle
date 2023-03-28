@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace CoopTilleuls\ForgotPasswordBundle\Provider;
 
+use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
+
 /**
  * Configuration of ForgotPassword for each provider.
  */
@@ -52,6 +54,11 @@ interface ProviderInterface
      * User password property.
      */
     public function getUserPasswordField(): string;
+
+    /**
+     * Manager to handle related objects.
+     */
+    public function getManager(): ManagerInterface;
 
     /**
      * User password/email property authorized.

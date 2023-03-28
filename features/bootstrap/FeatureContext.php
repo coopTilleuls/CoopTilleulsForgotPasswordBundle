@@ -12,12 +12,10 @@
 declare(strict_types=1);
 
 use App\Entity\Admin;
-use App\Entity\PasswordAdminToken;
-use App\Entity\PasswordToken;
 use App\Entity\User;
 use Behat\Behat\Context\Context;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
-use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -62,13 +60,19 @@ final class FeatureContext implements Context
      */
     private $output;
 
-    public function __construct($client, Registry $doctrine, PasswordTokenManager $passwordTokenManager, KernelInterface $kernel)
+    /**
+     * @var ProviderFactoryInterface
+     */
+    private $providerFactory;
+
+    public function __construct($client, Registry $doctrine, PasswordTokenManager $passwordTokenManager, ProviderFactoryInterface $providerFactory, KernelInterface $kernel)
     {
         $this->client = $client;
         $this->doctrine = $doctrine;
         $this->passwordTokenManager = $passwordTokenManager;
         $this->application = new Application($kernel);
         $this->output = new BufferedOutput();
+        $this->providerFactory = $providerFactory;
     }
 
     /**
@@ -295,7 +299,7 @@ JSON
      */
     public function iUpdateMyPasswordUsingWrongProvider(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), self::getProviders()['admin']);
+        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), $this->providerFactory->get('admin'));
 
         $this->client->request(
             'POST',
@@ -316,7 +320,7 @@ JSON
      */
     public function iUpdateMyPasswordUsingAValidProviderButAnInvalidPasswordField(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), self::getProviders()['admin']);
+        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), $this->providerFactory->get('admin'));
 
         $this->client->request(
             'POST',
@@ -613,33 +617,5 @@ JSON
         $this->doctrine->getManager()->flush();
 
         return $admin;
-    }
-
-    private static function getProviders(): array
-    {
-        return [
-            'customer' => new Provider(
-                'customer',
-                PasswordToken::class,
-                '+1 day',
-                'user',
-                User::class,
-                [],
-                'email',
-                'password',
-                ['email', 'password'],
-                true
-            ),
-            'admin' => new Provider(
-                'admin',
-                PasswordAdminToken::class,
-                '+1 hour',
-                'admin',
-                Admin::class,
-                [],
-                'username',
-                'encryptPassword',
-                ['email', 'password'],
-            ), ];
     }
 }

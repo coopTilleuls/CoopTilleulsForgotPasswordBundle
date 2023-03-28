@@ -36,7 +36,7 @@ if (interface_exists(OpenApiFactoryInterface::class)) {
 } else {
     final class OpenApiFactory extends AbstractOpenApiFactory implements LegacyOpenApiFactoryInterface
     {
-        public function __construct(LegacyOpenApiFactoryInterface $decorated, RouterInterface $router, ProviderFactory $providerFactory)
+        public function __construct(LegacyOpenApiFactoryInterface $decorated, RouterInterface $router, ProviderFactoryInterface $providerFactory)
         {
             parent::__construct($decorated, $router, $providerFactory);
         }

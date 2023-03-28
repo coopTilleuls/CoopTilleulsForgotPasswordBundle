@@ -13,8 +13,11 @@ declare(strict_types=1);
 
 namespace CoopTilleuls\ForgotPasswordBundle\Provider;
 
+use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
+
 final class Provider implements ProviderInterface
 {
+    private ManagerInterface $manager;
     private string $passwordTokenClass;
     private string $passwordTokenExpiredIn;
     private string $passwordTokenUserField;
@@ -27,6 +30,7 @@ final class Provider implements ProviderInterface
     private string $name;
 
     public function __construct(
+        ManagerInterface $manager,
         string $name,
         string $passwordTokenClass,
         string $passwordTokenExpiredIn,
@@ -38,6 +42,7 @@ final class Provider implements ProviderInterface
         array $userAuthorizedFields = [],
         bool $isDefault = false
     ) {
+        $this->manager = $manager;
         $this->name = $name;
         $this->passwordTokenClass = $passwordTokenClass;
         $this->passwordTokenExpiredIn = $passwordTokenExpiredIn;
@@ -48,6 +53,11 @@ final class Provider implements ProviderInterface
         $this->userPasswordField = $userPasswordField;
         $this->userAuthorizedFields = $userAuthorizedFields;
         $this->isDefault = $isDefault;
+    }
+
+    public function getManager(): ManagerInterface
+    {
+        return $this->manager;
     }
 
     public function getUserClass(): string

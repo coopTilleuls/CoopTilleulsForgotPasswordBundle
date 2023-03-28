@@ -30,6 +30,9 @@ final class ResetPassword
     }
 
     /**
+     * @param string $propertyName
+     * @param string $value
+     *
      * @return Response
      */
     public function __invoke($propertyName, $value, ProviderInterface $provider)

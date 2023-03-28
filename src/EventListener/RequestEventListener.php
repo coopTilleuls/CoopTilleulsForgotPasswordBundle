@@ -68,12 +68,9 @@ final class RequestEventListener
         }
 
         $provider = $this->providerFactory->get($request->headers->get('FP-provider'));
+        $request->attributes->set('provider', $provider);
 
         if ('coop_tilleuls_forgot_password.reset' === $routeName) {
-            $request->attributes->set('provider', $provider);
-
-            unset($data['provider']);
-
             foreach ($data as $fieldName => $value) {
                 if (\in_array($fieldName, $provider->getUserAuthorizedFields(), true)) {
                     $request->attributes->set('propertyName', $fieldName);
@@ -106,17 +103,14 @@ final class RequestEventListener
             return;
         }
 
-        $provider = $this->providerFactory->get($request->headers->get('FP-provider') ?: null);
-
-        $token = $this->passwordTokenManager->findOneByToken($request->attributes->get('tokenValue'), $provider->getPasswordTokenClass());
+        $provider = $this->providerFactory->get($request->headers->get('FP-provider'));
+        $token = $this->passwordTokenManager->findOneByToken($request->attributes->get('tokenValue'), $provider);
 
         if (null === $token || $token->isExpired()) {
             throw new NotFoundHttpException('Invalid token.');
         }
 
         $request->attributes->set('token', $token);
-        if ('coop_tilleuls_forgot_password.get_token' === $routeName) {
-            $request->attributes->set('provider', $provider);
-        }
+        $request->attributes->set('provider', $provider);
     }
 }

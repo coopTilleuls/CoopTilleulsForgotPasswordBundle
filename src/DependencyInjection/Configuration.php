@@ -65,18 +65,17 @@ final class Configuration implements ConfigurationInterface
             ->then(function ($config) {
                 $config['providers']['default']['default'] = true;
                 $config['providers']['default']['password_token'] = $config['password_token'];
-                unset($config['password_token']);
-
                 $config['providers']['default']['user'] = $config['user'];
-                unset($config['user']);
+                $config['providers']['default']['manager'] = $config['manager'];
+                unset($config['user'], $config['password_token'], $config['manager']);
 
                 return $config;
             })
             ->end()
             ->children()
-                ->scalarNode('manager')->defaultValue('coop_tilleuls_forgot_password.manager.doctrine')->cannotBeEmpty()->info('Manager service.')->end()
                 ->arrayNode('providers')->useAttributeAsKey('name')->prototype('array')
                     ->children()
+                        ->scalarNode('manager')->defaultValue('coop_tilleuls_forgot_password.manager.doctrine')->cannotBeEmpty()->info('Manager service.')->end()
                         ->booleanNode('default')->defaultFalse()->end()
                         ->arrayNode('password_token')
                             ->children()

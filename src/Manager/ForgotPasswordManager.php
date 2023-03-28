@@ -18,7 +18,6 @@ use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\UserNotFoundEvent;
-use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderFactoryInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
@@ -30,7 +29,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEvent
  */
 class ForgotPasswordManager
 {
-    private $manager;
     private $passwordTokenManager;
     private $dispatcher;
     private $providerFactory;
@@ -38,12 +36,10 @@ class ForgotPasswordManager
     public function __construct(
         PasswordTokenManager $passwordTokenManager,
         EventDispatcherInterface $dispatcher,
-        ManagerInterface $manager,
         ProviderFactoryInterface $providerFactory
     ) {
         $this->passwordTokenManager = $passwordTokenManager;
         $this->dispatcher = $dispatcher;
-        $this->manager = $manager;
         $this->providerFactory = $providerFactory;
     }
 
@@ -51,13 +47,13 @@ class ForgotPasswordManager
     {
         /* @var null|Provider $provider */
         if (!$provider) {
-            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "$provider" is recommended since 1.5 and will be mandatory in 2.0.');
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
             $provider = $this->providerFactory->get();
         }
 
         $context = [$propertyName => $value];
 
-        $user = $this->manager->findOneBy($provider->getUserClass(), $context);
+        $user = $provider->getManager()->findOneBy($provider->getUserClass(), $context);
 
         if (null === $user) {
             if ($this->dispatcher instanceof ContractsEventDispatcherInterface) {
@@ -69,7 +65,7 @@ class ForgotPasswordManager
             return;
         }
 
-        $token = $this->passwordTokenManager->findOneByUser($user, $provider->getPasswordTokenClass(), $provider->getPasswordTokenUserField());
+        $token = $this->passwordTokenManager->findOneByUser($user, $provider);
 
         // A token already exists and has not expired
         if (null === $token || $token->isExpired()) {
@@ -87,8 +83,19 @@ class ForgotPasswordManager
         }
     }
 
-    public function updatePassword(AbstractPasswordToken $passwordToken, $password)
+    /**
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function updatePassword(AbstractPasswordToken $passwordToken, $password, ?ProviderInterface $provider = null)
     {
+        /* @var null|Provider $provider */
+        if (!$provider) {
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
+            $provider = $this->providerFactory->get();
+        }
+
         // Update user password
         if ($this->dispatcher instanceof ContractsEventDispatcherInterface) {
             $this->dispatcher->dispatch(new UpdatePasswordEvent($passwordToken, $password));
@@ -97,7 +104,7 @@ class ForgotPasswordManager
         }
 
         // Remove PasswordToken
-        $this->manager->remove($passwordToken);
+        $provider->getManager()->remove($passwordToken);
 
         return true;
     }
