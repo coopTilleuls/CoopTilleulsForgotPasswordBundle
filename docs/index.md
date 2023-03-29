@@ -1,5 +1,7 @@
 # Getting started with CoopTilleulsForgotPasswordBundle
 
+> Tip: have a look at the [Forgot Password OWASP Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html).
+
 ## Installation
 
 Installing this bundle can be done easily through [Composer](https://getcomposer.org/):
@@ -43,12 +45,15 @@ It provides the following routes:
   cf. [Overriding the GET /forgot-password/{tokenValue} response](#overriding-the-get-forgot-passwordtokenvalue-response))
 - `POST /forgot-password/{tokenValue}`: update user password (or custom field configured through `password_field`)
 
-**For versions >= 1.5.0**   
-You can manage multi providers
-If you want to choose a specific provider, you must set header parameter `FP-provider => {provider}` for these endpoint.
+**For versions >= 1.5.0**
+
+You can manage multi providers. If you want to choose a specific provider, you must set header parameter
+`FP-provider => {provider}` for these endpoints:
+
 - `POST /forgot-password/`
 - `GET /forgot-password/{tokenValue}`
 - `POST /forgot-password/{tokenValue}`
+
 ### Create your entity
 
 This bundle provides an abstract _mapped superclass_, you'll have to create your own `PasswordToken` entity for your
@@ -94,9 +99,11 @@ class PasswordToken extends AbstractPasswordToken
     }
 }
 ```
-**For version  >= 1.5.0**   
-If you need to manage forgotten password for many users, you'll have to create a PasswordToken entity for each user.   
-Example :
+
+**For version >= 1.5.0**
+
+If you need to manage forgotten password for many users, you'll have to create a PasswordToken entity for each user:
+
 ```php
 // src/Entity/PasswordToken.php
 namespace App\Entity;
@@ -168,6 +175,7 @@ class PasswordAdminToken extends AbstractPasswordToken
     }
 }
 ```
+
 ### Configure your application
 
 By default, this bundle will look for `email` field on user class to retrieve it, will generate a PasswordToken valid
@@ -189,8 +197,10 @@ coop_tilleuls_forgot_password:
     use_jms_serializer: false             # Switch between symfony's serializer component or JMS Serializer
 ```
 
-**For version >= 1.5.0**   
-If you have one or many user providers, here an example of a configuration with two providers:   
+**For version >= 1.5.0**
+
+If you have one or many user providers, here is an example of a configuration with two providers:   
+
 ```yaml
 # config/packages/coop_tilleuls_forgot_password.yaml
 coop_tilleuls_forgot_password:
