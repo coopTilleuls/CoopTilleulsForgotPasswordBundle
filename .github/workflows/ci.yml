@@ -1,14 +1,21 @@
 name: CI
 
 on:
-  schedule:
-    # Every sunday at 02:00
-    - cron: 0 2 * * 0
-  pull_request:
   push:
     branches:
       - main
       - '[0-9].[0-9]'
+    tags:
+      - '*'
+  pull_request: ~
+  schedule:
+    # Every Sunday at 02:00
+    - cron: 0 2 * * 0
+  workflow_dispatch: ~
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   tests:
@@ -34,14 +41,16 @@ jobs:
           - '^2.7'
           - '^3.0'
         include:
+          # Ensure the bundle is bootable
+          - php: '8.2'
+            symfony: '6.2.*'
+            bootable: true
           # Fix laminas/laminas-code support
           - php: '8.0'
             symfony: '4.4.*'
             laminas: true
           # Waiting for php-cs-fixer to support PHP 8.2
           - php: '8.1'
-            symfony: '6.2.*'
-            bootable: true
             quality: true
         exclude:
           # Symfony 6.1.* requires PHP >= 8.1
