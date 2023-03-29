@@ -10,7 +10,7 @@ Feature: I need to be able to reset my password
 
     Scenario Outline: I cannot reset my password using an invalid provider
         When I reset my password with my <property> "<value>" on provider "<provider>"
-        Then the request should be invalid with message 'This provider wrong is not defined.'
+        Then the request should be invalid with message 'The provider "wrong" is not defined.'
         Examples:
           | property  | value                 | provider |
           | email     | admin@example.com     | wrong    |
@@ -77,7 +77,7 @@ Feature: I need to be able to reset my password
 
     Scenario: I can't update my password with wrong provider
       When I update my password using wrong provider
-      Then the request should be invalid with message 'This provider wrong is not defined.'
+      Then the request should be invalid with message 'The provider "wrong" is not defined.'
 
     Scenario: I can't update my password with a valid provider and wrong password field
       When I update my password using a valid provider but an invalid password field

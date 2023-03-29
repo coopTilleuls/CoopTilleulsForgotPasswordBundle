@@ -16,4 +16,9 @@ namespace CoopTilleuls\ForgotPasswordBundle\Provider;
 interface ProviderChainInterface
 {
     public function get(?string $name = null): ProviderInterface;
+
+    /**
+     * @return array<string, ProviderInterface>
+     */
+    public function all(): iterable;
 }

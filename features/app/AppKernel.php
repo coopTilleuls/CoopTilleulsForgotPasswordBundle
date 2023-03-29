@@ -140,7 +140,7 @@ final class AppKernel extends Kernel
                         'class' => User::class,
                         'email_field' => 'email',
                         'password_field' => 'password',
-                        'authorized_fields' => ['email', 'password'],
+                        'authorized_fields' => ['email'],
                     ],
                 ],
                 'admin' => [
@@ -154,7 +154,7 @@ final class AppKernel extends Kernel
                         'class' => Admin::class,
                         'email_field' => 'username',
                         'password_field' => 'adminPassword',
-                        'authorized_fields' => ['username', 'password'],
+                        'authorized_fields' => ['username', 'email'],
                     ],
                 ],
             ],

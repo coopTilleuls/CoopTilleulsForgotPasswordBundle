@@ -207,18 +207,18 @@ coop_tilleuls_forgot_password:
                 class: 'App\Security\Entity\User'               # User class fully qualified name (required)
                 email_field: 'email'                            # Email property in user class (required)
                 password_field: 'password'                      # Password property in user class (required)
-                authorized_fields: [ 'email','password' ]       # User properties authorized to reset the password (optional, default value)
+                authorized_fields: [ 'email' ]                  # User properties authorized to reset the password (optional, default value)
         admin:
             password_token:
                 class: 'App\Security\Entity\PasswordAdminToken' # Token class fully qualified name (required)
                 expires_in: '4 hours'                           # Token duration (optional, default value)
-                user_field: 'user'                             # User property in token class (optional, default value)
+                user_field: 'user'                              # User property in token class (optional, default value)
                 serialization_groups: [ ]                       # Serialization groups used in GET /forgot-password/{tokenValue} (optional, default value)
             user:
                 class: 'App\Security\Entity\Admin'              # User class fully qualified name (required)
                 email_field: 'username'                         # Email property in user class (required)
-                password_field: 'password'             # Password property in user class (required)
-                authorized_fields: [ 'username', 'password']    # Serialization groups used in GET /forgot-password/{tokenValue} (optional)
+                password_field: 'password'                      # Password property in user class (required)
+                authorized_fields: [ 'email' ]                  # User properties authorized to reset the password (optional, default value)
 ```
 
 Update your security to allow anonymous users to reset their password:

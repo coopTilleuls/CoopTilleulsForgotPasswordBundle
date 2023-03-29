@@ -28,9 +28,7 @@ final class ProviderChain implements ProviderChainInterface
     }
 
     /**
-     * @return ProviderInterface
-     *
-     * This method return a provider by its name, without name the default provider is returned
+     * Returns a provider by its name, without name the default provider is returned.
      */
     public function get(?string $name = null): ProviderInterface
     {
@@ -39,10 +37,20 @@ final class ProviderChain implements ProviderChainInterface
         }
 
         if (!isset($this->providers[$name])) {
-            throw new UndefinedProviderException("This provider $name is not defined.");
+            throw new UndefinedProviderException(sprintf('The provider "%s" is not defined.', $name));
         }
 
         return $this->providers[$name];
+    }
+
+    /**
+     * Returns all providers indexed by name.
+     *
+     * @return array<string, ProviderInterface>
+     */
+    public function all(): iterable
+    {
+        return $this->providers;
     }
 
     private function getDefault(): ProviderInterface

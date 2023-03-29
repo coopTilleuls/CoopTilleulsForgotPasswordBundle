@@ -31,8 +31,6 @@ abstract class AbstractOpenApiFactory
 {
     protected $decorated;
     protected $router;
-    protected $authorizedFields;
-    protected $passwordField;
     protected $providerChain;
 
     /**
@@ -47,40 +45,49 @@ abstract class AbstractOpenApiFactory
 
     public function __invoke(array $context = [])
     {
-        $defaultProvider = $this->providerChain->get();
-        $this->authorizedFields = $defaultProvider->getUserAuthorizedFields();
-        $this->passwordField = $defaultProvider->getUserPasswordField();
-
         $routes = $this->router->getRouteCollection();
         $openApi = ($this->decorated)($context);
         $schemas = $openApi->getComponents()->getSchemas();
         $paths = $openApi->getPaths();
 
-        $schemas['ForgotPassword:reset'] = new \ArrayObject([
-            'type' => 'object',
-            'required' => [$this->passwordField],
-            'properties' => [
-                $this->passwordField => [
-                    'type' => 'string',
-                ],
-            ],
-        ]);
+        $resetProperties = [];
+        $requestProperties = [];
+        foreach ($this->providerChain->all() as $provider) {
+            $userPasswordField = $provider->getUserPasswordField();
+            if (!\array_key_exists($userPasswordField, $resetProperties)) {
+                $resetProperties[$userPasswordField] = [
+                    'type' => 'object',
+                    'required' => [$userPasswordField],
+                    'properties' => [
+                        $userPasswordField => ['type' => 'string'],
+                    ],
+                ];
+            }
+
+            $userAuthorizedFields = $provider->getUserAuthorizedFields();
+            foreach ($userAuthorizedFields as $userAuthorizedField) {
+                if (!\array_key_exists($userAuthorizedField, $requestProperties)) {
+                    $requestProperties[$userAuthorizedField] = [
+                        'type' => 'object',
+                        'required' => [$userAuthorizedField],
+                        'properties' => [
+                            $userAuthorizedField => [
+                                'type' => ['string', 'integer'],
+                            ],
+                        ],
+                    ];
+                }
+            }
+        }
+        $resetSchema = 1 < \count($resetProperties) ? ['oneOf' => array_values($resetProperties)] : array_values($resetProperties)[0];
+        $requestSchema = 1 < \count($requestProperties) ? ['oneOf' => array_values($requestProperties)] : array_values($requestProperties)[0];
+
+        $schemas['ForgotPassword:reset'] = new \ArrayObject($resetSchema);
+
+        $schemas['ForgotPassword:request'] = new \ArrayObject($requestSchema);
 
         $schemas['ForgotPassword:validate'] = new \ArrayObject([
-            'type' => 'object',
-        ]);
-
-        $schemas['ForgotPassword:request'] = new \ArrayObject([
-            'type' => 'object',
-            'required' => [$this->authorizedFields[0]], // get the first authorized field for reference
-            'properties' => [
-                $this->authorizedFields[0] => [
-                    'oneOf' => [
-                        ['type' => 'string'],
-                        ['type' => 'integer'],
-                    ],
-                ],
-            ],
+            'type' => ['object', 'null'],
         ]);
 
         $resetForgotPasswordPath = $routes->get('coop_tilleuls_forgot_password.reset')->getPath();

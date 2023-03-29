@@ -413,25 +413,48 @@ JSON
         Assert::assertEquals([
             'schemas' => [
                 'ForgotPassword:reset' => [
-                    'type' => 'object',
-                    'required' => ['password'],
-                    'properties' => [
-                        'password' => [
-                            'type' => 'string',
+                    'oneOf' => [
+                        [
+                            'type' => 'object',
+                            'required' => ['password'],
+                            'properties' => [
+                                'password' => [
+                                    'type' => 'string',
+                                ],
+                            ],
+                        ],
+                        [
+                            'type' => 'object',
+                            'required' => ['adminPassword'],
+                            'properties' => [
+                                'adminPassword' => [
+                                    'type' => 'string',
+                                ],
+                            ],
                         ],
                     ],
                 ],
                 'ForgotPassword:validate' => [
-                    'type' => 'object',
+                    'type' => ['object', 'null'],
                 ],
                 'ForgotPassword:request' => [
-                    'type' => 'object',
-                    'required' => ['email'],
-                    'properties' => [
-                        'email' => [
-                            'oneOf' => [
-                                ['type' => 'string'],
-                                ['type' => 'integer'],
+                    'oneOf' => [
+                        [
+                            'type' => 'object',
+                            'required' => ['email'],
+                            'properties' => [
+                                'email' => [
+                                    'type' => ['string', 'integer'],
+                                ],
+                            ],
+                        ],
+                        [
+                            'type' => 'object',
+                            'required' => ['username'],
+                            'properties' => [
+                                'username' => [
+                                    'type' => ['string', 'integer'],
+                                ],
                             ],
                         ],
                     ],

@@ -9,6 +9,7 @@
                  class="CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer\DocumentationNormalizer">
             <argument type="service" id="coop_tilleuls_forgot_password.normalizer.documentation.inner"/>
             <argument type="service" id="router"/>
+            <argument type="service" id="coop_tilleuls_forgot_password.provider_chain"/>
         </service>
 
         <service id="coop_tilleuls_forgot_password.openapi.factory" public="false"
