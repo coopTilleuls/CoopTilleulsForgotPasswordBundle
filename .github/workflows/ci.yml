@@ -34,14 +34,16 @@ jobs:
           - '^2.7'
           - '^3.0'
         include:
+          # Ensure the bundle is bootable
+          - php: '8.2'
+            symfony: '6.2.*'
+            bootable: true
           # Fix laminas/laminas-code support
           - php: '8.0'
             symfony: '4.4.*'
             laminas: true
           # Waiting for php-cs-fixer to support PHP 8.2
           - php: '8.1'
-            symfony: '6.2.*'
-            bootable: true
             quality: true
         exclude:
           # Symfony 6.1.* requires PHP >= 8.1
