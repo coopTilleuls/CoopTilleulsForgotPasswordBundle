@@ -1,14 +1,21 @@
 name: CI
 
 on:
-  schedule:
-    # Every sunday at 02:00
-    - cron: 0 2 * * 0
-  pull_request:
   push:
     branches:
       - main
       - '[0-9].[0-9]'
+    tags:
+      - '*'
+  pull_request: ~
+  schedule:
+    # Every Sunday at 02:00
+    - cron: 0 2 * * 0
+  workflow_dispatch: ~
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   tests:
