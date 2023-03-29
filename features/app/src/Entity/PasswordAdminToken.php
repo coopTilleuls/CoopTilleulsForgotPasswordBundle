@@ -18,10 +18,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- *
- * @author Vincent CHALAMON <vincent@les-tilleuls.coop>
  */
-final class PasswordToken extends AbstractPasswordToken
+final class PasswordAdminToken extends AbstractPasswordToken
 {
     /**
      * @var int
@@ -35,13 +33,13 @@ final class PasswordToken extends AbstractPasswordToken
     private $id;
 
     /**
-     * @var User
+     * @var Admin
      *
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity=Admin::class)
      *
      * @ORM\JoinColumn(nullable=false, name="user_id")
      */
-    private $user;
+    private $admin;
 
     /**
      * @return int
@@ -52,18 +50,15 @@ final class PasswordToken extends AbstractPasswordToken
     }
 
     /**
-     * @return User
+     * @return Admin
      */
     public function getUser()
     {
-        return $this->user;
+        return $this->admin;
     }
 
-    /**
-     * @param User $user
-     */
-    public function setUser($user): void
+    public function setUser($admin): void
     {
-        $this->user = $user;
+        $this->admin = $admin;
     }
 }

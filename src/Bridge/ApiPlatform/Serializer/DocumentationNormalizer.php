@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer;
 
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -23,17 +24,51 @@ final class DocumentationNormalizer implements NormalizerInterface
 {
     private $decorated;
     private $router;
+    private $providerChain;
 
-    public function __construct(NormalizerInterface $decorated, RouterInterface $router)
+    public function __construct(NormalizerInterface $decorated, RouterInterface $router, ProviderChainInterface $providerChain)
     {
         $this->decorated = $decorated;
         $this->router = $router;
+        $this->providerChain = $providerChain;
     }
 
     public function normalize($object, $format = null, array $context = []): array
     {
         $routes = $this->router->getRouteCollection();
         $docs = $this->decorated->normalize($object, $format, $context);
+
+        $resetProperties = [];
+        $requestProperties = [];
+        foreach ($this->providerChain->all() as $provider) {
+            $userPasswordField = $provider->getUserPasswordField();
+            if (!\array_key_exists($userPasswordField, $resetProperties)) {
+                $resetProperties[$userPasswordField] = [
+                    'type' => 'object',
+                    'required' => [$userPasswordField],
+                    'properties' => [
+                        $userPasswordField => ['type' => 'string'],
+                    ],
+                ];
+            }
+
+            $userAuthorizedFields = $provider->getUserAuthorizedFields();
+            foreach ($userAuthorizedFields as $userAuthorizedField) {
+                if (!\array_key_exists($userAuthorizedField, $requestProperties)) {
+                    $requestProperties[$userAuthorizedField] = [
+                        'type' => 'object',
+                        'required' => [$userAuthorizedField],
+                        'properties' => [
+                            $userAuthorizedField => [
+                                'type' => ['string', 'integer'],
+                            ],
+                        ],
+                    ];
+                }
+            }
+        }
+        $resetSchema = 1 < \count($resetProperties) ? ['oneOf' => array_values($resetProperties)] : array_values($resetProperties)[0];
+        $requestSchema = 1 < \count($requestProperties) ? ['oneOf' => array_values($requestProperties)] : array_values($requestProperties)[0];
 
         // Add POST /forgot-password/ path
         $docs['tags'][] = ['name' => 'Forgot password'];
@@ -60,16 +95,9 @@ final class DocumentationNormalizer implements NormalizerInterface
                 ],
             ],
         ];
-        $docs['components']['schemas']['ForgotPassword:request'] = [
-            'type' => 'object',
-            'description' => '',
-            'required' => ['email'],
-            'properties' => [
-                'email' => [
-                    'type' => 'string',
-                ],
-            ],
-        ];
+        $docs['components']['schemas']['ForgotPassword:request'] = array_merge([
+            'description' => 'New password request object',
+        ], $requestSchema);
 
         // Add GET /forgot-password/{tokenValue} path
         $docs['paths'][$routes->get('coop_tilleuls_forgot_password.get_token')->getPath()]['get'] = [
@@ -100,11 +128,19 @@ final class DocumentationNormalizer implements NormalizerInterface
                         'type' => 'string',
                     ],
                 ],
+                [
+                    'name' => 'FP-provider',
+                    'in' => 'headers',
+                    'required' => false,
+                    'schema' => [
+                        'type' => 'string',
+                    ],
+                ],
             ],
         ];
         $docs['components']['schemas']['ForgotPassword:validate'] = [
-            'type' => 'object',
-            'description' => '',
+            'type' => ['object', 'null'],
+            'description' => 'Authenticated user',
         ];
 
         // Add POST /forgot-password/{tokenValue} path
@@ -144,16 +180,9 @@ final class DocumentationNormalizer implements NormalizerInterface
                 ],
             ],
         ];
-        $docs['components']['schemas']['ForgotPassword:reset'] = [
-            'type' => 'object',
-            'description' => '',
-            'required' => ['password'],
-            'properties' => [
-                'password' => [
-                    'type' => 'string',
-                ],
-            ],
-        ];
+        $docs['components']['schemas']['ForgotPassword:reset'] = array_merge([
+            'description' => 'Reset password object',
+        ], $resetSchema);
 
         return $docs;
     }

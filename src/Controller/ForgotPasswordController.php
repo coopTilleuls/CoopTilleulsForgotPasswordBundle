@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace CoopTilleuls\ForgotPasswordBundle\Controller;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,21 +42,21 @@ final class ForgotPasswordController
      *
      * @return Response
      */
-    public function resetPasswordAction($propertyName, $value)
+    public function resetPasswordAction($propertyName, $value, ProviderInterface $provider)
     {
         $resetPassword = $this->resetPassword;
 
-        return $resetPassword($propertyName, $value);
+        return $resetPassword($propertyName, $value, $provider);
     }
 
     /**
      * @return JsonResponse
      */
-    public function getTokenAction(AbstractPasswordToken $token)
+    public function getTokenAction(AbstractPasswordToken $token, ProviderInterface $provider)
     {
         $getToken = $this->getToken;
 
-        return $getToken($token);
+        return $getToken($token, $provider);
     }
 
     /**
@@ -63,10 +64,10 @@ final class ForgotPasswordController
      *
      * @return Response
      */
-    public function updatePasswordAction(AbstractPasswordToken $token, $password)
+    public function updatePasswordAction(AbstractPasswordToken $token, $password, ProviderInterface $provider)
     {
         $updatePassword = $this->updatePassword;
 
-        return $updatePassword($token, $password);
+        return $updatePassword($token, $password, $provider);
     }
 }

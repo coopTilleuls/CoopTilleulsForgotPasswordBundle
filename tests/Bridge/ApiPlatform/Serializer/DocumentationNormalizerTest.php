@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace CoopTilleuls\ForgotPasswordBundle\Tests\Bridge\ApiPlatform\Serializer;
 
 use CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer\DocumentationNormalizer;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -50,6 +52,16 @@ final class DocumentationNormalizerTest extends TestCase
     private $routeMock;
 
     /**
+     * @var ProviderChainInterface|ObjectProphecy
+     */
+    private $providerChainMock;
+
+    /**
+     * @var ProviderInterface|ObjectProphecy
+     */
+    private $providerMock;
+
+    /**
      * @var DocumentationNormalizer
      */
     private $normalizer;
@@ -60,7 +72,13 @@ final class DocumentationNormalizerTest extends TestCase
         $this->routerMock = $this->prophesize(RouterInterface::class);
         $this->routeCollectionMock = $this->prophesize(RouteCollection::class);
         $this->routeMock = $this->prophesize(Route::class);
-        $this->normalizer = new DocumentationNormalizer($this->normalizerMock->reveal(), $this->routerMock->reveal());
+        $this->providerChainMock = $this->prophesize(ProviderChainInterface::class);
+        $this->providerMock = $this->prophesize(ProviderInterface::class);
+        $this->normalizer = new DocumentationNormalizer(
+            $this->normalizerMock->reveal(),
+            $this->routerMock->reveal(),
+            $this->providerChainMock->reveal()
+        );
     }
 
     public function testItSupportsDecoratedSupport(): void
@@ -76,6 +94,13 @@ final class DocumentationNormalizerTest extends TestCase
         $this->routeCollectionMock->get('coop_tilleuls_forgot_password.get_token')->willReturn($this->routeMock)->shouldBeCalledOnce();
         $this->routeCollectionMock->get('coop_tilleuls_forgot_password.update')->willReturn($this->routeMock)->shouldBeCalledOnce();
         $this->routeMock->getPath()->willReturn('/api/forgot-password/', '/api/forgot-password/{tokenValue}', '/api/forgot-password/{tokenValue}')->shouldBeCalledTimes(3);
+
+        $this->providerChainMock->all()->willReturn([
+            'user' => $this->providerMock->reveal(),
+            'admin' => $this->providerMock->reveal(),
+        ])->shouldBeCalledOnce();
+        $this->providerMock->getUserPasswordField()->willReturn('password', 'password')->shouldBeCalledTimes(2);
+        $this->providerMock->getUserAuthorizedFields()->willReturn(['email'], ['username', 'email'])->shouldBeCalledTimes(2);
 
         $this->normalizerMock->normalize(new \stdClass(), 'bar', [])->willReturn([
             'tags' => [['name' => 'Login']],
@@ -110,7 +135,7 @@ final class DocumentationNormalizerTest extends TestCase
                 'schemas' => [
                     'User:login' => [
                         'type' => 'object',
-                        'description' => '',
+                        'description' => 'User login object',
                         'required' => ['username', 'password'],
                         'properties' => [
                             'username' => [
@@ -206,6 +231,14 @@ final class DocumentationNormalizerTest extends TestCase
                                     'type' => 'string',
                                 ],
                             ],
+                            [
+                                'name' => 'FP-provider',
+                                'in' => 'headers',
+                                'required' => false,
+                                'schema' => [
+                                    'type' => 'string',
+                                ],
+                            ],
                         ],
                     ],
                     'post' => [
@@ -250,7 +283,7 @@ final class DocumentationNormalizerTest extends TestCase
                 'schemas' => [
                     'User:login' => [
                         'type' => 'object',
-                        'description' => '',
+                        'description' => 'User login object',
                         'required' => ['username', 'password'],
                         'properties' => [
                             'username' => [
@@ -262,22 +295,35 @@ final class DocumentationNormalizerTest extends TestCase
                         ],
                     ],
                     'ForgotPassword:request' => [
-                        'type' => 'object',
-                        'description' => '',
-                        'required' => ['email'],
-                        'properties' => [
-                            'email' => [
-                                'type' => 'string',
+                        'description' => 'New password request object',
+                        'oneOf' => [
+                            [
+                                'type' => 'object',
+                                'required' => ['email'],
+                                'properties' => [
+                                    'email' => [
+                                        'type' => ['string', 'integer'],
+                                    ],
+                                ],
+                            ],
+                            [
+                                'type' => 'object',
+                                'required' => ['username'],
+                                'properties' => [
+                                    'username' => [
+                                        'type' => ['string', 'integer'],
+                                    ],
+                                ],
                             ],
                         ],
                     ],
                     'ForgotPassword:validate' => [
-                        'type' => 'object',
-                        'description' => '',
+                        'type' => ['object', 'null'],
+                        'description' => 'Authenticated user',
                     ],
                     'ForgotPassword:reset' => [
                         'type' => 'object',
-                        'description' => '',
+                        'description' => 'Reset password object',
                         'required' => ['password'],
                         'properties' => [
                             'password' => [

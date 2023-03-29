@@ -9,6 +9,7 @@
                  class="CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer\DocumentationNormalizer">
             <argument type="service" id="coop_tilleuls_forgot_password.normalizer.documentation.inner"/>
             <argument type="service" id="router"/>
+            <argument type="service" id="coop_tilleuls_forgot_password.provider_chain"/>
         </service>
 
         <service id="coop_tilleuls_forgot_password.openapi.factory" public="false"
@@ -16,8 +17,7 @@
                  class="CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\OpenApi\OpenApiFactory">
             <argument type="service" id="coop_tilleuls_forgot_password.openapi.factory.inner"/>
             <argument type="service" id="router"/>
-            <argument>%coop_tilleuls_forgot_password.user_authorized_fields%</argument>
-            <argument>%coop_tilleuls_forgot_password.user_password_field%</argument>
+            <argument type="service" id="coop_tilleuls_forgot_password.provider_chain"/>
         </service>
     </services>
 </container>

@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace CoopTilleuls\ForgotPasswordBundle\Manager;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
-use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
+use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use RandomLib\Factory;
 use SecurityLib\Strength;
 
@@ -23,35 +25,33 @@ use SecurityLib\Strength;
  */
 class PasswordTokenManager
 {
-    private $manager;
-    private $passwordTokenClass;
-    private $defaultExpiresIn;
-    private $passwordTokenUserField;
+    private $providerChain;
 
-    /**
-     * @param string $passwordTokenClass
-     * @param string $defaultExpiresIn
-     * @param string $passwordTokenUserField
-     */
-    public function __construct(
-        ManagerInterface $manager,
-        $passwordTokenClass,
-        $defaultExpiresIn,
-        $passwordTokenUserField
-    ) {
-        $this->manager = $manager;
-        $this->passwordTokenClass = $passwordTokenClass;
-        $this->defaultExpiresIn = $defaultExpiresIn;
-        $this->passwordTokenUserField = $passwordTokenUserField;
+    public function __construct(ProviderChainInterface $providerChain)
+    {
+        $this->providerChain = $providerChain;
     }
 
     /**
      * @return AbstractPasswordToken
      */
-    public function createPasswordToken($user, \DateTime $expiresAt = null)
+    public function createPasswordToken($user, \DateTime $expiresAt = null, ?ProviderInterface $provider = null)
     {
+        /* @var Provider $provider */
+        if (!$provider) {
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
+            $provider = $this->providerChain->get();
+        }
+
+        if (!$expiresAt) {
+            $expiredAt = new \DateTime($provider->getPasswordTokenExpiredIn());
+            $expiredAt->setTime((int) $expiredAt->format('H'), (int) $expiredAt->format('i'), (int) $expiredAt->format('s'), 0);
+        }
+
+        $tokenClass = $provider->getPasswordTokenClass();
+
         /** @var AbstractPasswordToken $passwordToken */
-        $passwordToken = new $this->passwordTokenClass();
+        $passwordToken = new $tokenClass();
 
         if (version_compare(\PHP_VERSION, '7.0', '>')) {
             $passwordToken->setToken(bin2hex(random_bytes(25)));
@@ -65,9 +65,8 @@ class PasswordTokenManager
         }
 
         $passwordToken->setUser($user);
-        $passwordToken->setExpiresAt($expiresAt ?: new \DateTime($this->defaultExpiresIn));
-
-        $this->manager->persist($passwordToken);
+        $passwordToken->setExpiresAt($expiresAt);
+        $provider->getManager()->persist($passwordToken);
 
         return $passwordToken;
     }
@@ -77,16 +76,28 @@ class PasswordTokenManager
      *
      * @return AbstractPasswordToken
      */
-    public function findOneByToken($token)
+    public function findOneByToken($token, ?ProviderInterface $provider = null)
     {
-        return $this->manager->findOneBy($this->passwordTokenClass, ['token' => $token]);
+        /* @var null|Provider $provider */
+        if (!$provider) {
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
+            $provider = $this->providerChain->get();
+        }
+
+        return $provider->getManager()->findOneBy($provider->getPasswordTokenClass(), ['token' => $token]);
     }
 
     /**
      * @return AbstractPasswordToken
      */
-    public function findOneByUser($user)
+    public function findOneByUser($user, ?ProviderInterface $provider = null)
     {
-        return $this->manager->findOneBy($this->passwordTokenClass, [$this->passwordTokenUserField => $user]);
+        /* @var null|Provider $provider */
+        if (!$provider) {
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
+            $provider = $this->providerChain->get();
+        }
+
+        return $provider->getManager()->findOneBy($provider->getPasswordTokenClass(), [$provider->getPasswordTokenUserField() => $user]);
     }
 }

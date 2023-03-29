@@ -1,5 +1,7 @@
 # Getting started with CoopTilleulsForgotPasswordBundle
 
+> Tip: have a look at the [Forgot Password OWASP Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html).
+
 ## Installation
 
 Installing this bundle can be done easily through [Composer](https://getcomposer.org/):
@@ -42,6 +44,15 @@ It provides the following routes:
 - `GET /forgot-password/{tokenValue}`: validates the token and returns it (
   cf. [Overriding the GET /forgot-password/{tokenValue} response](#overriding-the-get-forgot-passwordtokenvalue-response))
 - `POST /forgot-password/{tokenValue}`: update user password (or custom field configured through `password_field`)
+
+**For versions >= 1.5.0**
+
+You can manage multi providers. If you want to choose a specific provider, you must set header parameter
+`FP-provider => {provider}` for these endpoints:
+
+- `POST /forgot-password/`
+- `GET /forgot-password/{tokenValue}`
+- `POST /forgot-password/{tokenValue}`
 
 ### Create your entity
 
@@ -89,6 +100,82 @@ class PasswordToken extends AbstractPasswordToken
 }
 ```
 
+**For version >= 1.5.0**
+
+If you need to manage forgotten password for many users, you'll have to create a PasswordToken entity for each user:
+
+```php
+// src/Entity/PasswordToken.php
+namespace App\Entity;
+
+use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+class PasswordToken extends AbstractPasswordToken
+{
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    private ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false, name: 'admin_id')]
+    private $admin;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getUser()
+    {
+        return $this->admin;
+    }
+
+    public function setUser($admin): void
+    {
+        $this->admin = $admin;
+    }
+}
+```
+
+```php
+// src/Entity/PasswordAdminToken.php
+namespace App\Entity;
+
+use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+class PasswordAdminToken extends AbstractPasswordToken
+{
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    private ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Admin::class)]
+    #[ORM\JoinColumn(nullable: false, name: 'user_id')]
+    private $user;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function setUser($user): void
+    {
+        $this->user = $user;
+    }
+}
+```
+
 ### Configure your application
 
 By default, this bundle will look for `email` field on user class to retrieve it, will generate a PasswordToken valid
@@ -108,6 +195,40 @@ coop_tilleuls_forgot_password:
         password_field: 'password'        # Password property in user class (optional, default value)
         authorized_fields: [ 'email' ]    # User properties authorized to reset the password (optional, default value)
     use_jms_serializer: false             # Switch between symfony's serializer component or JMS Serializer
+```
+
+**For version >= 1.5.0**
+
+If you have one or many user providers, here is an example of a configuration with two providers:   
+
+```yaml
+# config/packages/coop_tilleuls_forgot_password.yaml
+coop_tilleuls_forgot_password:
+    use_jms_serializer: false                                   # Switch between symfony's serializer component or JMS Serializer'
+    providers:                                                  # At least one provider 
+        customer:
+            default: true
+            password_token:
+                class: 'App\Security\Entity\PasswordToken'      # Token class fully qualified name (required)
+                expires_in: '1 day'                             # Token duration (optional, default value)
+                user_field: 'user'                              # User property in token class (optional, default value)
+                serialization_groups: [ ]                       # Serialization groups used in GET /forgot-password/{tokenValue} (optional, default value)
+            user:
+                class: 'App\Security\Entity\User'               # User class fully qualified name (required)
+                email_field: 'email'                            # Email property in user class (required)
+                password_field: 'password'                      # Password property in user class (required)
+                authorized_fields: [ 'email' ]                  # User properties authorized to reset the password (optional, default value)
+        admin:
+            password_token:
+                class: 'App\Security\Entity\PasswordAdminToken' # Token class fully qualified name (required)
+                expires_in: '4 hours'                           # Token duration (optional, default value)
+                user_field: 'user'                              # User property in token class (optional, default value)
+                serialization_groups: [ ]                       # Serialization groups used in GET /forgot-password/{tokenValue} (optional, default value)
+            user:
+                class: 'App\Security\Entity\Admin'              # User class fully qualified name (required)
+                email_field: 'username'                         # Email property in user class (required)
+                password_field: 'password'                      # Password property in user class (required)
+                authorized_fields: [ 'email' ]                  # User properties authorized to reset the password (optional, default value)
 ```
 
 Update your security to allow anonymous users to reset their password:
@@ -177,6 +298,24 @@ This bundle provides 3 events allowing you to build your own business:
 - `coop_tilleuls_forgot_password.update_password`: dispatched when a user has reset its
   password (`POST /forgot-password/{tokenValue}`)
 - `coop_tilleuls_forgot_password.user_not_found`: dispatched when a user was not found (`POST /forgot-password/`)
+
+**For version >= 1.5.0 :**
+
+If you want to choose a specific provider, you must set header parameter `FP-provider => {provider}` for these events.
+- `coop_tilleuls_forgot_password.create_token`: 
+  password (`POST /forgot-password/`)
+```
+{
+   "replace_with_your_email_field": "johndoe@example.com",
+}
+```
+- `coop_tilleuls_forgot_password.update_password`: 
+  password (`POST /forgot-password/{tokenValue}`)
+```
+{
+   "replace_with_your_password_field": "NewPassword",
+}
+```
 
 Read full documentation about [usage](usage.md).
 

@@ -11,9 +11,11 @@
 
 declare(strict_types=1);
 
+use App\Entity\Admin;
 use App\Entity\User;
 use Behat\Behat\Context\Context;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -58,13 +60,19 @@ final class FeatureContext implements Context
      */
     private $output;
 
-    public function __construct($client, Registry $doctrine, PasswordTokenManager $passwordTokenManager, KernelInterface $kernel)
+    /**
+     * @var ProviderChainInterface
+     */
+    private $providerChain;
+
+    public function __construct($client, Registry $doctrine, PasswordTokenManager $passwordTokenManager, ProviderChainInterface $providerChain, KernelInterface $kernel)
     {
         $this->client = $client;
         $this->doctrine = $doctrine;
         $this->passwordTokenManager = $passwordTokenManager;
         $this->application = new Application($kernel);
         $this->output = new BufferedOutput();
+        $this->providerChain = $providerChain;
     }
 
     /**
@@ -87,7 +95,7 @@ final class FeatureContext implements Context
      */
     public function iHaveAValidToken(): void
     {
-        $this->passwordTokenManager->createPasswordToken($this->createUser());
+        $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('+1 day'));
     }
 
     /**
@@ -100,14 +108,16 @@ final class FeatureContext implements Context
 
     /**
      * @When I reset my password
+     * @When I reset my password with my :propertyName ":value" on provider ":provider"
      * @When I reset my password with my :propertyName ":value"
      *
-     * @param string $propertyName
-     * @param string $value
+     * @param mixed|null $provider
      */
-    public function IResetMyPassword($propertyName = 'email', $value = 'john.doe@example.com'): void
+    public function IResetMyPassword(string $propertyName = 'email', string $value = 'john.doe@example.com', $provider = null): void
     {
         $this->createUser();
+        $this->createAdmin();
+        $headers = $provider ? ['HTTP_FP-provider' => $provider] : [];
 
         $this->client->enableProfiler();
         $this->client->request(
@@ -115,20 +125,20 @@ final class FeatureContext implements Context
             '/api/forgot-password/',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            array_merge(['CONTENT_TYPE' => 'application/json'], $headers),
             sprintf(<<<'JSON'
 {
-    "%s": "%s"
+  "%s": "%s"
 }
-JSON
-                , $propertyName, $value)
+JSON,
+                $propertyName, $value)
         );
     }
 
     /**
-     * @Then I should receive an email
+     * @Then I should receive an email at ":value"
      */
-    public function iShouldReceiveAnEmail(): void
+    public function iShouldReceiveAnEmail($value = 'john.doe@example.com'): void
     {
         Assert::assertTrue(
             $this->client->getResponse()->isSuccessful(),
@@ -146,7 +156,7 @@ JSON
         Assert::assertInstanceOf(RawMessage::class, $message);
         Assert::assertEquals('Réinitialisation de votre mot de passe', $message->getSubject());
         Assert::assertEquals('no-reply@example.com', $message->getFrom()[0]->getAddress());
-        Assert::assertEquals('john.doe@example.com', $message->getTo()[0]->getAddress());
+        Assert::assertEquals($value, $message->getTo()[0]->getAddress());
         Assert::assertMatchesRegularExpression('/http:\/\/www\.example\.com\/api\/forgot-password\/(.*)/', $message->getHtmlBody());
     }
 
@@ -227,7 +237,7 @@ JSON
      */
     public function iUpdateMyPassword(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('+1 day'));
 
         $this->client->request(
             'POST',
@@ -260,7 +270,7 @@ JSON
      */
     public function iUpdateMyPasswordUsingNoPassword(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('+1 day'));
 
         $this->client->request('POST', sprintf('/api/forgot-password/%s', $token->getToken()));
     }
@@ -276,6 +286,48 @@ JSON
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
+            <<<'JSON'
+{
+    "password": "foo"
+}
+JSON
+        );
+    }
+
+    /**
+     * @When I update my password using wrong provider
+     */
+    public function iUpdateMyPasswordUsingWrongProvider(): void
+    {
+        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), $this->providerChain->get('admin'));
+
+        $this->client->request(
+            'POST',
+            sprintf('/api/forgot-password/%s', $token->getToken()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_FP-provider' => 'wrong'],
+            <<<'JSON'
+{
+    "adminPassword": "foo"
+}
+JSON
+        );
+    }
+
+    /**
+     * @When I update my password using a valid provider but an invalid password field
+     */
+    public function iUpdateMyPasswordUsingAValidProviderButAnInvalidPasswordField(): void
+    {
+        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new \DateTime('+1 day'), $this->providerChain->get('admin'));
+
+        $this->client->request(
+            'POST',
+            sprintf('/api/forgot-password/%s', $token->getToken()),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json', 'HTTP_FP-provider' => 'admin'],
             <<<'JSON'
 {
     "password": "foo"
@@ -310,7 +362,7 @@ JSON
      */
     public function iGetAPasswordToken(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createUser());
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new \DateTime('+1 day'));
         $token->setToken('d7xtQlJVyN61TzWtrY6xy37zOxB66BqMSDXEbXBbo2Mw4Jjt9C');
         $this->doctrine->getManager()->persist($token);
         $this->doctrine->getManager()->flush();
@@ -356,31 +408,53 @@ JSON
     {
         $output = $this->output->fetch();
         Assert::assertJson($output);
-
         $openApi = json_decode($output, true);
         Assert::assertEquals($this->getOpenApiPaths(), $openApi['paths']);
         Assert::assertEquals([
             'schemas' => [
                 'ForgotPassword:reset' => [
-                    'type' => 'object',
-                    'required' => ['password'],
-                    'properties' => [
-                        'password' => [
-                            'type' => 'string',
+                    'oneOf' => [
+                        [
+                            'type' => 'object',
+                            'required' => ['password'],
+                            'properties' => [
+                                'password' => [
+                                    'type' => 'string',
+                                ],
+                            ],
+                        ],
+                        [
+                            'type' => 'object',
+                            'required' => ['adminPassword'],
+                            'properties' => [
+                                'adminPassword' => [
+                                    'type' => 'string',
+                                ],
+                            ],
                         ],
                     ],
                 ],
                 'ForgotPassword:validate' => [
-                    'type' => 'object',
+                    'type' => ['object', 'null'],
                 ],
                 'ForgotPassword:request' => [
-                    'type' => 'object',
-                    'required' => ['email'],
-                    'properties' => [
-                        'email' => [
-                            'oneOf' => [
-                                ['type' => 'string'],
-                                ['type' => 'integer'],
+                    'oneOf' => [
+                        [
+                            'type' => 'object',
+                            'required' => ['email'],
+                            'properties' => [
+                                'email' => [
+                                    'type' => ['string', 'integer'],
+                                ],
+                            ],
+                        ],
+                        [
+                            'type' => 'object',
+                            'required' => ['username'],
+                            'properties' => [
+                                'username' => [
+                                    'type' => ['string', 'integer'],
+                                ],
                             ],
                         ],
                     ],
@@ -427,6 +501,16 @@ JSON
                         ],
                     ],
                     'summary' => 'Generates a token and send email',
+                    'parameters' => [
+                        [
+                            'name' => 'FP-provider',
+                            'in' => 'header',
+                            'required' => false,
+                            'schema' => [
+                                'type' => 'string',
+                            ],
+                        ],
+                    ],
                     'requestBody' => [
                         'description' => 'Request a new password',
                         'content' => [
@@ -471,6 +555,14 @@ JSON
                                 'type' => 'string',
                             ],
                         ],
+                        [
+                            'name' => 'FP-provider',
+                            'in' => 'header',
+                            'required' => false,
+                            'schema' => [
+                                'type' => 'string',
+                            ],
+                        ],
                     ],
                 ],
                 'post' => [
@@ -497,6 +589,14 @@ JSON
                                 'type' => 'string',
                             ],
                         ],
+                        [
+                            'name' => 'FP-provider',
+                            'in' => 'header',
+                            'required' => false,
+                            'schema' => [
+                                'type' => 'string',
+                            ],
+                        ],
                     ],
                     'requestBody' => [
                         'description' => 'Reset password',
@@ -517,7 +617,6 @@ JSON
         // BC api-platform/core:^2.7
         if (class_exists(ApiPlatform\Core\Bridge\Symfony\Bundle\ApiPlatformBundle::class)) {
             $paths['/api/forgot-password/']['post']['description'] = '';
-            $paths['/api/forgot-password/']['post']['parameters'] = [];
             $paths['/api/forgot-password/']['post']['deprecated'] = false;
             $paths['/api/forgot-password/{tokenValue}']['get']['description'] = '';
             $paths['/api/forgot-password/{tokenValue}']['get']['deprecated'] = false;
@@ -526,5 +625,20 @@ JSON
         }
 
         return $paths;
+    }
+
+    /**
+     * @return Admin
+     */
+    private function createAdmin()
+    {
+        $admin = new Admin();
+        $admin->setEmail('admin@example.com');
+        $admin->setUsername('admin@example.com');
+        $admin->setPassword('password');
+        $this->doctrine->getManager()->persist($admin);
+        $this->doctrine->getManager()->flush();
+
+        return $admin;
     }
 }

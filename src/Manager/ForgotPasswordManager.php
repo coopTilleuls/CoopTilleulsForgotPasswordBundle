@@ -18,7 +18,9 @@ use CoopTilleuls\ForgotPasswordBundle\Event\CreateTokenEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\ForgotPasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\UpdatePasswordEvent;
 use CoopTilleuls\ForgotPasswordBundle\Event\UserNotFoundEvent;
-use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
+use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
+use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 
@@ -27,31 +29,32 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEvent
  */
 class ForgotPasswordManager
 {
-    private $manager;
     private $passwordTokenManager;
     private $dispatcher;
-    private $userClass;
+    private $providerChain;
 
-    /**
-     * @param string $userClass
-     */
     public function __construct(
         PasswordTokenManager $passwordTokenManager,
         EventDispatcherInterface $dispatcher,
-        ManagerInterface $manager,
-        $userClass
+        ProviderChainInterface $providerChain
     ) {
         $this->passwordTokenManager = $passwordTokenManager;
         $this->dispatcher = $dispatcher;
-        $this->manager = $manager;
-        $this->userClass = $userClass;
+        $this->providerChain = $providerChain;
     }
 
-    public function resetPassword($propertyName, $value): void
+    public function resetPassword($propertyName, $value, ?ProviderInterface $provider = null): void
     {
+        /* @var null|Provider $provider */
+        if (!$provider) {
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
+            $provider = $this->providerChain->get();
+        }
+
         $context = [$propertyName => $value];
 
-        $user = $this->manager->findOneBy($this->userClass, $context);
+        $user = $provider->getManager()->findOneBy($provider->getUserClass(), $context);
+
         if (null === $user) {
             if ($this->dispatcher instanceof ContractsEventDispatcherInterface) {
                 $this->dispatcher->dispatch(new UserNotFoundEvent($context));
@@ -62,11 +65,14 @@ class ForgotPasswordManager
             return;
         }
 
-        $token = $this->passwordTokenManager->findOneByUser($user);
+        $token = $this->passwordTokenManager->findOneByUser($user, $provider);
 
         // A token already exists and has not expired
         if (null === $token || $token->isExpired()) {
-            $token = $this->passwordTokenManager->createPasswordToken($user);
+            $expiredAt = new \DateTime($provider->getPasswordTokenExpiredIn());
+            $expiredAt->setTime((int) $expiredAt->format('H'), (int) $expiredAt->format('m'), (int) $expiredAt->format('s'), 0);
+
+            $token = $this->passwordTokenManager->createPasswordToken($user, $expiredAt, $provider);
         }
 
         // Generate password token
@@ -82,8 +88,14 @@ class ForgotPasswordManager
      *
      * @return bool
      */
-    public function updatePassword(AbstractPasswordToken $passwordToken, $password)
+    public function updatePassword(AbstractPasswordToken $passwordToken, $password, ?ProviderInterface $provider = null)
     {
+        /* @var null|Provider $provider */
+        if (!$provider) {
+            trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Parameter "%s" in method "%s" is recommended since 1.5 and will be mandatory in 2.0.', '$provider', __METHOD__);
+            $provider = $this->providerChain->get();
+        }
+
         // Update user password
         if ($this->dispatcher instanceof ContractsEventDispatcherInterface) {
             $this->dispatcher->dispatch(new UpdatePasswordEvent($passwordToken, $password));
@@ -92,7 +104,7 @@ class ForgotPasswordManager
         }
 
         // Remove PasswordToken
-        $this->manager->remove($passwordToken);
+        $provider->getManager()->remove($passwordToken);
 
         return true;
     }
