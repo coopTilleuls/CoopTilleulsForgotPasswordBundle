@@ -45,7 +45,7 @@ It provides the following routes:
 
 **For versions >= 1.5.0**   
 You can manage multi providers
-If you want to choose a specific provider, you should set header parameter `FP-provider => {provider}` for these endpoint.
+If you want to choose a specific provider, you must set header parameter `FP-provider => {provider}` for these endpoint.
 - `POST /forgot-password/`
 - `GET /forgot-password/{tokenValue}`
 - `POST /forgot-password/{tokenValue}`
@@ -291,19 +291,19 @@ This bundle provides 3 events allowing you to build your own business:
 
 **For version >= 1.5.0 :**
 
-If you want to choose a specific provider, you should set header parameter `FP-provider => {provider}` for these events.
+If you want to choose a specific provider, you must set header parameter `FP-provider => {provider}` for these events.
 - `coop_tilleuls_forgot_password.create_token`: 
   password (`POST /forgot-password/`)
 ```
 {
-   "email_field": "email/username",  #example in configuration "email"
+   "replace_with_your_email_field": "johndoe@example.com",
 }
 ```
 - `coop_tilleuls_forgot_password.update_password`: 
   password (`POST /forgot-password/{tokenValue}`)
 ```
 {
-   "password_field": "encryptedPasswrod",  #example in configuration "email"
+   "replace_with_your_password_field": "NewPassword",
 }
 ```
 

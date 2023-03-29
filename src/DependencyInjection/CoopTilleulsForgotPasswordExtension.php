@@ -38,7 +38,7 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         if (!$defaultProvider = $this->getDefaultProvider($config)) {
-            throw new InvalidConfigurationException('The child config "default" must be set true under one of providers.');
+            throw new InvalidConfigurationException('Multiple "ForgotPassword" providers have been defined but none of them is set as default. Did you forget to set "default" option?');
         }
 
         // Build parameters
