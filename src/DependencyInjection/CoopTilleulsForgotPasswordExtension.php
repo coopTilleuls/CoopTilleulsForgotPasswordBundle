@@ -68,9 +68,12 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
             $loader->load('api_platform.xml');
         }
 
-        $container
-            ->setAlias('coop_tilleuls_forgot_password.manager', $defaultProvider['manager'])
-            ->setDeprecated('tilleuls/forgot-password-bundle', '1.5', 'Alias "%alias_id%" is deprecated and will be removed without replacement in 2.0.');
+        $alias = $container->setAlias('coop_tilleuls_forgot_password.manager', $defaultProvider['manager']);
+        if (method_exists(Definition::class, 'getDeprecation')) {
+            $alias->setDeprecated('tilleuls/forgot-password-bundle', '1.5', 'Alias "%alias_id%" is deprecated and will be removed without replacement in 2.0.');
+        } else {
+            $alias->setDeprecated(true, 'Alias "%alias_id%" is deprecated and will be removed without replacement in 2.0.');
+        }
 
         // Build normalizer
         $class = true === $config['use_jms_serializer'] ? JMSNormalizer::class : SymfonyNormalizer::class;
