@@ -37,14 +37,14 @@ final class DoctrineManager implements ManagerInterface
 
     public function persist($object): void
     {
-        $manager = $this->registry->getManagerForClass(\get_class($object));
+        $manager = $this->registry->getManagerForClass($object::class);
         $manager->persist($object);
         $manager->flush();
     }
 
     public function remove($object): void
     {
-        $manager = $this->registry->getManagerForClass(\get_class($object));
+        $manager = $this->registry->getManagerForClass($object::class);
         $manager->remove($object);
         $manager->flush();
     }

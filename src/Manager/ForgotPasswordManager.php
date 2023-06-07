@@ -43,7 +43,7 @@ class ForgotPasswordManager
         $this->providerChain = $providerChain;
     }
 
-    public function resetPassword($propertyName, $value, ?ProviderInterface $provider = null): void
+    public function resetPassword($propertyName, $value, ProviderInterface $provider = null): void
     {
         /* @var null|Provider $provider */
         if (!$provider) {
@@ -88,7 +88,7 @@ class ForgotPasswordManager
      *
      * @return bool
      */
-    public function updatePassword(AbstractPasswordToken $passwordToken, $password, ?ProviderInterface $provider = null)
+    public function updatePassword(AbstractPasswordToken $passwordToken, $password, ProviderInterface $provider = null)
     {
         /* @var null|Provider $provider */
         if (!$provider) {
