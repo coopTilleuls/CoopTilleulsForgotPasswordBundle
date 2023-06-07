@@ -30,7 +30,7 @@ final class ProviderChain implements ProviderChainInterface
     /**
      * Returns a provider by its name, without name the default provider is returned.
      */
-    public function get(?string $name = null): ProviderInterface
+    public function get(string $name = null): ProviderInterface
     {
         if (null === $name) {
             return $this->getDefault();

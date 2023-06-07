@@ -92,12 +92,12 @@ final class ExceptionEventListenerTest extends TestCase
         $eventMock->setResponse(
             Argument::that(
                 function ($response) {
-                    return $response instanceof JsonResponse &&
-                    json_encode(
+                    return $response instanceof JsonResponse
+                    && json_encode(
                         ['message' => 'Parameter "foo" is missing.'],
                         15
-                    ) === $response->getContent() &&
-                    400 === $response->getStatusCode();
+                    ) === $response->getContent()
+                    && 400 === $response->getStatusCode();
                 }
             )
         )->shouldBeCalledOnce();

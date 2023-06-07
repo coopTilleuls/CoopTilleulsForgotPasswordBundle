@@ -35,7 +35,7 @@ class PasswordTokenManager
     /**
      * @return AbstractPasswordToken
      */
-    public function createPasswordToken($user, \DateTime $expiresAt = null, ?ProviderInterface $provider = null)
+    public function createPasswordToken($user, \DateTime $expiresAt = null, ProviderInterface $provider = null)
     {
         /* @var Provider $provider */
         if (!$provider) {
@@ -76,7 +76,7 @@ class PasswordTokenManager
      *
      * @return AbstractPasswordToken
      */
-    public function findOneByToken($token, ?ProviderInterface $provider = null)
+    public function findOneByToken($token, ProviderInterface $provider = null)
     {
         /* @var null|Provider $provider */
         if (!$provider) {
@@ -90,7 +90,7 @@ class PasswordTokenManager
     /**
      * @return AbstractPasswordToken
      */
-    public function findOneByUser($user, ?ProviderInterface $provider = null)
+    public function findOneByUser($user, ProviderInterface $provider = null)
     {
         /* @var null|Provider $provider */
         if (!$provider) {
