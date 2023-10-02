@@ -19,43 +19,24 @@ concurrency:
 
 jobs:
   tests:
-    name: Tests PHP ${{ matrix.php }} (Symfony ${{ matrix.symfony }}) (API Platform ${{ matrix.api-platform }})
+    name: Tests PHP ${{ matrix.php }} (Symfony ${{ matrix.symfony }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
         php:
           # Only PHP supported versions: https://www.php.net/supported-versions.php
-          - '8.0'
           - '8.1'
           - '8.2'
         symfony:
           # Only Symfony supported versions: https://symfony.com/releases
-          - '5.4.*'
+          # API Platform 3.* only supports Symfony >= 6.1
           - '6.3.*'
-        api-platform:
-          # Only API Platform supported versions
-          - '^2.6'
-          - '^2.7'
-          - '^3.1'
         include:
           # Ensure the bundle is bootable
           - php: '8.2'
             symfony: '6.3.*'
             bootable: true
             quality: true
-            api-platform: '^3.1'
-        exclude:
-          # Symfony 6 requires PHP >= 8.1
-          - symfony: '6.3.*'
-            php: '8.0'
-          # Symfony 6.* requires PHP >= 8.1
-          - symfony: '6.3.*'
-            php: '8.0'
-          # API Platform 3.1 requires PHP >= 8.1 and Symfony >= 6.1.*
-          - api-platform: '^3.1'
-            php: '8.0'
-          - api-platform: '^3.1'
-            symfony: '5.4.*'
       fail-fast: false
     steps:
       - name: Checkout
@@ -76,8 +57,6 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
       - name: Configure Symfony
         run: composer config extra.symfony.require "${{ matrix.symfony }}"
-      - name: Configure API Platform
-        run: composer require api-platform/core:${{ matrix.api-platform }} --dev --no-install --no-update --no-progress --no-scripts
       - name: Update project dependencies
         run: composer update --no-progress --ansi --prefer-stable --prefer-dist --no-scripts
       - name: Bundle is bootable
