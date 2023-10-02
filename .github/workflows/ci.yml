@@ -30,9 +30,8 @@ jobs:
           - '8.2'
         symfony:
           # Only Symfony supported versions: https://symfony.com/releases
-          - '4.4.*'
           - '5.4.*'
-          - '6.2.*'
+          - '6.3.*'
         api-platform:
           # Only API Platform supported versions
           - '^2.6'
@@ -41,26 +40,20 @@ jobs:
         include:
           # Ensure the bundle is bootable
           - php: '8.2'
-            symfony: '6.2.*'
+            symfony: '6.3.*'
             bootable: true
             quality: true
             api-platform: '^3.1'
-          # Fix laminas/laminas-code support
-          - php: '8.0'
-            symfony: '4.4.*'
-            laminas: true
         exclude:
           # Symfony 6 requires PHP >= 8.1
-          - symfony: '6.2.*'
+          - symfony: '6.3.*'
             php: '8.0'
-          # Symfony 6.2.* requires PHP >= 8.1
-          - symfony: '6.2.*'
+          # Symfony 6.* requires PHP >= 8.1
+          - symfony: '6.3.*'
             php: '8.0'
           # API Platform 3.1 requires PHP >= 8.1 and Symfony >= 6.1.*
           - api-platform: '^3.1'
             php: '8.0'
-          - api-platform: '^3.1'
-            symfony: '4.4.*'
           - api-platform: '^3.1'
             symfony: '5.4.*'
       fail-fast: false
@@ -83,9 +76,6 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
       - name: Configure Symfony
         run: composer config extra.symfony.require "${{ matrix.symfony }}"
-      - name: Configure Laminas
-        if: matrix.laminas
-        run: composer require laminas/laminas-zendframework-bridge --no-install --no-update --no-progress --no-scripts
       - name: Configure API Platform
         run: composer require api-platform/core:${{ matrix.api-platform }} --dev --no-install --no-update --no-progress --no-scripts
       - name: Update project dependencies
