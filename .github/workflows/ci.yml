@@ -70,7 +70,7 @@ jobs:
       - name: Run php-cs-fixer tests
         if: matrix.quality
         env:
-          # PHP CS Fixer does not support PHP 8.2 yet
+          # PHP CS Fixer does not support PHP 8.3 yet
           PHP_CS_FIXER_IGNORE_ENV: 1
         run: php-cs-fixer fix --diff --dry-run
       - name: Run PHPUnit tests

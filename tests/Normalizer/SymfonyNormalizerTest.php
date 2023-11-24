@@ -15,7 +15,6 @@ namespace CoopTilleuls\ForgotPasswordBundle\Tests\Normalizer;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\SymfonyNormalizer;
-use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -24,16 +23,14 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 final class SymfonyNormalizerTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testNormalize(): void
     {
-        $normalizerMock = $this->prophesize(NormalizerInterface::class);
-        $passwordTokenMock = $this->prophesize(AbstractPasswordToken::class);
+        $normalizerMock = $this->createMock(NormalizerInterface::class);
+        $passwordTokenMock = $this->createMock(AbstractPasswordToken::class);
 
-        $normalizerMock->normalize($passwordTokenMock, 'json', [])->willReturn('foo')->shouldBeCalledOnce();
+        $normalizerMock->expects($this->once())->method('normalize')->with($passwordTokenMock, 'json', [])->willReturn('foo');
 
-        $normalizer = new SymfonyNormalizer($normalizerMock->reveal());
-        $this->assertEquals('foo', $normalizer->normalize($passwordTokenMock->reveal(), 'json'));
+        $normalizer = new SymfonyNormalizer($normalizerMock);
+        $this->assertEquals('foo', $normalizer->normalize($passwordTokenMock, 'json'));
     }
 }

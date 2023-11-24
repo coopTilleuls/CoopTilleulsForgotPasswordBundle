@@ -16,7 +16,6 @@ namespace CoopTilleuls\ForgotPasswordBundle\Tests\Bridge\ApiPlatform\Serializer;
 use CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer\DocumentationNormalizer;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
-use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Routing\Route;
@@ -29,8 +28,6 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 final class DocumentationNormalizerTest extends TestCase
 {
-    use ProphecyTrait;
-
     /**
      * @var NormalizerInterface|ObjectProphecy
      */
@@ -68,41 +65,41 @@ final class DocumentationNormalizerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->normalizerMock = $this->prophesize(NormalizerInterface::class);
-        $this->routerMock = $this->prophesize(RouterInterface::class);
-        $this->routeCollectionMock = $this->prophesize(RouteCollection::class);
-        $this->routeMock = $this->prophesize(Route::class);
-        $this->providerChainMock = $this->prophesize(ProviderChainInterface::class);
-        $this->providerMock = $this->prophesize(ProviderInterface::class);
+        $this->normalizerMock = $this->createMock(NormalizerInterface::class);
+        $this->routerMock = $this->createMock(RouterInterface::class);
+        $this->routeCollectionMock = $this->createMock(RouteCollection::class);
+        $this->routeMock = $this->createMock(Route::class);
+        $this->providerChainMock = $this->createMock(ProviderChainInterface::class);
+        $this->providerMock = $this->createMock(ProviderInterface::class);
         $this->normalizer = new DocumentationNormalizer(
-            $this->normalizerMock->reveal(),
-            $this->routerMock->reveal(),
-            $this->providerChainMock->reveal()
+            $this->normalizerMock,
+            $this->routerMock,
+            $this->providerChainMock
         );
     }
 
     public function testItSupportsDecoratedSupport(): void
     {
-        $this->normalizerMock->supportsNormalization('foo', 'bar')->willReturn(true)->shouldBeCalledOnce();
+        $this->normalizerMock->expects($this->once())->method('supportsNormalization')->with('foo', 'bar')->willReturn(true);
         $this->assertTrue($this->normalizer->supportsNormalization('foo', 'bar'));
     }
 
     public function testItDecoratesNormalizedData(): void
     {
-        $this->routerMock->getRouteCollection()->willReturn($this->routeCollectionMock)->shouldBeCalledOnce();
-        $this->routeCollectionMock->get('coop_tilleuls_forgot_password.reset')->willReturn($this->routeMock)->shouldBeCalledOnce();
-        $this->routeCollectionMock->get('coop_tilleuls_forgot_password.get_token')->willReturn($this->routeMock)->shouldBeCalledOnce();
-        $this->routeCollectionMock->get('coop_tilleuls_forgot_password.update')->willReturn($this->routeMock)->shouldBeCalledOnce();
-        $this->routeMock->getPath()->willReturn('/api/forgot-password/', '/api/forgot-password/{tokenValue}', '/api/forgot-password/{tokenValue}')->shouldBeCalledTimes(3);
+        $this->routerMock->expects($this->once())->method('getRouteCollection')->willReturn($this->routeCollectionMock);
+        $this->routeCollectionMock->expects($this->exactly(3))->method('get')
+            ->withConsecutive(['coop_tilleuls_forgot_password.reset'], ['coop_tilleuls_forgot_password.get_token'], ['coop_tilleuls_forgot_password.update'])
+            ->willReturn($this->routeMock);
+        $this->routeMock->expects($this->exactly(3))->method('getPath')->willReturnOnConsecutiveCalls('/api/forgot-password/', '/api/forgot-password/{tokenValue}', '/api/forgot-password/{tokenValue}');
 
-        $this->providerChainMock->all()->willReturn([
-            'user' => $this->providerMock->reveal(),
-            'admin' => $this->providerMock->reveal(),
-        ])->shouldBeCalledOnce();
-        $this->providerMock->getUserPasswordField()->willReturn('password', 'password')->shouldBeCalledTimes(2);
-        $this->providerMock->getUserAuthorizedFields()->willReturn(['email'], ['username', 'email'])->shouldBeCalledTimes(2);
+        $this->providerChainMock->expects($this->once())->method('all')->willReturn([
+            'user' => $this->providerMock,
+            'admin' => $this->providerMock,
+        ]);
+        $this->providerMock->expects($this->exactly(2))->method('getUserPasswordField')->willReturn('password');
+        $this->providerMock->expects($this->exactly(2))->method('getUserAuthorizedFields')->willReturnOnConsecutiveCalls(['email'], ['username', 'email']);
 
-        $this->normalizerMock->normalize(new \stdClass(), 'bar', [])->willReturn([
+        $this->normalizerMock->expects($this->once())->method('normalize')->with(new \stdClass(), 'bar', [])->willReturn([
             'tags' => [['name' => 'Login']],
             'paths' => [
                 '/login' => [
@@ -148,7 +145,7 @@ final class DocumentationNormalizerTest extends TestCase
                     ],
                 ],
             ],
-        ])->shouldBeCalledOnce();
+        ]);
         $this->assertEquals([
             'tags' => [['name' => 'Login'], ['name' => 'Forgot password']],
             'paths' => [

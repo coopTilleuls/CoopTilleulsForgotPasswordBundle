@@ -15,9 +15,7 @@ namespace CoopTilleuls\ForgotPasswordBundle\Tests\EventListener;
 
 use CoopTilleuls\ForgotPasswordBundle\EventListener\ExceptionEventListener;
 use CoopTilleuls\ForgotPasswordBundle\Exception\MissingFieldHttpException;
-use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -27,48 +25,46 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
  */
 final class ExceptionEventListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testOnKernelExceptionInvalid(): void
     {
         if (class_exists(ExceptionEvent::class)) {
-            $eventMock = $this->prophesize(ExceptionEvent::class);
-            $eventMock->getThrowable()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledOnce();
+            $eventMock = $this->createMock(ExceptionEvent::class);
+            $eventMock->expects($this->once())->method('getThrowable')->willReturn($this->createMock(\Exception::class));
         } else {
-            $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
-            $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledOnce();
+            $eventMock = $this->createMock(GetResponseForExceptionEvent::class);
+            $eventMock->expects($this->once())->method('getException')->willReturn($this->createMock(\Exception::class));
         }
 
         if (method_exists(ExceptionEvent::class, 'isMainRequest')) {
-            $eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
+            $eventMock->expects($this->once())->method('isMainRequest')->willReturn(true);
         } else {
-            $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
+            $eventMock->expects($this->once())->method('isMasterRequest')->willReturn(true);
         }
-        $eventMock->setResponse(Argument::any())->shouldNotBeCalled();
+        $eventMock->expects($this->never())->method('setResponse');
 
         $listener = new ExceptionEventListener();
-        $listener->onKernelException($eventMock->reveal());
+        $listener->onKernelException($eventMock);
     }
 
     public function testOnKernelExceptionSubRequest(): void
     {
         if (class_exists(ExceptionEvent::class)) {
-            $eventMock = $this->prophesize(ExceptionEvent::class);
-            $eventMock->getThrowable()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledOnce();
+            $eventMock = $this->createMock(ExceptionEvent::class);
+            $eventMock->expects($this->once())->method('getThrowable')->willReturn($this->createMock(\Exception::class));
         } else {
-            $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
-            $eventMock->getException()->willReturn($this->prophesize(\Exception::class)->reveal())->shouldBeCalledOnce();
+            $eventMock = $this->createMock(GetResponseForExceptionEvent::class);
+            $eventMock->expects($this->once())->method('getException')->willReturn($this->createMock(\Exception::class));
         }
 
         if (method_exists(ExceptionEvent::class, 'isMainRequest')) {
-            $eventMock->isMainRequest()->willReturn(false)->shouldBeCalledOnce();
+            $eventMock->expects($this->once())->method('isMainRequest')->willReturn(false);
         } else {
-            $eventMock->isMasterRequest()->willReturn(false)->shouldBeCalledOnce();
+            $eventMock->expects($this->once())->method('isMasterRequest')->willReturn(false);
         }
-        $eventMock->setResponse(Argument::any())->shouldNotBeCalled();
+        $eventMock->expects($this->never())->method('setResponse');
 
         $listener = new ExceptionEventListener();
-        $listener->onKernelException($eventMock->reveal());
+        $listener->onKernelException($eventMock);
     }
 
     public function testOnKernelException(): void
@@ -78,31 +74,27 @@ final class ExceptionEventListenerTest extends TestCase
         $exception = new MissingFieldHttpException('foo');
 
         if (class_exists(ExceptionEvent::class)) {
-            $eventMock = $this->prophesize(ExceptionEvent::class);
-            $eventMock->getThrowable()->willReturn($exception)->shouldBeCalledOnce();
+            $eventMock = $this->createMock(ExceptionEvent::class);
+            $eventMock->expects($this->once())->method('getThrowable')->willReturn($exception);
         } else {
-            $eventMock = $this->prophesize(GetResponseForExceptionEvent::class);
-            $eventMock->getException()->willReturn($exception)->shouldBeCalledOnce();
+            $eventMock = $this->createMock(GetResponseForExceptionEvent::class);
+            $eventMock->expects($this->once())->method('getException')->willReturn($exception);
         }
         if (method_exists(ExceptionEvent::class, 'isMainRequest')) {
-            $eventMock->isMainRequest()->willReturn(true)->shouldBeCalledOnce();
+            $eventMock->expects($this->once())->method('isMainRequest')->willReturn(true);
         } else {
-            $eventMock->isMasterRequest()->willReturn(true)->shouldBeCalledOnce();
+            $eventMock->expects($this->once())->method('isMasterRequest')->willReturn(true);
         }
-        $eventMock->setResponse(
-            Argument::that(
-                function ($response) {
-                    return $response instanceof JsonResponse
-                    && json_encode(
-                        ['message' => 'Parameter "foo" is missing.'],
-                        15
-                    ) === $response->getContent()
-                    && 400 === $response->getStatusCode();
-                }
-            )
-        )->shouldBeCalledOnce();
+        $eventMock->expects($this->once())->method('setResponse')->with($this->callback(function ($response) {
+            return $response instanceof JsonResponse
+                && json_encode(
+                    ['message' => 'Parameter "foo" is missing.'],
+                    15
+                ) === $response->getContent()
+                && 400 === $response->getStatusCode();
+        }));
 
         $listener = new ExceptionEventListener();
-        $listener->onKernelException($eventMock->reveal());
+        $listener->onKernelException($eventMock);
     }
 }

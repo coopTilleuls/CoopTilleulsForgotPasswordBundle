@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace CoopTilleuls\ForgotPasswordBundle\Tests\Manager\Bridge;
 
 use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\DoctrineManager;
-use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -25,8 +24,6 @@ use PHPUnit\Framework\TestCase;
  */
 final class DoctrineManagerTest extends TestCase
 {
-    use ProphecyTrait;
-
     /**
      * @var DoctrineManager
      */
@@ -38,38 +35,38 @@ final class DoctrineManagerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->registryMock = $this->prophesize(Registry::class);
-        $this->managerMock = $this->prophesize(EntityManagerInterface::class);
-        $this->repositoryMock = $this->prophesize(EntityRepository::class);
-        $this->objectMock = $this->prophesize(\stdClass::class);
+        $this->registryMock = $this->createMock(Registry::class);
+        $this->managerMock = $this->createMock(EntityManagerInterface::class);
+        $this->repositoryMock = $this->createMock(EntityRepository::class);
+        $this->objectMock = $this->createMock(\stdClass::class);
 
-        $this->doctrineManager = new DoctrineManager($this->registryMock->reveal());
+        $this->doctrineManager = new DoctrineManager($this->registryMock);
     }
 
     public function testFindOneBy(): void
     {
-        $this->registryMock->getManagerForClass('class')->willReturn($this->managerMock->reveal())->shouldBeCalledOnce();
-        $this->managerMock->getRepository('class')->willReturn($this->repositoryMock->reveal())->shouldBeCalledOnce();
-        $this->repositoryMock->findOneBy(['criteria'])->willReturn('foo')->shouldBeCalledOnce();
+        $this->registryMock->expects($this->once())->method('getManagerForClass')->with('class')->willReturn($this->managerMock);
+        $this->managerMock->expects($this->once())->method('getRepository')->with('class')->willReturn($this->repositoryMock);
+        $this->repositoryMock->expects($this->once())->method('findOneBy')->with(['criteria'])->willReturn('foo');
 
         $this->assertEquals('foo', $this->doctrineManager->findOneBy('class', ['criteria']));
     }
 
     public function testPersist(): void
     {
-        $this->registryMock->getManagerForClass(\get_class($this->objectMock->reveal()))->willReturn($this->managerMock->reveal())->shouldBeCalledOnce();
-        $this->managerMock->persist($this->objectMock->reveal())->shouldBeCalledOnce();
-        $this->managerMock->flush()->shouldBeCalledOnce();
+        $this->registryMock->expects($this->once())->method('getManagerForClass')->with(\get_class($this->objectMock))->willReturn($this->managerMock);
+        $this->managerMock->expects($this->once())->method('persist')->with($this->objectMock);
+        $this->managerMock->expects($this->once())->method('flush');
 
-        $this->doctrineManager->persist($this->objectMock->reveal());
+        $this->doctrineManager->persist($this->objectMock);
     }
 
     public function testRemove(): void
     {
-        $this->registryMock->getManagerForClass(\get_class($this->objectMock->reveal()))->willReturn($this->managerMock->reveal())->shouldBeCalledOnce();
-        $this->managerMock->remove($this->objectMock->reveal())->shouldBeCalledOnce();
-        $this->managerMock->flush()->shouldBeCalledOnce();
+        $this->registryMock->expects($this->once())->method('getManagerForClass')->with(\get_class($this->objectMock))->willReturn($this->managerMock);
+        $this->managerMock->expects($this->once())->method('remove')->with($this->objectMock);
+        $this->managerMock->expects($this->once())->method('flush');
 
-        $this->doctrineManager->remove($this->objectMock->reveal());
+        $this->doctrineManager->remove($this->objectMock);
     }
 }
