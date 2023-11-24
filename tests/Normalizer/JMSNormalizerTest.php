@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class JMSNormalizerTest extends TestCase
 {
-        public function testNormalize(): void
+    public function testNormalize(): void
     {
         $normalizerMock = $this->createMock(ArrayTransformerInterface::class);
         $passwordTokenMock = $this->createMock(AbstractPasswordToken::class);

@@ -35,7 +35,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class RequestEventListenerTest extends TestCase
 {
-        /**
+    /**
      * @var RequestEventListener
      */
     private $listener;

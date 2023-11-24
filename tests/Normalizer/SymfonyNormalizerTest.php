@@ -23,7 +23,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 final class SymfonyNormalizerTest extends TestCase
 {
-        public function testNormalize(): void
+    public function testNormalize(): void
     {
         $normalizerMock = $this->createMock(NormalizerInterface::class);
         $passwordTokenMock = $this->createMock(AbstractPasswordToken::class);

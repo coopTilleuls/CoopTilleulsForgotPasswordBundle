@@ -26,7 +26,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 final class PasswordTokenManagerTest extends TestCase
 {
-        /**
+    /**
      * @var PasswordTokenManager
      */
     private $manager;

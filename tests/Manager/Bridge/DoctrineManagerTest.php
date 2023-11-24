@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class DoctrineManagerTest extends TestCase
 {
-        /**
+    /**
      * @var DoctrineManager
      */
     private $doctrineManager;

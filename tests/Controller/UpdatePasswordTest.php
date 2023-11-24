@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class UpdatePasswordTest extends TestCase
 {
-        /**
+    /**
      * @var ProviderInterface|ObjectProphecy
      */
     private $providerMock;

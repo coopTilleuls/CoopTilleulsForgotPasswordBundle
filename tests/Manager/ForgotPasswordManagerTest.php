@@ -34,7 +34,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEvent
  */
 final class ForgotPasswordManagerTest extends TestCase
 {
-        /**
+    /**
      * @var ForgotPasswordManager
      */
     private $manager;

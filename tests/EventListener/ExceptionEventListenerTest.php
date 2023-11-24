@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
  */
 final class ExceptionEventListenerTest extends TestCase
 {
-        public function testOnKernelExceptionInvalid(): void
+    public function testOnKernelExceptionInvalid(): void
     {
         if (class_exists(ExceptionEvent::class)) {
             $eventMock = $this->createMock(ExceptionEvent::class);

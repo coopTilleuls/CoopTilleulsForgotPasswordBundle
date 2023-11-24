@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 final class GetTokenTest extends TestCase
 {
-        /**
+    /**
      * @var ProviderInterface|ObjectProphecy
      */
     private $providerMock;
