@@ -15,7 +15,6 @@ namespace CoopTilleuls\ForgotPasswordBundle\Tests\Normalizer;
 
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\JMSNormalizer;
-use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use JMS\Serializer\ArrayTransformerInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -24,16 +23,14 @@ use PHPUnit\Framework\TestCase;
  */
 final class JMSNormalizerTest extends TestCase
 {
-    use ProphecyTrait;
-
-    public function testNormalize(): void
+        public function testNormalize(): void
     {
-        $normalizerMock = $this->prophesize(ArrayTransformerInterface::class);
-        $passwordTokenMock = $this->prophesize(AbstractPasswordToken::class);
+        $normalizerMock = $this->createMock(ArrayTransformerInterface::class);
+        $passwordTokenMock = $this->createMock(AbstractPasswordToken::class);
 
-        $normalizerMock->toArray($passwordTokenMock)->willReturn(['foo'])->shouldBeCalledOnce();
+        $normalizerMock->expects($this->once())->method('toArray')->with($passwordTokenMock)->willReturn(['foo']);
 
-        $normalizer = new JMSNormalizer($normalizerMock->reveal());
-        $this->assertEquals(['foo'], $normalizer->normalize($passwordTokenMock->reveal(), 'json'));
+        $normalizer = new JMSNormalizer($normalizerMock);
+        $this->assertEquals(['foo'], $normalizer->normalize($passwordTokenMock, 'json'));
     }
 }

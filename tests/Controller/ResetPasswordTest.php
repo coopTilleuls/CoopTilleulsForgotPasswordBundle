@@ -16,7 +16,6 @@ namespace CoopTilleuls\ForgotPasswordBundle\Tests\Controller;
 use CoopTilleuls\ForgotPasswordBundle\Controller\ResetPassword;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
-use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,9 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class ResetPasswordTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /**
+        /**
      * @var ProviderInterface|ObjectProphecy
      */
     private $providerMock;
@@ -39,15 +36,15 @@ final class ResetPasswordTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->providerMock = $this->prophesize(ProviderInterface::class);
-        $this->managerMock = $this->prophesize(ForgotPasswordManager::class);
+        $this->providerMock = $this->createMock(ProviderInterface::class);
+        $this->managerMock = $this->createMock(ForgotPasswordManager::class);
     }
 
     public function testResetPasswordAction(): void
     {
-        $this->managerMock->resetPassword('email', 'foo@example.com', $this->providerMock)->shouldBeCalledOnce();
-        $controller = new ResetPassword($this->managerMock->reveal());
-        $response = $controller('email', 'foo@example.com', $this->providerMock->reveal());
+        $this->managerMock->expects($this->once())->method('resetPassword')->with('email', 'foo@example.com', $this->providerMock);
+        $controller = new ResetPassword($this->managerMock);
+        $response = $controller('email', 'foo@example.com', $this->providerMock);
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals('', $response->getContent());
         $this->assertEquals(204, $response->getStatusCode());

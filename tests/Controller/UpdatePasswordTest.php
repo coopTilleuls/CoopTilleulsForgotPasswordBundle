@@ -17,7 +17,6 @@ use CoopTilleuls\ForgotPasswordBundle\Controller\UpdatePassword;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Manager\ForgotPasswordManager;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
-use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,9 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class UpdatePasswordTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /**
+        /**
      * @var ProviderInterface|ObjectProphecy
      */
     private $providerMock;
@@ -45,9 +42,9 @@ final class UpdatePasswordTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->providerMock = $this->prophesize(ProviderInterface::class);
-        $this->managerMock = $this->prophesize(ForgotPasswordManager::class);
-        $this->tokenMock = $this->prophesize(AbstractPasswordToken::class);
+        $this->providerMock = $this->createMock(ProviderInterface::class);
+        $this->managerMock = $this->createMock(ForgotPasswordManager::class);
+        $this->tokenMock = $this->createMock(AbstractPasswordToken::class);
     }
 
     public function testUpdatePasswordAction(): void
@@ -55,9 +52,9 @@ final class UpdatePasswordTest extends TestCase
         $expiredAt = new \DateTime('+1 day');
         $expiredAt->setTime((int) $expiredAt->format('H'), (int) $expiredAt->format('m'), (int) $expiredAt->format('s'), 0);
 
-        $this->managerMock->updatePassword($this->tokenMock->reveal(), 'bar', $this->providerMock)->shouldBeCalledOnce();
-        $controller = new UpdatePassword($this->managerMock->reveal());
-        $response = $controller($this->tokenMock->reveal(), 'bar', $this->providerMock->reveal());
+        $this->managerMock->expects($this->once())->method('updatePassword')->with($this->tokenMock, 'bar', $this->providerMock);
+        $controller = new UpdatePassword($this->managerMock);
+        $response = $controller($this->tokenMock, 'bar', $this->providerMock);
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals('', $response->getContent());
         $this->assertEquals(204, $response->getStatusCode());

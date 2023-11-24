@@ -17,7 +17,6 @@ use CoopTilleuls\ForgotPasswordBundle\Controller\GetToken;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Normalizer\NormalizerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
-use CoopTilleuls\ForgotPasswordBundle\Tests\ProphecyTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,9 +26,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 final class GetTokenTest extends TestCase
 {
-    use ProphecyTrait;
-
-    /**
+        /**
      * @var ProviderInterface|ObjectProphecy
      */
     private $providerMock;
@@ -46,21 +43,17 @@ final class GetTokenTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->providerMock = $this->prophesize(ProviderInterface::class);
-        $this->normalizerMock = $this->prophesize(NormalizerInterface::class);
-        $this->tokenMock = $this->prophesize(AbstractPasswordToken::class);
+        $this->providerMock = $this->createMock(ProviderInterface::class);
+        $this->normalizerMock = $this->createMock(NormalizerInterface::class);
+        $this->tokenMock = $this->createMock(AbstractPasswordToken::class);
     }
 
     public function testGetTokenAction(): void
     {
-        $this->providerMock->getPasswordTokenSerializationGroups()
-            ->willReturn(['foo'])
-            ->shouldBeCalledOnce();
-        $this->normalizerMock->normalize($this->tokenMock->reveal(), 'json', ['groups' => ['foo']])
-            ->willReturn(['foo' => 'bar'])
-            ->shouldBeCalledOnce();
-        $controller = new GetToken($this->normalizerMock->reveal());
-        $response = $controller($this->tokenMock->reveal(), $this->providerMock->reveal());
+        $this->providerMock->expects($this->once())->method('getPasswordTokenSerializationGroups')->willReturn(['foo']);
+        $this->normalizerMock->expects($this->once())->method('normalize')->with($this->tokenMock, 'json', ['groups' => ['foo']])->willReturn(['foo' => 'bar']);
+        $controller = new GetToken($this->normalizerMock);
+        $response = $controller($this->tokenMock, $this->providerMock);
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(json_encode(['foo' => 'bar']), $response->getContent());
     }
