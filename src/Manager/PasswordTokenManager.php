@@ -44,8 +44,8 @@ class PasswordTokenManager
         }
 
         if (!$expiresAt) {
-            $expiredAt = new \DateTime($provider->getPasswordTokenExpiredIn());
-            $expiredAt->setTime((int) $expiredAt->format('H'), (int) $expiredAt->format('i'), (int) $expiredAt->format('s'), 0);
+            $expiresAt = new \DateTime($provider->getPasswordTokenExpiredIn());
+            $expiresAt->setTime((int) $expiresAt->format('H'), (int) $expiresAt->format('i'), (int) $expiresAt->format('s'), 0);
         }
 
         $tokenClass = $provider->getPasswordTokenClass();
