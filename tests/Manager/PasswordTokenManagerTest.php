@@ -63,6 +63,21 @@ final class PasswordTokenManagerTest extends TestCase
         $this->manager->createPasswordToken($this->userMock, new \DateTime('2016-10-11 10:00:00'));
     }
 
+    public function testCreatePasswordTokenWithoutExpirationDate(): void
+    {
+        $this->managerMock->expects($this->once())->method('persist')->with($this->callback(function ($object) {
+            return $object instanceof AbstractPasswordToken
+                && preg_match('/^[A-z\d]{50}$/', $object->getToken())
+                && $this->userMock === $object->getUser();
+        }));
+
+        $this->providerChainMock->expects($this->once())->method('get')->willReturn($this->providerMock);
+        $this->providerMock->expects($this->once())->method('getPasswordTokenClass')->willReturn(PasswordToken::class);
+        $this->providerMock->expects($this->once())->method('getManager')->willReturn($this->managerMock);
+
+        $this->manager->createPasswordToken($this->userMock);
+    }
+
     public function testFindOneByToken(): void
     {
         $this->managerMock->expects($this->once())->method('findOneBy')->with(PasswordToken::class, ['token' => 'foo'])->willReturn('bar');
