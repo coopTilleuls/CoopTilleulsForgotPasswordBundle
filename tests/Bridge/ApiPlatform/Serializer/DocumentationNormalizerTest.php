@@ -84,6 +84,12 @@ final class DocumentationNormalizerTest extends TestCase
         $this->assertTrue($this->normalizer->supportsNormalization('foo', 'bar'));
     }
 
+    public function testItSupportsDecoratedType(): void
+    {
+        $this->normalizerMock->expects($this->once())->method('getSupportedTypes')->with('foo')->willReturn(['bar', 'baz']);
+        $this->assertSame(['bar', 'baz'], $this->normalizer->getSupportedTypes('foo'));
+    }
+
     public function testItDecoratesNormalizedData(): void
     {
         $this->routerMock->expects($this->once())->method('getRouteCollection')->willReturn($this->routeCollectionMock);
