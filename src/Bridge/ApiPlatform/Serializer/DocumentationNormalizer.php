@@ -191,4 +191,9 @@ final class DocumentationNormalizer implements NormalizerInterface
     {
         return $this->decorated->supportsNormalization($data, $format);
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return $this->decorated->getSupportedTypes($format);
+    }
 }
