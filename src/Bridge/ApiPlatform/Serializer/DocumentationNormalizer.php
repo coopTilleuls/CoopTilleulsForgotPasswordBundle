@@ -16,6 +16,7 @@ namespace CoopTilleuls\ForgotPasswordBundle\Bridge\ApiPlatform\Serializer;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 
 /**
  * @author Vincent CHALAMON <vincent@les-tilleuls.coop>
@@ -194,6 +195,13 @@ final class DocumentationNormalizer implements NormalizerInterface
 
     public function getSupportedTypes(?string $format): array
     {
+        // @deprecated remove condition when support for symfony versions under 6.4 is dropped
+        if (!method_exists($this->decorated, 'getSupportedTypes')) {
+            return [
+                '*' => $this->decorated instanceof CacheableSupportsMethodInterface && $this->decorated->hasCacheableSupportsMethod(),
+            ];
+        }
+
         return $this->decorated->getSupportedTypes($format);
     }
 }
