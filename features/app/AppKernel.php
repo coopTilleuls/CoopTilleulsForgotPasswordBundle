@@ -175,7 +175,7 @@ final class AppKernel extends Kernel
                 'mappings' => [
                     'App' => [
                         'is_bundle' => false,
-                        'type' => 'annotation',
+                        'type' => 'attribute',
                         'dir' => $this->getProjectDir().'/src/Entity',
                         'prefix' => 'App\Entity',
                         'alias' => 'App',
