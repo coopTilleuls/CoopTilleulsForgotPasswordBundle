@@ -21,12 +21,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 final class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     *
-     * @return TreeBuilder
-     */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         if (method_exists(TreeBuilder::class, 'root')) {
             $treeBuilder = new TreeBuilder();

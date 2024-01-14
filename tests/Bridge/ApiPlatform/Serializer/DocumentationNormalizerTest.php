@@ -84,6 +84,19 @@ final class DocumentationNormalizerTest extends TestCase
         $this->assertTrue($this->normalizer->supportsNormalization('foo', 'bar'));
     }
 
+    public function testItSupportsDecoratedType(): void
+    {
+        // @deprecated remove condition when support for symfony versions under 6.4 is dropped
+        if (!method_exists($this->normalizerMock, 'getSupportedTypes')) {
+            $this->assertSame(['*' => false], $this->normalizer->getSupportedTypes('foo'));
+
+            return;
+        }
+
+        $this->normalizerMock->expects($this->once())->method('getSupportedTypes')->with('foo')->willReturn(['bar', 'baz']);
+        $this->assertSame(['bar', 'baz'], $this->normalizer->getSupportedTypes('foo'));
+    }
+
     public function testItDecoratesNormalizedData(): void
     {
         $this->routerMock->expects($this->once())->method('getRouteCollection')->willReturn($this->routeCollectionMock);
