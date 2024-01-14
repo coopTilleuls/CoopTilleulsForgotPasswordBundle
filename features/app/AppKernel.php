@@ -103,7 +103,7 @@ final class AppKernel extends Kernel
                 new Reference('twig'),
                 new Reference('doctrine'),
             ])->tag('kernel.event_subscriber');
-            $container->services()->set(\FeatureContext::class, \FeatureContext::class)->args([
+            $container->services()->set(FeatureContext::class, FeatureContext::class)->args([
                 new Reference('test.client'),
                 new Reference('doctrine'),
                 new Reference('coop_tilleuls_forgot_password.manager.password_token'),
@@ -116,7 +116,7 @@ final class AppKernel extends Kernel
                 new Reference('twig'),
                 new Reference('doctrine'),
             ]))->addTag('kernel.event_subscriber'));
-            $container->setDefinition(\FeatureContext::class, (new Definition(\FeatureContext::class, [
+            $container->setDefinition(FeatureContext::class, (new Definition(FeatureContext::class, [
                 new Reference('test.client'),
                 new Reference('doctrine'),
                 new Reference('coop_tilleuls_forgot_password.manager.password_token'),
