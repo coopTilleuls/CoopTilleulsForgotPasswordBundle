@@ -16,29 +16,22 @@ namespace App\Entity;
 use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- */
+#[ORM\Entity]
 final class PasswordAdminToken extends AbstractPasswordToken
 {
     /**
      * @var int
-     *
-     * @ORM\Id
-     *
-     * @ORM\Column(type="integer")
-     *
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
     /**
      * @var Admin
-     *
-     * @ORM\ManyToOne(targetEntity=Admin::class)
-     *
-     * @ORM\JoinColumn(nullable=false, name="user_id")
      */
+    #[ORM\ManyToOne(targetEntity: Admin::class)]
+    #[ORM\JoinColumn(nullable: false, name: 'user_id')]
     private $admin;
 
     /**
