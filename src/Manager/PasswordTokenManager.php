@@ -17,13 +17,14 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
+use CoopTilleuls\ForgotPasswordBundle\TokenGenerator\TokenGeneratorInterface;
 
 /**
  * @author Vincent CHALAMON <vincent@les-tilleuls.coop>
  */
 class PasswordTokenManager
 {
-    public function __construct(private readonly ProviderChainInterface $providerChain)
+    public function __construct(private readonly ProviderChainInterface $providerChain, private readonly TokenGeneratorInterface $tokenGenerator)
     {
     }
 
@@ -47,7 +48,7 @@ class PasswordTokenManager
 
         /** @var AbstractPasswordToken $passwordToken */
         $passwordToken = new $tokenClass();
-        $passwordToken->setToken(bin2hex(random_bytes(25)));
+        $passwordToken->setToken($this->tokenGenerator->generate());
         $passwordToken->setUser($user);
         $passwordToken->setExpiresAt($expiresAt);
         $provider->getManager()->persist($passwordToken);

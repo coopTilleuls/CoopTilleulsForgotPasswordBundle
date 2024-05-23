@@ -30,11 +30,14 @@
 
         <service id="coop_tilleuls_forgot_password.manager.password_token" class="CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager" public="true">
             <argument type="service" id="coop_tilleuls_forgot_password.provider_chain"/>
+            <argument/> <!-- token_generator -->
         </service>
 
         <service id="coop_tilleuls_forgot_password.manager.doctrine" class="CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\DoctrineManager" public="false">
             <argument type="service" id="doctrine" on-invalid="null" />
         </service>
+
+        <service id="coop_tilleuls_forgot_password.token_generator.bin2hex" class="CoopTilleuls\ForgotPasswordBundle\TokenGenerator\Bridge\Bin2HexTokenGenerator" public="false" />
 
         <service id="coop_tilleuls_forgot_password.event_listener.request" class="CoopTilleuls\ForgotPasswordBundle\EventListener\RequestEventListener">
             <argument type="service" id="coop_tilleuls_forgot_password.manager.password_token" />

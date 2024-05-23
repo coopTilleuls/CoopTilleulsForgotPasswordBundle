@@ -18,6 +18,7 @@ use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 use CoopTilleuls\ForgotPasswordBundle\Manager\PasswordTokenManager;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
+use CoopTilleuls\ForgotPasswordBundle\TokenGenerator\TokenGeneratorInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -35,6 +36,7 @@ final class PasswordTokenManagerTest extends TestCase
     private $tokenMock;
     private $providerChainMock;
     private $providerMock;
+    private $tokenGeneratorMock;
 
     protected function setUp(): void
     {
@@ -43,20 +45,22 @@ final class PasswordTokenManagerTest extends TestCase
         $this->tokenMock = $this->createMock(AbstractPasswordToken::class);
         $this->providerChainMock = $this->createMock(ProviderChainInterface::class);
         $this->providerMock = $this->createMock(ProviderInterface::class);
+        $this->tokenGeneratorMock = $this->createMock(TokenGeneratorInterface::class);
 
-        $this->manager = new PasswordTokenManager($this->providerChainMock);
+        $this->manager = new PasswordTokenManager($this->providerChainMock, $this->tokenGeneratorMock);
     }
 
     public function testCreatePasswordToken(): void
     {
         $this->managerMock->expects($this->once())->method('persist')->with($this->callback(fn ($object) => $object instanceof AbstractPasswordToken
                && '2016-10-11 10:00:00' === $object->getExpiresAt()->format('Y-m-d H:i:s')
-               && preg_match('/^[A-z\d]{50}$/', $object->getToken())
+               && '12345' === $object->getToken()
                && $this->userMock === $object->getUser()));
 
         $this->providerChainMock->expects($this->once())->method('get')->willReturn($this->providerMock);
         $this->providerMock->expects($this->once())->method('getPasswordTokenClass')->willReturn(PasswordToken::class);
         $this->providerMock->expects($this->once())->method('getManager')->willReturn($this->managerMock);
+        $this->tokenGeneratorMock->expects($this->once())->method('generate')->willReturn('12345');
 
         $this->manager->createPasswordToken($this->userMock, new \DateTime('2016-10-11 10:00:00'));
     }
@@ -64,12 +68,13 @@ final class PasswordTokenManagerTest extends TestCase
     public function testCreatePasswordTokenWithoutExpirationDate(): void
     {
         $this->managerMock->expects($this->once())->method('persist')->with($this->callback(fn ($object) => $object instanceof AbstractPasswordToken
-            && preg_match('/^[A-z\d]{50}$/', $object->getToken())
+            && '12345' === $object->getToken()
             && $this->userMock === $object->getUser()));
 
         $this->providerChainMock->expects($this->once())->method('get')->willReturn($this->providerMock);
         $this->providerMock->expects($this->once())->method('getPasswordTokenClass')->willReturn(PasswordToken::class);
         $this->providerMock->expects($this->once())->method('getManager')->willReturn($this->managerMock);
+        $this->tokenGeneratorMock->expects($this->once())->method('generate')->willReturn('12345');
 
         $this->manager->createPasswordToken($this->userMock);
     }

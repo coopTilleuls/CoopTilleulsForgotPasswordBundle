@@ -79,6 +79,10 @@ final class CoopTilleulsForgotPasswordExtension extends Extension
         $class = true === $config['use_jms_serializer'] ? JMSNormalizer::class : SymfonyNormalizer::class;
         $serializerId = true === $config['use_jms_serializer'] ? 'jms_serializer.serializer' : 'serializer';
         $container->setDefinition('coop_tilleuls_forgot_password.normalizer', new Definition($class, [new Reference($serializerId)]))->setPublic(false);
+
+        $container
+            ->getDefinition('coop_tilleuls_forgot_password.manager.password_token')
+            ->replaceArgument(1, new Reference($config['token_generator']));
     }
 
     private function buildProvider(array $config, ContainerBuilder $container): void
