@@ -29,18 +29,8 @@ use Symfony\Component\Routing\RouterInterface;
  */
 abstract class AbstractOpenApiFactory
 {
-    protected $decorated;
-    protected $router;
-    protected $providerChain;
-
-    /**
-     * @param LegacyOpenApiFactoryInterface|OpenApiFactoryInterface $decorated
-     */
-    public function __construct($decorated, RouterInterface $router, ProviderChainInterface $providerChain)
+    public function __construct(protected readonly LegacyOpenApiFactoryInterface|OpenApiFactoryInterface $decorated, protected readonly RouterInterface $router, protected readonly ProviderChainInterface $providerChain)
     {
-        $this->providerChain = $providerChain;
-        $this->decorated = $decorated;
-        $this->router = $router;
     }
 
     public function __invoke(array $context = [])

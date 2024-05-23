@@ -25,15 +25,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class ForgotPasswordController
 {
-    private $getToken;
-    private $updatePassword;
-    private $resetPassword;
-
-    public function __construct(GetToken $getToken, UpdatePassword $updatePassword, ResetPassword $resetPassword)
+    public function __construct(private readonly GetToken $getToken, private readonly UpdatePassword $updatePassword, private readonly ResetPassword $resetPassword)
     {
-        $this->getToken = $getToken;
-        $this->updatePassword = $updatePassword;
-        $this->resetPassword = $resetPassword;
     }
 
     /**

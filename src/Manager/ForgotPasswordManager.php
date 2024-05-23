@@ -29,18 +29,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEvent
  */
 class ForgotPasswordManager
 {
-    private $passwordTokenManager;
-    private $dispatcher;
-    private $providerChain;
-
-    public function __construct(
-        PasswordTokenManager $passwordTokenManager,
-        EventDispatcherInterface $dispatcher,
-        ProviderChainInterface $providerChain
-    ) {
-        $this->passwordTokenManager = $passwordTokenManager;
-        $this->dispatcher = $dispatcher;
-        $this->providerChain = $providerChain;
+    public function __construct(private readonly PasswordTokenManager $passwordTokenManager, private readonly EventDispatcherInterface $dispatcher, private readonly ProviderChainInterface $providerChain)
+    {
     }
 
     public function resetPassword($propertyName, $value, ?ProviderInterface $provider = null): void

@@ -54,7 +54,7 @@ final class DoctrineManagerTest extends TestCase
 
     public function testPersist(): void
     {
-        $this->registryMock->expects($this->once())->method('getManagerForClass')->with(\get_class($this->objectMock))->willReturn($this->managerMock);
+        $this->registryMock->expects($this->once())->method('getManagerForClass')->with($this->objectMock::class)->willReturn($this->managerMock);
         $this->managerMock->expects($this->once())->method('persist')->with($this->objectMock);
         $this->managerMock->expects($this->once())->method('flush');
 
@@ -63,7 +63,7 @@ final class DoctrineManagerTest extends TestCase
 
     public function testRemove(): void
     {
-        $this->registryMock->expects($this->once())->method('getManagerForClass')->with(\get_class($this->objectMock))->willReturn($this->managerMock);
+        $this->registryMock->expects($this->once())->method('getManagerForClass')->with($this->objectMock::class)->willReturn($this->managerMock);
         $this->managerMock->expects($this->once())->method('remove')->with($this->objectMock);
         $this->managerMock->expects($this->once())->method('flush');
 

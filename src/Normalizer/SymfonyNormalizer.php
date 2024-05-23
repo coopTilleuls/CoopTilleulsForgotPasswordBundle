@@ -21,14 +21,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface as SymfonyNormal
  */
 final class SymfonyNormalizer implements NormalizerInterface
 {
-    /**
-     * @var SymfonyNormalizerInterface
-     */
-    private $normalizer;
-
-    public function __construct(SymfonyNormalizerInterface $normalizer)
+    public function __construct(private readonly SymfonyNormalizerInterface $normalizer)
     {
-        $this->normalizer = $normalizer;
     }
 
     /**

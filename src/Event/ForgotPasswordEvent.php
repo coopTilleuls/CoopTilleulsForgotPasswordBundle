@@ -25,16 +25,8 @@ class ForgotPasswordEvent extends PolyfillEvent
     public const CREATE_TOKEN = 'coop_tilleuls_forgot_password.create_token';
     public const UPDATE_PASSWORD = 'coop_tilleuls_forgot_password.update_password';
 
-    protected $passwordToken;
-    protected $password;
-
-    /**
-     * @param string $password
-     */
-    public function __construct(AbstractPasswordToken $passwordToken, $password = null)
+    public function __construct(protected readonly AbstractPasswordToken $passwordToken, protected readonly ?string $password = null)
     {
-        $this->passwordToken = $passwordToken;
-        $this->password = $password;
     }
 
     /**

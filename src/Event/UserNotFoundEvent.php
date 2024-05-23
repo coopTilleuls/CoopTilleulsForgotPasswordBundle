@@ -17,11 +17,8 @@ final class UserNotFoundEvent extends PolyfillEvent
 {
     public const USER_NOT_FOUND = 'coop_tilleuls_forgot_password.user_not_found';
 
-    private array $context;
-
-    public function __construct(array $context = [])
+    public function __construct(private readonly array $context = [])
     {
-        $this->context = $context;
     }
 
     /**

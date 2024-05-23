@@ -21,14 +21,8 @@ use JMS\Serializer\ArrayTransformerInterface;
  */
 final class JMSNormalizer implements NormalizerInterface
 {
-    /**
-     * @var ArrayTransformerInterface
-     */
-    private $normalizer;
-
-    public function __construct(ArrayTransformerInterface $normalizer)
+    public function __construct(private readonly ArrayTransformerInterface $normalizer)
     {
-        $this->normalizer = $normalizer;
     }
 
     /**

@@ -72,13 +72,9 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->providerMock->expects($this->once())->method('getUserClass')->willReturn(User::class);
         $this->managerMock->expects($this->once())->method('findOneBy')->with(User::class, ['email' => 'foo@example.com']);
         if ($this->eventDispatcherMock instanceof ContractsEventDispatcherInterface) {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(function ($event) {
-                return $event instanceof UserNotFoundEvent && ['email' => 'foo@example.com'] === $event->getContext();
-            }));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(fn ($event) => $event instanceof UserNotFoundEvent && ['email' => 'foo@example.com'] === $event->getContext()));
         } else {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(UserNotFoundEvent::USER_NOT_FOUND, $this->callback(function ($event) {
-                return $event instanceof UserNotFoundEvent && ['email' => 'foo@example.com'] === $event->getContext();
-            }));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(UserNotFoundEvent::USER_NOT_FOUND, $this->callback(fn ($event) => $event instanceof UserNotFoundEvent && ['email' => 'foo@example.com'] === $event->getContext()));
         }
 
         $this->passwordManagerMock->expects($this->never())->method('findOneByUser')->with(self::any(), $this->providerMock);
@@ -97,13 +93,9 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->passwordManagerMock->expects($this->once())->method('createPasswordToken')->with($this->userMock, $this->isInstanceOf(\DateTimeInterface::class), $this->providerMock)->willReturn($this->tokenMock);
 
         if ($this->eventDispatcherMock instanceof ContractsEventDispatcherInterface) {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(function ($event) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken();
-            }));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(fn ($event) => $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken()));
         } else {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(ForgotPasswordEvent::CREATE_TOKEN, $this->callback(function ($event) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken();
-            }));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(ForgotPasswordEvent::CREATE_TOKEN, $this->callback(fn ($event) => $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken()));
         }
 
         $this->manager->resetPassword('email', 'foo@example.com');
@@ -121,13 +113,9 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->passwordManagerMock->expects($this->once())->method('createPasswordToken')->with($this->userMock, $this->isInstanceOf(\DateTimeInterface::class), $this->providerMock)->willReturn($this->tokenMock);
 
         if ($this->eventDispatcherMock instanceof ContractsEventDispatcherInterface) {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(function ($event) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken();
-            }));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(fn ($event) => $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken()));
         } else {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(ForgotPasswordEvent::CREATE_TOKEN, $this->callback(function ($event) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken();
-            }));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(ForgotPasswordEvent::CREATE_TOKEN, $this->callback(fn ($event) => $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken()));
         }
 
         $this->manager->resetPassword('email', 'foo@example.com');
@@ -147,13 +135,9 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->passwordManagerMock->expects($this->once())->method('findOneByUser')->with($this->userMock, $this->providerMock)->willReturn($this->tokenMock);
 
         if ($this->eventDispatcherMock instanceof ContractsEventDispatcherInterface) {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(function ($event) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken();
-            }));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(fn ($event) => $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken()));
         } else {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(ForgotPasswordEvent::CREATE_TOKEN, $this->callback(function ($event) {
-                return $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken();
-            }));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(ForgotPasswordEvent::CREATE_TOKEN, $this->callback(fn ($event) => $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken()));
         }
 
         $this->manager->resetPassword('email', 'foo@example.com');
@@ -165,13 +149,9 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->providerMock->expects($this->once())->method('getManager')->willReturn($this->managerMock);
 
         if ($this->eventDispatcherMock instanceof ContractsEventDispatcherInterface) {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(function ($event) {
-                return $event instanceof UpdatePasswordEvent && 'bar' === $event->getPassword() && $this->tokenMock === $event->getPasswordToken();
-            }));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(fn ($event) => $event instanceof UpdatePasswordEvent && 'bar' === $event->getPassword() && $this->tokenMock === $event->getPasswordToken()));
         } else {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(ForgotPasswordEvent::UPDATE_PASSWORD, $this->callback(function ($event) {
-                return $event instanceof UpdatePasswordEvent && 'bar' === $event->getPassword() && $this->tokenMock === $event->getPasswordToken();
-            }));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(ForgotPasswordEvent::UPDATE_PASSWORD, $this->callback(fn ($event) => $event instanceof UpdatePasswordEvent && 'bar' === $event->getPassword() && $this->tokenMock === $event->getPasswordToken()));
         }
         $this->managerMock->expects($this->once())->method('remove')->with($this->tokenMock);
 

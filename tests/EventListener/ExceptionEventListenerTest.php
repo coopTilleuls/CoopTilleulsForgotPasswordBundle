@@ -85,14 +85,12 @@ final class ExceptionEventListenerTest extends TestCase
         } else {
             $eventMock->expects($this->once())->method('isMasterRequest')->willReturn(true);
         }
-        $eventMock->expects($this->once())->method('setResponse')->with($this->callback(function ($response) {
-            return $response instanceof JsonResponse
-                && json_encode(
-                    ['message' => 'Parameter "foo" is missing.'],
-                    15
-                ) === $response->getContent()
-                && 400 === $response->getStatusCode();
-        }));
+        $eventMock->expects($this->once())->method('setResponse')->with($this->callback(fn ($response) => $response instanceof JsonResponse
+            && json_encode(
+                ['message' => 'Parameter "foo" is missing.'],
+                15
+            ) === $response->getContent()
+            && 400 === $response->getStatusCode()));
 
         $listener = new ExceptionEventListener();
         $listener->onKernelException($eventMock);
