@@ -17,7 +17,6 @@
     ],
     "require": {
         "php": ">=8.1",
-        "ircmaxell/random-lib": "^1.2",
         "symfony/config": "^5.1 || ^6.0 || ^7.0",
         "symfony/dependency-injection": "^5.1 || ^6.0 || ^7.0",
         "symfony/event-dispatcher": "^5.1 || ^6.0 || ^7.0",
