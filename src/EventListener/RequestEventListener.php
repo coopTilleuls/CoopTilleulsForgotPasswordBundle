@@ -29,15 +29,8 @@ final class RequestEventListener
 {
     use MainRequestTrait;
 
-    private $passwordTokenManager;
-    private ProviderChainInterface $providerChain;
-
-    public function __construct(
-        PasswordTokenManager $passwordTokenManager,
-        ProviderChainInterface $providerChain
-    ) {
-        $this->passwordTokenManager = $passwordTokenManager;
-        $this->providerChain = $providerChain;
+    public function __construct(private readonly PasswordTokenManager $passwordTokenManager, private readonly ProviderChainInterface $providerChain)
+    {
     }
 
     public function decodeRequest(KernelEvent $event): void

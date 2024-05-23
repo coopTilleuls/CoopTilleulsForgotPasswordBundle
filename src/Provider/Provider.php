@@ -17,42 +17,8 @@ use CoopTilleuls\ForgotPasswordBundle\Manager\Bridge\ManagerInterface;
 
 final class Provider implements ProviderInterface
 {
-    private ManagerInterface $manager;
-    private string $passwordTokenClass;
-    private string $passwordTokenExpiredIn;
-    private string $passwordTokenUserField;
-    private array $passwordTokenSerializationGroups;
-    private string $userClass;
-    private string $userEmailField;
-    private string $userPasswordField;
-    private array $userAuthorizedFields;
-    private bool $isDefault;
-    private string $name;
-
-    public function __construct(
-        ManagerInterface $manager,
-        string $name,
-        string $passwordTokenClass,
-        string $passwordTokenExpiredIn,
-        string $passwordTokenUserField,
-        string $userClass,
-        array $passwordTokenSerializationGroups = [],
-        string $userEmailField = 'email',
-        string $userPasswordField = 'password',
-        array $userAuthorizedFields = [],
-        bool $isDefault = false
-    ) {
-        $this->manager = $manager;
-        $this->name = $name;
-        $this->passwordTokenClass = $passwordTokenClass;
-        $this->passwordTokenExpiredIn = $passwordTokenExpiredIn;
-        $this->passwordTokenUserField = $passwordTokenUserField;
-        $this->passwordTokenSerializationGroups = $passwordTokenSerializationGroups;
-        $this->userClass = $userClass;
-        $this->userEmailField = $userEmailField;
-        $this->userPasswordField = $userPasswordField;
-        $this->userAuthorizedFields = $userAuthorizedFields;
-        $this->isDefault = $isDefault;
+    public function __construct(private readonly ManagerInterface $manager, private readonly string $name, private readonly string $passwordTokenClass, private readonly string $passwordTokenExpiredIn, private readonly string $passwordTokenUserField, private readonly string $userClass, private readonly array $passwordTokenSerializationGroups = [], private readonly string $userEmailField = 'email', private readonly string $userPasswordField = 'password', private readonly array $userAuthorizedFields = [], private readonly bool $isDefault = false)
+    {
     }
 
     public function getManager(): ManagerInterface

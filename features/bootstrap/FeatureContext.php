@@ -36,21 +36,6 @@ use Symfony\Component\Mime\RawMessage;
 final class FeatureContext implements Context
 {
     /**
-     * @var Registry
-     */
-    private $doctrine;
-
-    /**
-     * @var Client|KernelBrowser
-     */
-    private $client;
-
-    /**
-     * @var PasswordTokenManager
-     */
-    private $passwordTokenManager;
-
-    /**
      * @var Application
      */
     private $application;
@@ -60,19 +45,10 @@ final class FeatureContext implements Context
      */
     private $output;
 
-    /**
-     * @var ProviderChainInterface
-     */
-    private $providerChain;
-
-    public function __construct($client, Registry $doctrine, PasswordTokenManager $passwordTokenManager, ProviderChainInterface $providerChain, KernelInterface $kernel)
+    public function __construct(private readonly Client|KernelBrowser $client, private readonly Registry $doctrine, private readonly PasswordTokenManager $passwordTokenManager, private readonly ProviderChainInterface $providerChain, KernelInterface $kernel)
     {
-        $this->client = $client;
-        $this->doctrine = $doctrine;
-        $this->passwordTokenManager = $passwordTokenManager;
         $this->application = new Application($kernel);
         $this->output = new BufferedOutput();
-        $this->providerChain = $providerChain;
     }
 
     /**
@@ -84,7 +60,7 @@ final class FeatureContext implements Context
         $purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
         try {
             $purger->purge();
-        } catch (Exception $e) {
+        } catch (Exception) {
             $schemaTool = new SchemaTool($this->doctrine->getManager());
             $schemaTool->createSchema($this->doctrine->getManager()->getMetadataFactory()->getAllMetadata());
         }
@@ -408,7 +384,7 @@ JSON
     {
         $output = $this->output->fetch();
         Assert::assertJson($output);
-        $openApi = json_decode($output, true);
+        $openApi = json_decode((string) $output, true);
         Assert::assertEquals($this->getOpenApiPaths(), $openApi['paths']);
         Assert::assertEquals([
             'schemas' => [

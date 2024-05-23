@@ -25,11 +25,8 @@ use SecurityLib\Strength;
  */
 class PasswordTokenManager
 {
-    private $providerChain;
-
-    public function __construct(ProviderChainInterface $providerChain)
+    public function __construct(private readonly ProviderChainInterface $providerChain)
     {
-        $this->providerChain = $providerChain;
     }
 
     /**

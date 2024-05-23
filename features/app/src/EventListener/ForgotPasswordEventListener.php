@@ -31,24 +31,12 @@ use Twig\Environment;
 final class ForgotPasswordEventListener implements EventSubscriberInterface
 {
     /**
-     * @var MailerInterface
-     */
-    private $mailer;
-
-    /**
-     * @var EngineInterface|Environment
-     */
-    private $twig;
-
-    /**
      * @var EntityManagerInterface
      */
     private $entityManager;
 
-    public function __construct(MailerInterface $mailer, $twig, Registry $doctrine)
+    public function __construct(private readonly MailerInterface $mailer, private readonly EngineInterface|Environment $twig, Registry $doctrine)
     {
-        $this->mailer = $mailer;
-        $this->twig = $twig;
         $this->entityManager = $doctrine->getManager();
     }
 

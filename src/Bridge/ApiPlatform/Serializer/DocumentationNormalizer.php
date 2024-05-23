@@ -23,15 +23,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
  */
 final class DocumentationNormalizer implements NormalizerInterface
 {
-    private $decorated;
-    private $router;
-    private $providerChain;
-
-    public function __construct(NormalizerInterface $decorated, RouterInterface $router, ProviderChainInterface $providerChain)
+    public function __construct(private readonly NormalizerInterface $decorated, private readonly RouterInterface $router, private readonly ProviderChainInterface $providerChain)
     {
-        $this->decorated = $decorated;
-        $this->router = $router;
-        $this->providerChain = $providerChain;
     }
 
     public function normalize($object, $format = null, array $context = []): array

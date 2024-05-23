@@ -13,19 +13,16 @@ declare(strict_types=1);
 
 namespace CoopTilleuls\ForgotPasswordBundle\Manager\Bridge;
 
+use Doctrine\Common\Persistence\ManagerRegistry as LegacyManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
+
 /**
  * @author Vincent CHALAMON <vincent@les-tilleuls.coop>
  */
 final class DoctrineManager implements ManagerInterface
 {
-    private $registry;
-
-    /**
-     * @var \Doctrine\Common\Persistence\ManagerRegistry|\Doctrine\Persistence\ManagerRegistry
-     */
-    public function __construct($registry)
+    public function __construct(private readonly LegacyManagerRegistry|ManagerRegistry $registry)
     {
-        $this->registry = $registry;
     }
 
     public function findOneBy($class, array $criteria)

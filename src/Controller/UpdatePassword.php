@@ -23,11 +23,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class UpdatePassword
 {
-    private $forgotPasswordManager;
-
-    public function __construct(ForgotPasswordManager $forgotPasswordManager)
+    public function __construct(private readonly ForgotPasswordManager $forgotPasswordManager)
     {
-        $this->forgotPasswordManager = $forgotPasswordManager;
     }
 
     /**

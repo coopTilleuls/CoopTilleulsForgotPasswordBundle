@@ -49,12 +49,10 @@ final class PasswordTokenManagerTest extends TestCase
 
     public function testCreatePasswordToken(): void
     {
-        $this->managerMock->expects($this->once())->method('persist')->with($this->callback(function ($object) {
-            return $object instanceof AbstractPasswordToken
-                   && '2016-10-11 10:00:00' === $object->getExpiresAt()->format('Y-m-d H:i:s')
-                   && preg_match('/^[A-z\d]{50}$/', $object->getToken())
-                   && $this->userMock === $object->getUser();
-        }));
+        $this->managerMock->expects($this->once())->method('persist')->with($this->callback(fn ($object) => $object instanceof AbstractPasswordToken
+               && '2016-10-11 10:00:00' === $object->getExpiresAt()->format('Y-m-d H:i:s')
+               && preg_match('/^[A-z\d]{50}$/', $object->getToken())
+               && $this->userMock === $object->getUser()));
 
         $this->providerChainMock->expects($this->once())->method('get')->willReturn($this->providerMock);
         $this->providerMock->expects($this->once())->method('getPasswordTokenClass')->willReturn(PasswordToken::class);
@@ -65,11 +63,9 @@ final class PasswordTokenManagerTest extends TestCase
 
     public function testCreatePasswordTokenWithoutExpirationDate(): void
     {
-        $this->managerMock->expects($this->once())->method('persist')->with($this->callback(function ($object) {
-            return $object instanceof AbstractPasswordToken
-                && preg_match('/^[A-z\d]{50}$/', $object->getToken())
-                && $this->userMock === $object->getUser();
-        }));
+        $this->managerMock->expects($this->once())->method('persist')->with($this->callback(fn ($object) => $object instanceof AbstractPasswordToken
+            && preg_match('/^[A-z\d]{50}$/', $object->getToken())
+            && $this->userMock === $object->getUser()));
 
         $this->providerChainMock->expects($this->once())->method('get')->willReturn($this->providerMock);
         $this->providerMock->expects($this->once())->method('getPasswordTokenClass')->willReturn(PasswordToken::class);

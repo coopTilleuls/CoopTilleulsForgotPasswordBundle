@@ -23,11 +23,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 final class GetToken
 {
-    private $normalizer;
-
-    public function __construct(NormalizerInterface $normalizer)
+    public function __construct(private readonly NormalizerInterface $normalizer)
     {
-        $this->normalizer = $normalizer;
     }
 
     /**
