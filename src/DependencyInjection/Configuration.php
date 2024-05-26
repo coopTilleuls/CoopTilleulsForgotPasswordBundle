@@ -134,6 +134,11 @@ final class Configuration implements ConfigurationInterface
             ->booleanNode('use_jms_serializer')
                 ->defaultFalse()
             ->end()
+            ->scalarNode('token_generator')
+                ->defaultValue('coop_tilleuls_forgot_password.token_generator.bin2hex')
+                ->cannotBeEmpty()
+                ->info('Persistence manager service to handle the token storage.')
+            ->end()
             ->end();
 
         return $treeBuilder;

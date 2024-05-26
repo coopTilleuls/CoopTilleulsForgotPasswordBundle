@@ -17,15 +17,14 @@ use CoopTilleuls\ForgotPasswordBundle\Entity\AbstractPasswordToken;
 use CoopTilleuls\ForgotPasswordBundle\Provider\Provider;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderChainInterface;
 use CoopTilleuls\ForgotPasswordBundle\Provider\ProviderInterface;
-use RandomLib\Factory;
-use SecurityLib\Strength;
+use CoopTilleuls\ForgotPasswordBundle\TokenGenerator\TokenGeneratorInterface;
 
 /**
  * @author Vincent CHALAMON <vincent@les-tilleuls.coop>
  */
 class PasswordTokenManager
 {
-    public function __construct(private readonly ProviderChainInterface $providerChain)
+    public function __construct(private readonly ProviderChainInterface $providerChain, private readonly TokenGeneratorInterface $tokenGenerator)
     {
     }
 
@@ -49,18 +48,7 @@ class PasswordTokenManager
 
         /** @var AbstractPasswordToken $passwordToken */
         $passwordToken = new $tokenClass();
-
-        if (version_compare(\PHP_VERSION, '7.0', '>')) {
-            $passwordToken->setToken(bin2hex(random_bytes(25)));
-        } else {
-            $factory = new Factory();
-            $generator = $factory->getGenerator(new Strength(Strength::MEDIUM));
-
-            $passwordToken->setToken(
-                $generator->generateString(50, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
-            );
-        }
-
+        $passwordToken->setToken($this->tokenGenerator->generate());
         $passwordToken->setUser($user);
         $passwordToken->setExpiresAt($expiresAt);
         $provider->getManager()->persist($passwordToken);

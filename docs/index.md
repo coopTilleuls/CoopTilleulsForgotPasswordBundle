@@ -324,3 +324,11 @@ Read full documentation about [usage](usage.md).
 By default, this bundle works with Doctrine ORM, but you're free to connect with any system.
 
 Read full documentation about [how to connect your manager](use_custom_manager.md).
+
+## Generate your own token
+
+By default, this bundle works uses [`bin2hex`](https://www.php.net/bin2hex) combined with
+[`random_bytes`](https://www.php.net/random_bytes) to generate the token, but you're free to create your own
+TokenGenerator to create your token.
+
+Read full documentation about [how to generate your own token](use_custom_token_generator.md).
