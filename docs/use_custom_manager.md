@@ -41,5 +41,8 @@ Update your configuration to set your service as default one to use by this bund
 # config/packages/coop_tilleuls_forgot_password.yaml
 coop_tilleuls_forgot_password:
     # ...
-    manager: 'App\Manager\FooManager'
+
+    providers:
+        app_user_provider: # this is exemple of provider
+            manager: 'App\Manager\FooManager'
 ```
