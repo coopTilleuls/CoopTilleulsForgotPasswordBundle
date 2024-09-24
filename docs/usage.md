@@ -109,6 +109,46 @@ Your app is ready to receive a request like:
 }
 ```
 
+### Validate the user password
+
+Chances are that you want to ensure the new password is strong enough.
+
+```php
+// src/Entity/User.php
+namespace App\Entity;
+
+use Symfony\Component\Validator\Constraints as Assert;
+
+class User
+{
+    #[Assert\PasswordStrength]
+    protected $rawPassword;
+}
+```
+
+Now, you can use the very same event to validate the User.
+
+```php
+// src/EventSubscriber/ForgotPasswordEventSubscriber.php
+
+public function onUpdatePassword(UpdatePasswordEvent $event): void
+{
+    $passwordToken = $event->getPasswordToken();
+    $user = $passwordToken->getUser();
+    $user->setPlainPassword($event->getPassword());
+    
+    $this->validate->($user); // ApiPlatform\Validator\ValidatorInterface or Symfony\Component\Validator\Validator\ValidatorInterface
+    
+    $this->userManager->updateUser($user);
+}
+```
+
+Please note that when using API Platform validator, there is a slight difference between version 3.3 and 3.4+.  
+
+**In version 3.3 and lower**, the validation system overwrite Symfony's. In case of a constraint violation Exception thrown, it will always respond in JSON with Hydra / JsonLD / JsonProblem, according to your configuration. This, even if the Request has been sent through a classic form. _You might want to prefer one or the other accordingly to your situation._  
+
+**In version 3.4 and above**, this unwanted behaviour has been fixed and API Platform's validation system will check if the object (here the user) is an API Platform resource. If not, It will fallback to Symfony's error system, as it should. _Using API Platform validator is then completely fine._
+
 ## Use your own business rules when the user is not found
 
 On the third user story, user was not found, you can listen to this event and use your own rules.
