@@ -1,6 +1,6 @@
 # CoopTilleulsForgotPasswordBundle
 
-This Symfony bundle provides an _forgot password_ feature for a REST API.
+This Symfony bundle provides a _forgot password_ feature for a REST API.
 It is bridged for [API Platform](https://api-platform.com/).
 
 [![Actions Status](https://github.com/coopTilleuls/CoopTilleulsForgotPasswordBundle/workflows/CI/badge.svg)](https://github.com/coopTilleuls/CoopTilleulsForgotPasswordBundle/actions)
