@@ -37,7 +37,7 @@ final class ProviderChain implements ProviderChainInterface
         }
 
         if (!isset($this->providers[$name])) {
-            throw new UndefinedProviderException(sprintf('The provider "%s" is not defined.', $name));
+            throw new UndefinedProviderException(\sprintf('The provider "%s" is not defined.', $name));
         }
 
         return $this->providers[$name];
