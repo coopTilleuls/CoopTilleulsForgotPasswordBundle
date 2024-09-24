@@ -499,7 +499,6 @@ JSON
                         'required' => true,
                     ],
                 ],
-                'parameters' => [],
             ],
             '/api/forgot-password/{tokenValue}' => [
                 'ref' => 'ForgotPassword',
@@ -586,7 +585,6 @@ JSON
                         'required' => true,
                     ],
                 ],
-                'parameters' => [],
             ],
         ];
 
