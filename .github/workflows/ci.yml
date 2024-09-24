@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   tests:
-    name: Tests PHP ${{ matrix.php }} (Symfony ${{ matrix.symfony }})
+    name: Tests PHP ${{ matrix.php }} / Symfony ${{ matrix.symfony }} / API Platform ${{ matrix.api-platform }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -30,23 +30,26 @@ jobs:
           - '8.3'
         symfony:
           # Only Symfony supported versions: https://symfony.com/releases
-          # API Platform 3.* only supports Symfony >= 6.1
           - '6.4.*'
-          - '7.0.*'
+          - '7.1.*'
+        api-platform:
+          - '^3.4'
+          - '^4.0'
         include:
-          # Ensure the bundle is bootable
           - php: '8.3'
-            symfony: '6.4.*'
-            bootable: true
-            quality: true
-          - php: '8.3'
-            symfony: '7.0.*'
+            symfony: '7.1.*'
+            api-platform: '^4.0'
             bootable: true
             quality: true
         exclude:
-          # Symfony 7 requires php 8.2
+          # Symfony 7 requires PHP 8.2
           - php: '8.1'
-            symfony: '7.0.*'
+            symfony: '7.1.*'
+          - php: '8.2'
+            symfony: '7.1.*'
+          # API Platform 4 requires PHP 8.2
+          - php: '8.1'
+            api-platform: '^4.0'
       fail-fast: false
     steps:
       - name: Checkout
@@ -67,21 +70,10 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
       - name: Configure Symfony
         run: composer config extra.symfony.require "${{ matrix.symfony }}"
+      - name: Configure API Platform
+        run: composer require --dev "api-platform/core:${{ matrix.api-platform }}"
       - name: Update project dependencies
         run: composer update --no-progress --ansi --prefer-stable --prefer-dist --no-scripts
-      - name: Bundle is bootable
-        if: ${{ matrix.bootable && github.event_name == 'push' && github.ref_name == 'main' }}
-        run: |
-          composer create-project "symfony/skeleton:${{ matrix.symfony }}" flex
-          cd flex
-          composer config extra.symfony.allow-contrib true
-          composer req --ignore-platform-reqs tilleuls/forgot-password-bundle:dev-${{ github.ref_name }}
-      - name: Run php-cs-fixer tests
-        if: matrix.quality
-        env:
-          # PHP CS Fixer does not support PHP 8.3 yet
-          PHP_CS_FIXER_IGNORE_ENV: 1
-        run: php-cs-fixer fix --diff --dry-run
       - name: Run PHPUnit tests
         run: vendor/bin/simple-phpunit --colors=always --testdox
       - name: Run Behat tests
@@ -92,3 +84,16 @@ jobs:
         run: |
           mkdir -p features/app/cache/jmsserializer/doctrine/orm/Proxies features/app/logs
           vendor/bin/behat -p jmsserializer
+      - name: Run php-cs-fixer tests
+        if: matrix.quality
+        env:
+          # PHP CS Fixer does not support PHP 8.3 yet
+          PHP_CS_FIXER_IGNORE_ENV: 1
+        run: php-cs-fixer fix --diff --dry-run
+      - name: Bundle is bootable
+        if: ${{ matrix.bootable && github.event_name == 'push' && github.ref_name == 'main' }}
+        run: |
+          composer create-project "symfony/skeleton:${{ matrix.symfony }}" flex
+          cd flex
+          composer config extra.symfony.allow-contrib true
+          composer req --ignore-platform-reqs tilleuls/forgot-password-bundle:dev-${{ github.ref_name }}
