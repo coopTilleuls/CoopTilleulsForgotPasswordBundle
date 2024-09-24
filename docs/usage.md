@@ -137,7 +137,15 @@ public function onUpdatePassword(UpdatePasswordEvent $event): void
     $user = $passwordToken->getUser();
     $user->setPlainPassword($event->getPassword());
     
-    $this->validate->($user); // ApiPlatform\Validator\ValidatorInterface or Symfony\Component\Validator\Validator\ValidatorInterface
+    // ApiPlatform\Validator\ValidatorInterface
+    $this->validator->validate($user); // throws an Exception if invalid
+    
+    /*
+     * // Symfony\Component\Validator\Validator\ValidatorInterface
+     * $constraintViolationList = $this->validator->validate($user); // returns a ConstraintViolationListInterface which is a \Traversable, \Countable and \ArrayAccess
+     * 
+     * // TODO: handle when the list is not empty
+     */
     
     $this->userManager->updateUser($user);
 }
