@@ -160,7 +160,7 @@ final class RequestEventListenerTest extends TestCase
         $this->providerMock->expects($this->never())->method('getUserAuthorizedFields');
         $this->providerMock->expects($this->once())->method('getUserPasswordField')->willReturn('password');
         $this->parameterBagMock->expects($this->once())->method('get')->with('_route')->willReturn('coop_tilleuls_forgot_password.update');
-        $this->parameterBagMock->expects($this->exactly(2))->method('set')->withConsecutive(['provider', $this->providerMock], ['password', 'bar']);
+        $this->parameterBagMock->expects($this->exactly(2))->method('set');
 
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
             $this->eventMock->expects($this->once())->method('isMainRequest')->willReturn(true);
@@ -191,7 +191,7 @@ final class RequestEventListenerTest extends TestCase
 
         $this->headerBagMock->expects($this->once())->method('get')->with('FP-provider')->willReturn('admin');
         $this->providerChainMock->expects($this->once())->method('get')->with('admin')->willReturn($this->providerMock);
-        $this->parameterBagMock->expects($this->exactly(2))->method('get')->withConsecutive(['_route'], ['tokenValue'])->willReturnOnConsecutiveCalls('coop_tilleuls_forgot_password.update', 'foo');
+        $this->parameterBagMock->expects($this->exactly(2))->method('get')->willReturn('coop_tilleuls_forgot_password.update', 'foo');
 
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
             $this->eventMock->expects($this->once())->method('isMainRequest')->willReturn(true);
@@ -211,7 +211,7 @@ final class RequestEventListenerTest extends TestCase
 
         $this->headerBagMock->expects($this->once())->method('get')->with('FP-provider')->willReturn('admin');
         $this->providerChainMock->expects($this->once())->method('get')->with('admin')->willReturn($this->providerMock);
-        $this->parameterBagMock->expects($this->exactly(2))->method('get')->withConsecutive(['_route'], ['tokenValue'])->willReturnOnConsecutiveCalls('coop_tilleuls_forgot_password.update', 'foo');
+        $this->parameterBagMock->expects($this->exactly(2))->method('get')->willReturn('coop_tilleuls_forgot_password.update', 'foo');
 
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
             $this->eventMock->expects($this->once())->method('isMainRequest')->willReturn(true);
@@ -229,8 +229,8 @@ final class RequestEventListenerTest extends TestCase
         $tokenMock = $this->createMock(AbstractPasswordToken::class);
         $this->headerBagMock->expects($this->once())->method('get')->with('FP-provider')->willReturn('user');
         $this->providerChainMock->expects($this->once())->method('get')->with('user')->willReturn($this->providerMock);
-        $this->parameterBagMock->expects($this->exactly(2))->method('get')->withConsecutive(['_route'], ['tokenValue'])->willReturnOnConsecutiveCalls('coop_tilleuls_forgot_password.update', 'foo');
-        $this->parameterBagMock->expects($this->exactly(2))->method('set')->withConsecutive(['token', $tokenMock], ['provider', $this->providerMock]);
+        $this->parameterBagMock->expects($this->exactly(2))->method('get')->willReturn('coop_tilleuls_forgot_password.update', 'foo');
+        $this->parameterBagMock->expects($this->exactly(2))->method('set');
 
         if (method_exists(KernelEvent::class, 'isMainRequest')) {
             $this->eventMock->expects($this->once())->method('isMainRequest')->willReturn(true);

@@ -16,16 +16,6 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 
 date_default_timezone_set('UTC');
 
-// PHPUnit's autoloader
-if (!file_exists($phpUnitAutoloaderPath = __DIR__.'/../../vendor/bin/.phpunit/phpunit/vendor/autoload.php')) {
-    exit('PHPUnit is not installed. Please run vendor/bin/simple-phpunit --version to install it');
-}
-
-$phpunitLoader = require $phpUnitAutoloaderPath;
-// Don't register the PHPUnit autoloader before the normal autoloader to prevent weird issues
-$phpunitLoader->unregister();
-$phpunitLoader->register();
-
 $loader = require __DIR__.'/../../vendor/autoload.php';
 BypassFinals::enable();
 require 'AppKernel.php';

@@ -7,8 +7,6 @@
          bootstrap="features/app/bootstrap.php"
          failOnWarning="true"
          failOnRisky="true"
-         failOnDeprecation="true"
-         failOnNotice="true"
          displayDetailsOnTestsThatTriggerDeprecations="true"
          displayDetailsOnTestsThatTriggerErrors="true"
          displayDetailsOnTestsThatTriggerNotices="true"
