@@ -16,6 +16,7 @@ namespace CoopTilleuls\ForgotPasswordBundle;
 use CoopTilleuls\ForgotPasswordBundle\DependencyInjection\CompilerPass\ApiPlatformCompilerPass;
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -37,5 +38,18 @@ final class CoopTilleulsForgotPasswordBundle extends Bundle
                 realpath(__DIR__.'/../config/doctrine') => 'CoopTilleuls\ForgotPasswordBundle\Entity',
             ]));
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getContainerExtensionClass(): string
+    {
+        return \sprintf(
+            '%s\\DependencyInjection\\%s%sExtension',
+            $this->getNamespace(),
+            preg_replace('/Bundle$/', '', $this->getName()),
+            class_exists(Extension::class) ? '' : 'Legacy'
+        );
     }
 }
