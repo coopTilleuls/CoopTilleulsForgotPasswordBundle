@@ -19,6 +19,6 @@ final class NoParameterException extends HttpException implements JsonHttpExcept
 {
     public function __construct()
     {
-        parent::__construct(400, 'No parameter sent.');
+        parent::__construct(422, 'No parameter sent.');
     }
 }

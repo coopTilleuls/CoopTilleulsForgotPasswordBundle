@@ -37,23 +37,6 @@ trait BCExtensionTrait
             throw new InvalidConfigurationException('Multiple "ForgotPassword" providers have been defined but none of them is set as default. Did you forget to set "default" option?');
         }
 
-        // Build parameters
-        $container->setParameter('coop_tilleuls_forgot_password.password_token_class', $defaultProvider['password_token']['class']);
-        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "%s" is deprecated since 1.5 and will be removed without replacement in 2.0.', 'coop_tilleuls_forgot_password.password_token_class');
-        $container->setParameter('coop_tilleuls_forgot_password.password_token_expires_in', $defaultProvider['password_token']['expires_in']);
-        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "%s" is deprecated since 1.5 and will be removed without replacement in 2.0.', 'coop_tilleuls_forgot_password.password_token_expires_in');
-        $container->setParameter('coop_tilleuls_forgot_password.password_token_user_field', $defaultProvider['password_token']['user_field']);
-        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "%s" is deprecated since 1.5 and will be removed without replacement in 2.0.', 'coop_tilleuls_forgot_password.password_token_user_field');
-        $container->setParameter('coop_tilleuls_forgot_password.password_token_serialization_groups', $defaultProvider['password_token']['serialization_groups']);
-        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "%s" is deprecated since 1.5 and will be removed without replacement in 2.0.', 'coop_tilleuls_forgot_password.password_token_serialization_groups');
-        $container->setParameter('coop_tilleuls_forgot_password.user_class', $defaultProvider['user']['class']);
-        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "%s" is deprecated since 1.5 and will be removed without replacement in 2.0.', 'coop_tilleuls_forgot_password.user_class');
-        $authorizedFields = array_unique(array_merge($defaultProvider['user']['authorized_fields'], [$defaultProvider['user']['email_field']]));
-        $container->setParameter('coop_tilleuls_forgot_password.user_authorized_fields', $authorizedFields);
-        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "%s" is deprecated since 1.5 and will be removed without replacement in 2.0.', 'coop_tilleuls_forgot_password.user_authorized_fields');
-        $container->setParameter('coop_tilleuls_forgot_password.user_password_field', $defaultProvider['user']['password_field']);
-        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Container parameter "%s" is deprecated since 1.5 and will be removed without replacement in 2.0.', 'coop_tilleuls_forgot_password.user_password_field');
-
         $this->buildProvider($config, $container);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
@@ -78,7 +61,7 @@ trait BCExtensionTrait
 
         $container
             ->getDefinition('coop_tilleuls_forgot_password.manager.password_token')
-            ->replaceArgument(1, new Reference($config['token_generator']));
+            ->replaceArgument(0, new Reference($config['token_generator']));
     }
 
     private function buildProvider(array $config, ContainerBuilder $container): void

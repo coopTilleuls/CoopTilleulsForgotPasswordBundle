@@ -90,7 +90,7 @@ final class ExceptionEventListenerTest extends TestCase
                 ['message' => 'Parameter "foo" is missing.'],
                 15
             ) === $response->getContent()
-            && 400 === $response->getStatusCode()));
+            && 422 === $response->getStatusCode()));
 
         $listener = new ExceptionEventListener();
         $listener->onKernelException($eventMock);

@@ -88,7 +88,7 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->providerMock->expects($this->once())->method('getPasswordTokenExpiredIn')->willReturn('+1 day');
         $this->managerMock->expects($this->once())->method('findOneBy')->with(User::class, ['email' => 'foo@example.com'])->willReturn($this->userMock);
         $this->passwordManagerMock->expects($this->once())->method('findOneByUser')->with($this->userMock, $this->providerMock)->willReturn(null);
-        $this->passwordManagerMock->expects($this->once())->method('createPasswordToken')->with($this->userMock, $this->isInstanceOf(\DateTimeInterface::class), $this->providerMock)->willReturn($this->tokenMock);
+        $this->passwordManagerMock->expects($this->once())->method('createPasswordToken')->with($this->userMock, $this->providerMock, $this->isInstanceOf(\DateTimeInterface::class))->willReturn($this->tokenMock);
 
         if ($this->eventDispatcherMock instanceof ContractsEventDispatcherInterface) {
             $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(fn ($event) => $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken()));
@@ -107,7 +107,7 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->tokenMock->expects($this->once())->method('isExpired')->willReturn(true);
         $this->managerMock->expects($this->once())->method('findOneBy')->with(User::class, ['email' => 'foo@example.com'])->willReturn($this->userMock);
         $this->passwordManagerMock->expects($this->once())->method('findOneByUser')->with($this->userMock, $this->providerMock)->willReturn($this->tokenMock);
-        $this->passwordManagerMock->expects($this->once())->method('createPasswordToken')->with($this->userMock, $this->isInstanceOf(\DateTimeInterface::class), $this->providerMock)->willReturn($this->tokenMock);
+        $this->passwordManagerMock->expects($this->once())->method('createPasswordToken')->with($this->userMock, $this->providerMock, $this->isInstanceOf(\DateTimeInterface::class))->willReturn($this->tokenMock);
 
         if ($this->eventDispatcherMock instanceof ContractsEventDispatcherInterface) {
             $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(fn ($event) => $event instanceof CreateTokenEvent && null === $event->getPassword() && $this->tokenMock === $event->getPasswordToken()));

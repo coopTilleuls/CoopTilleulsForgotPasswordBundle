@@ -129,7 +129,7 @@ final class DocumentationNormalizerTest extends TestCase
                             204 => [
                                 'description' => 'Valid credentials',
                             ],
-                            400 => [
+                            422 => [
                                 'description' => 'Invalid credentials',
                             ],
                         ],
@@ -176,7 +176,7 @@ final class DocumentationNormalizerTest extends TestCase
                             204 => [
                                 'description' => 'Valid credentials',
                             ],
-                            400 => [
+                            422 => [
                                 'description' => 'Invalid credentials',
                             ],
                         ],
@@ -201,7 +201,7 @@ final class DocumentationNormalizerTest extends TestCase
                             204 => [
                                 'description' => 'Valid email address, no matter if user exists or not',
                             ],
-                            400 => [
+                            422 => [
                                 'description' => 'Missing email parameter or invalid format',
                             ],
                         ],
@@ -264,7 +264,7 @@ final class DocumentationNormalizerTest extends TestCase
                             204 => [
                                 'description' => 'Email address format valid, no matter if user exists or not',
                             ],
-                            400 => [
+                            422 => [
                                 'description' => 'Missing password parameter',
                             ],
                             404 => [

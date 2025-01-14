@@ -51,7 +51,7 @@
     "suggest": {
         "doctrine/doctrine-bundle": "To connect with Doctrine in Symfony project",
         "doctrine/orm": "To connect with Doctrine",
-        "api-platform/core": "To connect with API Platform"
+        "api-platform/openapi": "To connect with API Platform"
     },
     "autoload": {
         "psr-4": {
