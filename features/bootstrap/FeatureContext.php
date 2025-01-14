@@ -71,7 +71,7 @@ final class FeatureContext implements Context
      */
     public function iHaveAValidToken(): void
     {
-        $this->passwordTokenManager->createPasswordToken($this->createUser(), new DateTime('+1 day'));
+        $this->passwordTokenManager->createPasswordToken($this->createUser(), $this->providerChain->get('user'), new DateTime('+1 day'));
     }
 
     /**
@@ -79,7 +79,7 @@ final class FeatureContext implements Context
      */
     public function iHaveAnExpiredToken(): void
     {
-        $this->passwordTokenManager->createPasswordToken($this->createUser(), new DateTime('-1 minute'));
+        $this->passwordTokenManager->createPasswordToken($this->createUser(), $this->providerChain->get('user'), new DateTime('-1 minute'));
     }
 
     /**
@@ -166,7 +166,7 @@ JSON,
     public function theRequestShouldBeInvalidWithMessage($message): void
     {
         Assert::assertEquals(
-            400,
+            422,
             $this->client->getResponse()->getStatusCode(),
             sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
@@ -213,7 +213,7 @@ JSON
      */
     public function iUpdateMyPassword(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new DateTime('+1 day'));
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), $this->providerChain->get('user'), new DateTime('+1 day'));
 
         $this->client->request(
             'POST',
@@ -246,7 +246,7 @@ JSON
      */
     public function iUpdateMyPasswordUsingNoPassword(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new DateTime('+1 day'));
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), $this->providerChain->get('user'), new DateTime('+1 day'));
 
         $this->client->request('POST', sprintf('/api/forgot-password/%s', $token->getToken()));
     }
@@ -275,7 +275,7 @@ JSON
      */
     public function iUpdateMyPasswordUsingWrongProvider(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new DateTime('+1 day'), $this->providerChain->get('admin'));
+        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), $this->providerChain->get('admin'), new DateTime('+1 day'));
 
         $this->client->request(
             'POST',
@@ -296,7 +296,7 @@ JSON
      */
     public function iUpdateMyPasswordUsingAValidProviderButAnInvalidPasswordField(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), new DateTime('+1 day'), $this->providerChain->get('admin'));
+        $token = $this->passwordTokenManager->createPasswordToken($this->createAdmin(), $this->providerChain->get('admin'), new DateTime('+1 day'));
 
         $this->client->request(
             'POST',
@@ -317,7 +317,7 @@ JSON
      */
     public function iUpdateMyPasswordUsingAnExpiredToken(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new DateTime('-1 minute'));
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), $this->providerChain->get('user'), new DateTime('-1 minute'));
 
         $this->client->request(
             'POST',
@@ -338,7 +338,7 @@ JSON
      */
     public function iGetAPasswordToken(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new DateTime('+1 day'));
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), $this->providerChain->get('user'), new DateTime('+1 day'));
         $token->setToken('d7xtQlJVyN61TzWtrY6xy37zOxB66BqMSDXEbXBbo2Mw4Jjt9C');
         $this->doctrine->getManager()->persist($token);
         $this->doctrine->getManager()->flush();
@@ -363,7 +363,7 @@ JSON
      */
     public function iGetAPasswordTokenUsingAnExpiredToken(): void
     {
-        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), new DateTime('-1 minute'));
+        $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), $this->providerChain->get('user'), new DateTime('-1 minute'));
 
         $this->client->request('GET', sprintf('/api/forgot-password/%s', $token->getToken()));
     }
@@ -472,7 +472,7 @@ JSON
                         204 => [
                             'description' => 'Valid email address, no matter if user exists or not',
                         ],
-                        400 => [
+                        422 => [
                             'description' => 'Missing email parameter or invalid format',
                         ],
                     ],
@@ -547,7 +547,7 @@ JSON
                         204 => [
                             'description' => 'Email address format valid, no matter if user exists or not',
                         ],
-                        400 => [
+                        422 => [
                             'description' => 'Missing password parameter',
                         ],
                         404 => [

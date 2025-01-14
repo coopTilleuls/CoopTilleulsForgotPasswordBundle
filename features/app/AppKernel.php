@@ -61,15 +61,10 @@ final class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle(),
             new CoopTilleuls\ForgotPasswordBundle\CoopTilleulsForgotPasswordBundle(),
+            new ApiPlatform\Symfony\Bundle\ApiPlatformBundle(),
         ];
         if ('jmsserializer' === $this->getEnvironment()) {
             $bundles[] = new JMS\SerializerBundle\JMSSerializerBundle();
-        }
-        if (class_exists(ApiPlatform\Symfony\Bundle\ApiPlatformBundle::class)) {
-            $bundles[] = new ApiPlatform\Symfony\Bundle\ApiPlatformBundle();
-        } else {
-            // BC api-platform/core:^2.7
-            $bundles[] = new ApiPlatform\Core\Bridge\Symfony\Bundle\ApiPlatformBundle();
         }
 
         return $bundles;

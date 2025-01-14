@@ -22,7 +22,6 @@ final class MissingFieldHttpException extends HttpException implements JsonHttpE
 {
     public function __construct($fieldName)
     {
-        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Status code will change to "%s" in 2.0.', 422);
-        parent::__construct(400, \sprintf('Parameter "%s" is missing.', $fieldName));
+        parent::__construct(422, \sprintf('Parameter "%s" is missing.', $fieldName));
     }
 }

@@ -19,6 +19,6 @@ final class UndefinedProviderException extends HttpException implements JsonHttp
 {
     public function __construct(string $message = 'This provider is not defined.')
     {
-        parent::__construct(400, $message);
+        parent::__construct(422, $message);
     }
 }

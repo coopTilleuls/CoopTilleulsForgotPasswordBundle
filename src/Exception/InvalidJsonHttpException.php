@@ -19,6 +19,6 @@ final class InvalidJsonHttpException extends HttpException implements JsonHttpEx
 {
     public function __construct()
     {
-        parent::__construct(400, 'Invalid JSON data.');
+        parent::__construct(422, 'Invalid JSON data.');
     }
 }
