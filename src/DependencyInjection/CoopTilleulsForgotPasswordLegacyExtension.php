@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace CoopTilleuls\ForgotPasswordBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * @author Vincent CHALAMON <vincent@les-tilleuls.coop>
  */
-final class CoopTilleulsForgotPasswordExtension extends Extension
+final class CoopTilleulsForgotPasswordLegacyExtension extends Extension
 {
     use BCExtensionTrait;
 }
