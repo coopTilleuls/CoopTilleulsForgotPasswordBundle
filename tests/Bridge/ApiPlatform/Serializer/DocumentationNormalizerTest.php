@@ -101,16 +101,21 @@ final class DocumentationNormalizerTest extends TestCase
     {
         $this->routerMock->expects($this->once())->method('getRouteCollection')->willReturn($this->routeCollectionMock);
         $this->routeCollectionMock->expects($this->exactly(3))->method('get')
-            ->withConsecutive(['coop_tilleuls_forgot_password.reset'], ['coop_tilleuls_forgot_password.get_token'], ['coop_tilleuls_forgot_password.update'])
-            ->willReturn($this->routeMock);
-        $this->routeMock->expects($this->exactly(3))->method('getPath')->willReturnOnConsecutiveCalls('/api/forgot-password/', '/api/forgot-password/{tokenValue}', '/api/forgot-password/{tokenValue}');
+            ->willReturnCallback(function (string $arg) {
+                if (!\in_array($arg, ['coop_tilleuls_forgot_password.reset', 'coop_tilleuls_forgot_password.get_token', 'coop_tilleuls_forgot_password.update'], true)) {
+                    throw new \InvalidArgumentException();
+                }
+
+                return $this->routeMock;
+            });
+        $this->routeMock->expects($this->exactly(3))->method('getPath')->willReturn('/api/forgot-password/', '/api/forgot-password/{tokenValue}', '/api/forgot-password/{tokenValue}');
 
         $this->providerChainMock->expects($this->once())->method('all')->willReturn([
             'user' => $this->providerMock,
             'admin' => $this->providerMock,
         ]);
         $this->providerMock->expects($this->exactly(2))->method('getUserPasswordField')->willReturn('password');
-        $this->providerMock->expects($this->exactly(2))->method('getUserAuthorizedFields')->willReturnOnConsecutiveCalls(['email'], ['username', 'email']);
+        $this->providerMock->expects($this->exactly(2))->method('getUserAuthorizedFields')->willReturn(['email'], ['username', 'email']);
 
         $this->normalizerMock->expects($this->once())->method('normalize')->with(new \stdClass(), 'bar', [])->willReturn([
             'tags' => [['name' => 'Login']],

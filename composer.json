@@ -36,12 +36,11 @@
         "jms/serializer-bundle": "^1.4 || ^2.3 || ^3.0 || ^4.0 || ^5.0",
         "laminas/laminas-code": "^3.4 || ^4.0",
         "ocramius/proxy-manager": "^2.0.4",
-        "sebastian/comparator": "^3.0",
+        "phpunit/phpunit": "^10.0 || ^11.0",
         "symfony/asset": "^5.1 || ^6.0 || ^7.0",
         "symfony/browser-kit": "^5.1 || ^6.0 || ^7.0",
         "symfony/framework-bundle": "^5.1 || ^6.0 || ^7.0",
         "symfony/mailer": "^5.1 || ^6.0 || ^7.0",
-        "symfony/phpunit-bridge": "^5.1 || ^6.0 || ^7.0",
         "symfony/property-access": "^5.1 || ^6.0 || ^7.0",
         "symfony/security-bundle": "^5.1 || ^6.0 || ^7.0",
         "symfony/stopwatch": "^5.1 || ^6.0 || ^7.0",
@@ -62,17 +61,8 @@
     "autoload-dev": {
         "psr-4": {
             "CoopTilleuls\\ForgotPasswordBundle\\Tests\\": "tests",
-            "App\\": "features/app/src",
-            "PHPUnit\\": "vendor/bin/.phpunit/phpunit/src"
+            "App\\": "features/app/src"
         }
-    },
-    "scripts": {
-        "post-install-cmd": [
-            "vendor/bin/simple-phpunit --version"
-        ],
-        "post-update-cmd": [
-            "vendor/bin/simple-phpunit --version"
-        ]
     },
     "extra": {
         "branch-alias": {

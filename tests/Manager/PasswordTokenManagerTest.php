@@ -57,12 +57,11 @@ final class PasswordTokenManagerTest extends TestCase
                && '12345' === $object->getToken()
                && $this->userMock === $object->getUser()));
 
-        $this->providerChainMock->expects($this->once())->method('get')->willReturn($this->providerMock);
         $this->providerMock->expects($this->once())->method('getPasswordTokenClass')->willReturn(PasswordToken::class);
         $this->providerMock->expects($this->once())->method('getManager')->willReturn($this->managerMock);
         $this->tokenGeneratorMock->expects($this->once())->method('generate')->willReturn('12345');
 
-        $this->manager->createPasswordToken($this->userMock, new \DateTime('2016-10-11 10:00:00'));
+        $this->manager->createPasswordToken($this->userMock, new \DateTime('2016-10-11 10:00:00'), $this->providerMock);
     }
 
     public function testCreatePasswordTokenWithoutExpirationDate(): void
@@ -71,35 +70,32 @@ final class PasswordTokenManagerTest extends TestCase
             && '12345' === $object->getToken()
             && $this->userMock === $object->getUser()));
 
-        $this->providerChainMock->expects($this->once())->method('get')->willReturn($this->providerMock);
         $this->providerMock->expects($this->once())->method('getPasswordTokenClass')->willReturn(PasswordToken::class);
         $this->providerMock->expects($this->once())->method('getManager')->willReturn($this->managerMock);
         $this->tokenGeneratorMock->expects($this->once())->method('generate')->willReturn('12345');
 
-        $this->manager->createPasswordToken($this->userMock);
+        $this->manager->createPasswordToken($this->userMock, null, $this->providerMock);
     }
 
     public function testFindOneByToken(): void
     {
         $this->managerMock->expects($this->once())->method('findOneBy')->with(PasswordToken::class, ['token' => 'foo'])->willReturn('bar');
 
-        $this->providerChainMock->expects($this->once())->method('get')->willReturn($this->providerMock);
         $this->providerMock->expects($this->once())->method('getPasswordTokenClass')->willReturn(PasswordToken::class);
         $this->providerMock->expects($this->once())->method('getManager')->willReturn($this->managerMock);
 
-        $this->assertEquals('bar', $this->manager->findOneByToken('foo'));
+        $this->assertEquals('bar', $this->manager->findOneByToken('foo', $this->providerMock));
     }
 
     public function testFindOneByUser(): void
     {
         $this->managerMock->expects($this->once())->method('findOneBy')->with(PasswordToken::class, ['user' => $this->userMock])->willReturn('bar');
 
-        $this->providerChainMock->expects($this->once())->method('get')->willReturn($this->providerMock);
         $this->providerMock->expects($this->once())->method('getPasswordTokenClass')->willReturn(PasswordToken::class);
         $this->providerMock->expects($this->once())->method('getPasswordTokenUserField')->willReturn('user');
         $this->providerMock->expects($this->once())->method('getManager')->willReturn($this->managerMock);
 
-        $this->assertEquals('bar', $this->manager->findOneByUser($this->userMock));
+        $this->assertEquals('bar', $this->manager->findOneByUser($this->userMock, $this->providerMock));
     }
 }
 
