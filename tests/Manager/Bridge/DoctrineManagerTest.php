@@ -45,11 +45,12 @@ final class DoctrineManagerTest extends TestCase
 
     public function testFindOneBy(): void
     {
+        $expected = new \stdClass();
         $this->registryMock->expects($this->once())->method('getManagerForClass')->with('class')->willReturn($this->managerMock);
         $this->managerMock->expects($this->once())->method('getRepository')->with('class')->willReturn($this->repositoryMock);
-        $this->repositoryMock->expects($this->once())->method('findOneBy')->with(['criteria'])->willReturn('foo');
+        $this->repositoryMock->expects($this->once())->method('findOneBy')->with(['criteria'])->willReturn($expected);
 
-        $this->assertEquals('foo', $this->doctrineManager->findOneBy('class', ['criteria']));
+        $this->assertEquals($expected, $this->doctrineManager->findOneBy('class', ['criteria']));
     }
 
     public function testPersist(): void
