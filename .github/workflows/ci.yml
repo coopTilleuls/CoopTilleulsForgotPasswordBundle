@@ -28,6 +28,7 @@ jobs:
           - '8.1'
           - '8.2'
           - '8.3'
+          - '8.4'
         symfony:
           # Only Symfony supported versions: https://symfony.com/releases
           - '6.4.*'
@@ -36,7 +37,7 @@ jobs:
           - '^3.4'
           - '^4.0'
         include:
-          - php: '8.3'
+          - php: '8.4'
             symfony: '7.1.*'
             api-platform: '^4.0'
             bootable: true
@@ -87,7 +88,7 @@ jobs:
       - name: Run php-cs-fixer tests
         if: matrix.quality
         env:
-          # PHP CS Fixer does not support PHP 8.3 yet
+          # PHP CS Fixer may not support recent version(s) of PHP
           PHP_CS_FIXER_IGNORE_ENV: 1
         run: php-cs-fixer fix --diff --dry-run
       - name: Bundle is bootable
