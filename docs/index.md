@@ -45,14 +45,15 @@ It provides the following routes:
   cf. [Overriding the GET /forgot-password/{tokenValue} response](#overriding-the-get-forgot-passwordtokenvalue-response))
 - `POST /forgot-password/{tokenValue}`: update user password (or custom field configured through `password_field`)
 
-**For versions >= 1.5.0**
+> Note: This bundles supports multiple providers. If you want to choose a specific provider, you must set a `FB-provider` header as following:
 
-You can manage multi providers. If you want to choose a specific provider, you must set header parameter
-`FP-provider => {provider}` for these endpoints:
+```http request
+POST /forgot-password/
 
-- `POST /forgot-password/`
-- `GET /forgot-password/{tokenValue}`
-- `POST /forgot-password/{tokenValue}`
+FP-provider=<provider-name>
+
+...
+```
 
 ### Create your entity
 
@@ -100,9 +101,7 @@ class PasswordToken extends AbstractPasswordToken
 }
 ```
 
-**For version >= 1.5.0**
-
-If you need to manage forgotten password for many users, you'll have to create a PasswordToken entity for each user:
+> Note: If you need to manage forgotten password for many users, you'll have to create a `PasswordToken` entity for each user:
 
 ```php
 // src/Entity/PasswordToken.php
@@ -197,9 +196,7 @@ coop_tilleuls_forgot_password:
     use_jms_serializer: false             # Switch between symfony's serializer component or JMS Serializer
 ```
 
-**For version >= 1.5.0**
-
-If you have one or many user providers, here is an example of a configuration with two providers:   
+> Note: If you have one or many user providers, here is an example of a configuration with two providers:   
 
 ```yaml
 # config/packages/coop_tilleuls_forgot_password.yaml
@@ -299,9 +296,8 @@ This bundle provides 3 events allowing you to build your own business:
   password (`POST /forgot-password/{tokenValue}`)
 - `coop_tilleuls_forgot_password.user_not_found`: dispatched when a user was not found (`POST /forgot-password/`)
 
-**For version >= 1.5.0 :**
+> Note: If you want to choose a specific provider, you must set a `FP-provider` header for these events.
 
-If you want to choose a specific provider, you must set header parameter `FP-provider => {provider}` for these events.
 - `coop_tilleuls_forgot_password.create_token`: 
   password (`POST /forgot-password/`)
 ```
