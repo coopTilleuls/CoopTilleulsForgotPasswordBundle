@@ -19,6 +19,7 @@ final class UndefinedProviderException extends HttpException implements JsonHttp
 {
     public function __construct(string $message = 'This provider is not defined.')
     {
+        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Status code will change to "%s" in 2.0.', 422);
         parent::__construct(400, $message);
     }
 }
