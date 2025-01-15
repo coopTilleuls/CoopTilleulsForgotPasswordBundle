@@ -19,6 +19,7 @@ final class InvalidJsonHttpException extends HttpException implements JsonHttpEx
 {
     public function __construct()
     {
+        trigger_deprecation('tilleuls/forgot-password-bundle', '1.5', 'Status code will change to "%s" in 2.0.', 422);
         parent::__construct(400, 'Invalid JSON data.');
     }
 }
