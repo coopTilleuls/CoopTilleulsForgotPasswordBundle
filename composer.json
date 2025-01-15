@@ -64,11 +64,6 @@
             "App\\": "features/app/src"
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-main": "1.5.x-dev"
-        }
-    },
     "config": {
         "sort-packages": true,
         "allow-plugins": {

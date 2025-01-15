@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches:
-      - main
       - '[0-9].[0-9]'
     tags:
       - '*'
@@ -95,9 +94,9 @@ jobs:
           PHP_CS_FIXER_IGNORE_ENV: 1
         run: php-cs-fixer fix --diff --dry-run
       - name: Bundle is bootable
-        if: ${{ matrix.bootable && github.event_name == 'push' && github.ref_name == 'main' }}
+        if: ${{ matrix.bootable && github.event_name == 'push' && github.ref_name == github.event.repository.default_branch }}
         run: |
           composer create-project "symfony/skeleton:${{ matrix.symfony }}" flex
           cd flex
           composer config extra.symfony.allow-contrib true
-          composer req --ignore-platform-reqs tilleuls/forgot-password-bundle:dev-${{ github.ref_name }}
+          composer req --ignore-platform-reqs tilleuls/forgot-password-bundle:${{ github.ref_name }}.x-dev
