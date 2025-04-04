@@ -81,8 +81,12 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
       - name: Configure Symfony
         run: composer config extra.symfony.require "${{ matrix.symfony }}"
-      - name: Configure API Platform
+      - name: Configure API Platform 3.4
+        if: ${{ matrix.api-platform == '^3.4' }}
         run: composer require --dev "api-platform/core:${{ matrix.api-platform }}"
+      - name: Configure API Platform > 3.4
+        if: ${{ matrix.api-platform != '^3.4' }}
+        run: composer require --dev "api-platform/openapi:${{ matrix.api-platform }}" "api-platform/symfony:${{ matrix.api-platform }}" "api-platform/doctrine-orm:${{ matrix.api-platform }}"
       - name: Update project dependencies
         run: composer update --no-progress --ansi --prefer-stable --prefer-dist --no-scripts
       - name: Run PHPUnit tests
