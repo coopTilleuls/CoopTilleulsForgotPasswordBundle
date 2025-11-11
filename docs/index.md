@@ -45,7 +45,7 @@ It provides the following routes:
   cf. [Overriding the GET /forgot-password/{tokenValue} response](#overriding-the-get-forgot-passwordtokenvalue-response))
 - `POST /forgot-password/{tokenValue}`: update user password (or custom field configured through `password_field`)
 
-> Note: This bundles supports multiple providers. If you want to choose a specific provider, you must set a `FB-provider` header as following:
+> Note: This bundles supports multiple providers. If you want to choose a specific provider, you must set a `FP-provider` header as following:
 
 ```http request
 POST /forgot-password/
