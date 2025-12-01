@@ -24,43 +24,29 @@ jobs:
       matrix:
         php:
           # Only PHP supported versions: https://www.php.net/supported-versions.php
-          - '8.1'
           - '8.2'
           - '8.3'
           - '8.4'
+          - '8.5'
         symfony:
           # Only Symfony supported versions: https://symfony.com/releases
           - '6.4.*'
-          - '7.1.*'
-          - '7.2.*'
+          - '7.4.*'
+          - '8.0.*'
         api-platform:
-          - '^3.4'
-          - '^4.0'
+          # Only API Platform supported versions: https://api-platform.com/docs/extra/releases/#the-release-process
           - '^4.1'
+          - '^4.2'
         include:
-          - phpunit: 'phpunit.xml.dist'
-          - php: '8.1'
-            phpunit: 'phpunit-legacy.xml.dist'
-          - php: '8.4'
-            symfony: '7.2.*'
-            api-platform: '^4.1'
+          - php: '8.5'
+            symfony: '8.0.*'
+            api-platform: '^4.2'
             bootable: true
             quality: true
         exclude:
           # Symfony 7 requires PHP 8.2
-          - php: '8.1'
-            symfony: '7.1.*'
           - php: '8.2'
-            symfony: '7.1.*'
-          - php: '8.1'
-            symfony: '7.2.*'
-          - php: '8.2'
-            symfony: '7.2.*'
-          # API Platform 4 requires PHP 8.2
-          - php: '8.1'
-            api-platform: '^4.0'
-          - php: '8.1'
-            api-platform: '^4.1'
+            symfony: '7.4.*'
       fail-fast: false
     steps:
       - name: Checkout
@@ -90,7 +76,7 @@ jobs:
       - name: Update project dependencies
         run: composer update --no-progress --ansi --prefer-stable --prefer-dist --no-scripts
       - name: Run PHPUnit tests
-        run: vendor/bin/phpunit --colors=always --testdox -c ${{ matrix.phpunit }}
+        run: vendor/bin/phpunit --colors=always --testdox
       - name: Run Behat tests
         run: |
           mkdir -p features/app/cache/test/doctrine/orm/Proxies features/app/logs
