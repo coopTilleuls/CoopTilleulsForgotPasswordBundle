@@ -164,7 +164,6 @@ final class AppKernel extends Kernel
                 'charset' => 'UTF8',
             ],
             'orm' => [
-                'auto_generate_proxy_classes' => true,
                 'naming_strategy' => 'doctrine.orm.naming_strategy.underscore',
                 'auto_mapping' => true,
                 'mappings' => [

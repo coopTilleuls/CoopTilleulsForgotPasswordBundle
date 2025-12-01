@@ -47,6 +47,11 @@ jobs:
           # Symfony 7 requires PHP 8.2
           - php: '8.2'
             symfony: '7.4.*'
+          # Symfony 8 requires PHP 8.4
+          - php: '8.2'
+            symfony: '8.0.*'
+          - php: '8.3'
+            symfony: '8.0.*'
       fail-fast: false
     steps:
       - name: Checkout
@@ -67,24 +72,22 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
       - name: Configure Symfony
         run: composer config extra.symfony.require "${{ matrix.symfony }}"
-      - name: Configure API Platform 3.4
-        if: ${{ matrix.api-platform == '^3.4' }}
-        run: composer require --dev "api-platform/core:${{ matrix.api-platform }}"
-      - name: Configure API Platform > 3.4
-        if: ${{ matrix.api-platform != '^3.4' }}
+      - name: Configure API Platform
         run: composer require --dev "api-platform/openapi:${{ matrix.api-platform }}" "api-platform/symfony:${{ matrix.api-platform }}" "api-platform/doctrine-orm:${{ matrix.api-platform }}"
       - name: Update project dependencies
         run: composer update --no-progress --ansi --prefer-stable --prefer-dist --no-scripts
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit --colors=always --testdox
+      - name: Install Behat
+        run: composer global require behat/behat
       - name: Run Behat tests
         run: |
           mkdir -p features/app/cache/test/doctrine/orm/Proxies features/app/logs
-          vendor/bin/behat
+          $(composer config -g home)/vendor/bin/behat
       - name: Run Behat tests with jms/serializer-bundle
         run: |
           mkdir -p features/app/cache/jmsserializer/doctrine/orm/Proxies features/app/logs
-          vendor/bin/behat -p jmsserializer
+          $(composer config -g home)/vendor/bin/behat -p jmsserializer
       - name: Run php-cs-fixer tests
         if: matrix.quality
         env:
