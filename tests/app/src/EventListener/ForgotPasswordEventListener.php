@@ -40,7 +40,7 @@ final class ForgotPasswordEventListener implements EventSubscriberInterface
         $this->entityManager = $doctrine->getManager();
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             CreateTokenEvent::class => 'onCreateToken',
