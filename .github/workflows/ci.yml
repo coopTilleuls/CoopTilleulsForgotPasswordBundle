@@ -79,16 +79,6 @@ jobs:
         run: composer update --no-progress --ansi --prefer-stable --prefer-dist --no-scripts
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit --colors=always --testdox
-      - name: Install Behat
-        run: composer global require behat/behat
-      - name: Run Behat tests
-        run: |
-          mkdir -p features/app/cache/test/doctrine/orm/Proxies features/app/logs
-          $(composer config -g home)/vendor/bin/behat
-      - name: Run Behat tests with jms/serializer-bundle
-        run: |
-          mkdir -p features/app/cache/jmsserializer/doctrine/orm/Proxies features/app/logs
-          $(composer config -g home)/vendor/bin/behat -p jmsserializer
       - name: Run php-cs-fixer tests
         if: matrix.quality
         env:

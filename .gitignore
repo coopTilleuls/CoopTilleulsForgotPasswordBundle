@@ -1,7 +1,7 @@
 vendor
-features/app/var
-!features/app/var/cache/.gitkeep
-!features/app/var/logs/.gitkeep
+tests/app/var
+!tests/app/var/cache/.gitkeep
+!tests/app/var/logs/.gitkeep
 composer.phar
 composer.lock
 .php-cs-fixer.cache
