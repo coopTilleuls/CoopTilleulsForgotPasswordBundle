@@ -33,8 +33,8 @@ final class Configuration implements ConfigurationInterface
 
         $rootNode
             ->beforeNormalization()
-            ->ifTrue(fn ($config) => \array_key_exists('password_token_class', $config) || \array_key_exists('user_class', $config))
-            ->then(function ($config) {
+            ->ifTrue(static fn ($config) => \array_key_exists('password_token_class', $config) || \array_key_exists('user_class', $config))
+            ->then(static function ($config) {
                 if (\array_key_exists('password_token_class', $config)) {
                     if (!isset($config['password_token'])) {
                         $config['password_token'] = [];
@@ -52,8 +52,8 @@ final class Configuration implements ConfigurationInterface
 
                 return $config;
             })
-            ->ifTrue(fn ($config) => !\array_key_exists('providers', $config))
-            ->then(function ($config) {
+            ->ifTrue(static fn ($config) => !\array_key_exists('providers', $config))
+            ->then(static function ($config) {
                 $config['providers']['default']['default'] = true;
                 $config['providers']['default']['password_token'] = $config['password_token'];
                 $config['providers']['default']['user'] = $config['user'];

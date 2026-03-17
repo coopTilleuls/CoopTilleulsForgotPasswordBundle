@@ -101,7 +101,7 @@ class ForgotPasswordTest extends WebTestCase
     {
         $this->assertTrue(
             $this->client->getResponse()->isSuccessful(),
-            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+            \sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
         $this->assertEmpty($this->client->getResponse()->getContent());
 
@@ -124,11 +124,11 @@ class ForgotPasswordTest extends WebTestCase
         $this->assertEquals(
             422,
             $this->client->getResponse()->getStatusCode(),
-            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+            \sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
         $this->assertJson($this->client->getResponse()->getContent());
         $this->assertJsonStringEqualsJsonString(
-            sprintf('{"message": "%s"}', str_ireplace('"', '\"', $message)),
+            \sprintf('{"message": "%s"}', str_ireplace('"', '\"', $message)),
             $this->client->getResponse()->getContent()
         );
     }
@@ -277,7 +277,7 @@ class ForgotPasswordTest extends WebTestCase
 
         $this->assertTrue(
             $this->client->getResponse()->isEmpty(),
-            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+            \sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
     }
 
@@ -301,7 +301,7 @@ class ForgotPasswordTest extends WebTestCase
 
         $this->assertTrue(
             $this->client->getResponse()->isNotFound(),
-            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+            \sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
     }
 
@@ -311,7 +311,7 @@ class ForgotPasswordTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            sprintf('/api/forgot-password/%s', $token->getToken()),
+            \sprintf('/api/forgot-password/%s', $token->getToken()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -320,7 +320,7 @@ class ForgotPasswordTest extends WebTestCase
 
         $this->assertTrue(
             $this->client->getResponse()->isNotFound(),
-            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+            \sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
     }
 
@@ -328,7 +328,7 @@ class ForgotPasswordTest extends WebTestCase
     {
         $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), $this->providerChain->get('user'), new \DateTime('+1 day'));
 
-        $this->client->request('POST', sprintf('/api/forgot-password/%s', $token->getToken()));
+        $this->client->request('POST', \sprintf('/api/forgot-password/%s', $token->getToken()));
 
         $this->assertResponseInvalidWithMessage('No parameter sent.');
     }
@@ -339,7 +339,7 @@ class ForgotPasswordTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            sprintf('/api/forgot-password/%s', $token->getToken()),
+            \sprintf('/api/forgot-password/%s', $token->getToken()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -348,12 +348,12 @@ class ForgotPasswordTest extends WebTestCase
 
         $this->assertTrue(
             $this->client->getResponse()->isEmpty(),
-            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+            \sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
 
         $user = $this->doctrine->getManager()->getRepository(User::class)->findOneBy(['username' => 'JohnDoe']);
         $this->assertNotNull($user, 'Unable to retrieve User object.');
-        $this->assertEquals('foo', $user->getPassword(), sprintf('User password hasn\'t been updated, expected "foo", got "%s".', $user->getPassword()));
+        $this->assertEquals('foo', $user->getPassword(), \sprintf('User password hasn\'t been updated, expected "foo", got "%s".', $user->getPassword()));
     }
 
     public function testGetPasswordToken(): void
@@ -363,11 +363,11 @@ class ForgotPasswordTest extends WebTestCase
         $this->doctrine->getManager()->persist($token);
         $this->doctrine->getManager()->flush();
 
-        $this->client->request('GET', sprintf('/api/forgot-password/%s', $token->getToken()));
+        $this->client->request('GET', \sprintf('/api/forgot-password/%s', $token->getToken()));
 
         $this->assertTrue(
             $this->client->getResponse()->isSuccessful(),
-            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+            \sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
         $this->assertJson($this->client->getResponse()->getContent());
     }
@@ -376,11 +376,11 @@ class ForgotPasswordTest extends WebTestCase
     {
         $token = $this->passwordTokenManager->createPasswordToken($this->createUser(), $this->providerChain->get('user'), new \DateTime('-1 minute'));
 
-        $this->client->request('GET', sprintf('/api/forgot-password/%s', $token->getToken()));
+        $this->client->request('GET', \sprintf('/api/forgot-password/%s', $token->getToken()));
 
         $this->assertTrue(
             $this->client->getResponse()->isNotFound(),
-            sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
+            \sprintf('Response is not valid: got %d', $this->client->getResponse()->getStatusCode())
         );
     }
 
@@ -391,7 +391,7 @@ class ForgotPasswordTest extends WebTestCase
         $output = new \Symfony\Component\Console\Output\BufferedOutput();
         $exitCode = $application->doRun(new \Symfony\Component\Console\Input\ArgvInput(['test', 'api:openapi:export']), $output);
 
-        $this->assertSame(0, $exitCode, sprintf('Unable to run "api:openapi:export" command: got %d exit code.', $exitCode));
+        $this->assertSame(0, $exitCode, \sprintf('Unable to run "api:openapi:export" command: got %d exit code.', $exitCode));
 
         $json = $output->fetch();
         $this->assertJson($json);
@@ -462,7 +462,7 @@ class ForgotPasswordTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            sprintf('/api/forgot-password/%s', $token->getToken()),
+            \sprintf('/api/forgot-password/%s', $token->getToken()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_FP-provider' => 'wrong'],
@@ -478,7 +478,7 @@ class ForgotPasswordTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            sprintf('/api/forgot-password/%s', $token->getToken()),
+            \sprintf('/api/forgot-password/%s', $token->getToken()),
             [],
             [],
             ['CONTENT_TYPE' => 'application/json', 'HTTP_FP-provider' => 'admin'],
