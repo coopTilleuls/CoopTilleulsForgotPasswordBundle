@@ -71,9 +71,9 @@ final class ForgotPasswordManagerTest extends TestCase
         $this->providerMock->expects($this->once())->method('getUserClass')->willReturn(User::class);
         $this->managerMock->expects($this->once())->method('findOneBy')->with(User::class, ['email' => 'foo@example.com']);
         if ($this->eventDispatcherMock instanceof ContractsEventDispatcherInterface) {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(fn ($event) => $event instanceof UserNotFoundEvent && ['email' => 'foo@example.com'] === $event->getContext()));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with($this->callback(static fn ($event) => $event instanceof UserNotFoundEvent && ['email' => 'foo@example.com'] === $event->getContext()));
         } else {
-            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(UserNotFoundEvent::USER_NOT_FOUND, $this->callback(fn ($event) => $event instanceof UserNotFoundEvent && ['email' => 'foo@example.com'] === $event->getContext()));
+            $this->eventDispatcherMock->expects($this->once())->method('dispatch')->with(UserNotFoundEvent::USER_NOT_FOUND, $this->callback(static fn ($event) => $event instanceof UserNotFoundEvent && ['email' => 'foo@example.com'] === $event->getContext()));
         }
 
         $this->passwordManagerMock->expects($this->never())->method('findOneByUser')->with(self::any(), $this->providerMock);

@@ -4,7 +4,7 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          backupGlobals="false"
          colors="true"
-         bootstrap="features/app/bootstrap.php"
+         bootstrap="tests/app/bootstrap.php"
          failOnWarning="true"
          failOnRisky="true"
          displayDetailsOnTestsThatTriggerDeprecations="true"
@@ -15,6 +15,7 @@
     <php>
         <ini name="display_errors" value="1" />
         <ini name="error_reporting" value="-1" />
+        <env name="KERNEL_CLASS" value="AppKernel" />
     </php>
 
     <testsuites>

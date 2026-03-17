@@ -13,7 +13,7 @@ HEADER;
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
-    ->exclude(['vendor', 'flex', 'features/app/var']);
+    ->exclude(['vendor', 'flex', 'tests/app/var']);
 
 return (new PhpCsFixer\Config())
     ->setFinder($finder)

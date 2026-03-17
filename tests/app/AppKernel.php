@@ -59,7 +59,6 @@ final class AppKernel extends Kernel
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
-            new FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle(),
             new CoopTilleuls\ForgotPasswordBundle\CoopTilleulsForgotPasswordBundle(),
             new ApiPlatform\Symfony\Bundle\ApiPlatformBundle(),
         ];
@@ -98,26 +97,12 @@ final class AppKernel extends Kernel
                 new Reference('twig'),
                 new Reference('doctrine'),
             ])->tag('kernel.event_subscriber');
-            $container->services()->set(FeatureContext::class, FeatureContext::class)->args([
-                new Reference('test.client'),
-                new Reference('doctrine'),
-                new Reference('coop_tilleuls_forgot_password.manager.password_token'),
-                new Reference('coop_tilleuls_forgot_password.provider_chain'),
-                new Reference('kernel'),
-            ])->public();
         } else {
             $container->setDefinition(ForgotPasswordEventListener::class, (new Definition(ForgotPasswordEventListener::class, [
                 new Reference('mailer'),
                 new Reference('twig'),
                 new Reference('doctrine'),
             ]))->addTag('kernel.event_subscriber'));
-            $container->setDefinition(FeatureContext::class, (new Definition(FeatureContext::class, [
-                new Reference('test.client'),
-                new Reference('doctrine'),
-                new Reference('coop_tilleuls_forgot_password.manager.password_token'),
-                new Reference('coop_tilleuls_forgot_password.provider_chain'),
-                new Reference('kernel'),
-            ]))->setPublic(true));
         }
 
         $method = $container instanceof ContainerConfigurator ? 'extension' : 'loadFromExtension';
