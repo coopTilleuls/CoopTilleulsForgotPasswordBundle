@@ -37,10 +37,11 @@ jobs:
           # Only API Platform supported versions: https://api-platform.com/docs/extra/releases/#the-release-process
           - '^4.1'
           - '^4.2'
+          - '^4.3'
         include:
           - php: '8.5'
             symfony: '8.0.*'
-            api-platform: '^4.2'
+            api-platform: '^4.3'
             bootable: true
             quality: true
         exclude:
