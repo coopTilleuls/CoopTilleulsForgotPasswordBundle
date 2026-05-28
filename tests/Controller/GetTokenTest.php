@@ -9,8 +9,6 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types=1);
-
 namespace CoopTilleuls\ForgotPasswordBundle\Tests\Controller;
 
 use CoopTilleuls\ForgotPasswordBundle\Controller\GetToken;

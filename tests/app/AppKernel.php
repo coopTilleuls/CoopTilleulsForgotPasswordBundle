@@ -9,8 +9,6 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types=1);
-
 use App\Entity\Admin;
 use App\Entity\PasswordAdminToken;
 use App\Entity\PasswordToken;
