@@ -9,8 +9,6 @@
  * file that was distributed with this source code.
  */
 
-declare(strict_types=1);
-
 namespace CoopTilleuls\ForgotPasswordBundle\Manager\Bridge;
 
 use Doctrine\Common\Persistence\ManagerRegistry as LegacyManagerRegistry;
